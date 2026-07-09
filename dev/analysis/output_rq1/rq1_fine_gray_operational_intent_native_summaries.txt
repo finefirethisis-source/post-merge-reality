@@ -1,0 +1,572 @@
+
+## security_fix / file_role
+fg_rows: 380,190
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 380190, number of events= 4126 
+
+                                        coef exp(coef) se(coef) robust se
+origin_commit_categoryai_coauthored  0.16436   1.17864  0.01304   0.19417
+file_primary_roledependency_update   0.15795   1.17110  0.02657   1.23532
+file_primary_roledocumentation       0.04585   1.04691  0.02187   1.19369
+file_primary_roleresource_file      -2.43921   0.08723  0.04104   1.16482
+file_primary_rolesource_code        -0.17369   0.84056  0.02279   1.08636
+file_primary_roletest               -1.67553   0.18721  0.02838   1.08109
+file_primary_roleunknown            -0.43128   0.64968  0.02969   1.06350
+                                         z Pr(>|z|)  
+origin_commit_categoryai_coauthored  0.846   0.3973  
+file_primary_roledependency_update   0.128   0.8983  
+file_primary_roledocumentation       0.038   0.9694  
+file_primary_roleresource_file      -2.094   0.0363 *
+file_primary_rolesource_code        -0.160   0.8730  
+file_primary_roletest               -1.550   0.1212  
+file_primary_roleunknown            -0.406   0.6851  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored   1.17864     0.8484  0.805568    1.7245
+file_primary_roledependency_update    1.17110     0.8539  0.104014   13.1856
+file_primary_roledocumentation        1.04691     0.9552  0.100887   10.8639
+file_primary_roleresource_file        0.08723    11.4640  0.008895    0.8554
+file_primary_rolesource_code          0.84056     1.1897  0.099966    7.0678
+file_primary_roletest                 0.18721     5.3417  0.022496    1.5579
+file_primary_roleunknown              0.64968     1.5392  0.080806    5.2234
+
+Concordance= 0.672  (se = 0.057 )
+Likelihood ratio test= 14686  on 7 df,   p=<2e-16
+Wald test            = 63.97  on 7 df,   p=2e-11
+Score (logrank) test = 12247  on 7 df,   p=<2e-16,   Robust = 16.45  p=0.02
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## revert / file_role
+fg_rows: 399,238
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 399238, number of events= 3625 
+
+                                        coef exp(coef) se(coef) robust se
+origin_commit_categoryai_coauthored  0.32887   1.38940  0.00450   0.46928
+file_primary_roledependency_update   0.13074   1.13967  0.01281   0.48706
+file_primary_roledocumentation      -0.36387   0.69498  0.01308   0.70100
+file_primary_roleresource_file       0.01184   1.01191  0.01344   0.74475
+file_primary_rolesource_code         0.02455   1.02485  0.01213   0.40824
+file_primary_roletest               -0.67385   0.50974  0.01295   0.39841
+file_primary_roleunknown             0.36826   1.44522  0.01292   0.60813
+                                         z Pr(>|z|)  
+origin_commit_categoryai_coauthored  0.701   0.4834  
+file_primary_roledependency_update   0.268   0.7884  
+file_primary_roledocumentation      -0.519   0.6037  
+file_primary_roleresource_file       0.016   0.9873  
+file_primary_rolesource_code         0.060   0.9520  
+file_primary_roletest               -1.691   0.0908 .
+file_primary_roleunknown             0.606   0.5448  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    1.3894     0.7197    0.5538     3.486
+file_primary_roledependency_update     1.1397     0.8774    0.4387     2.961
+file_primary_roledocumentation         0.6950     1.4389    0.1759     2.746
+file_primary_roleresource_file         1.0119     0.9882    0.2351     4.356
+file_primary_rolesource_code           1.0249     0.9757    0.4604     2.281
+file_primary_roletest                  0.5097     1.9618    0.2335     1.113
+file_primary_roleunknown               1.4452     0.6919    0.4388     4.760
+
+Concordance= 0.497  (se = 0.138 )
+Likelihood ratio test= 34745  on 7 df,   p=<2e-16
+Wald test            = 18.02  on 7 df,   p=0.01
+Score (logrank) test = 33661  on 7 df,   p=<2e-16,   Robust = 11.76  p=0.1
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## bug_fix / file_role
+fg_rows: 889,379
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 889379, number of events= 121133 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored  0.374184  1.453805  0.001960  0.181507
+file_primary_roledependency_update  -0.372140  0.689258  0.004399  0.383983
+file_primary_roledocumentation      -0.501733  0.605481  0.004433  0.529715
+file_primary_roleresource_file      -1.051774  0.349318  0.005191  0.556240
+file_primary_rolesource_code        -0.663261  0.515169  0.004112  0.350687
+file_primary_roletest               -0.982653  0.374317  0.004371  0.359847
+file_primary_roleunknown            -0.225440  0.798165  0.004807  0.352700
+                                         z Pr(>|z|)   
+origin_commit_categoryai_coauthored  2.062  0.03925 * 
+file_primary_roledependency_update  -0.969  0.33247   
+file_primary_roledocumentation      -0.947  0.34355   
+file_primary_roleresource_file      -1.891  0.05864 . 
+file_primary_rolesource_code        -1.891  0.05858 . 
+file_primary_roletest               -2.731  0.00632 **
+file_primary_roleunknown            -0.639  0.52270   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    1.4538     0.6879    1.0186    2.0749
+file_primary_roledependency_update     0.6893     1.4508    0.3247    1.4629
+file_primary_roledocumentation         0.6055     1.6516    0.2144    1.7100
+file_primary_roleresource_file         0.3493     2.8627    0.1174    1.0392
+file_primary_rolesource_code           0.5152     1.9411    0.2591    1.0244
+file_primary_roletest                  0.3743     2.6715    0.1849    0.7578
+file_primary_roleunknown               0.7982     1.2529    0.3998    1.5933
+
+Concordance= 0.578  (se = 0.041 )
+Likelihood ratio test= 147614  on 7 df,   p=<2e-16
+Wald test            = 63.78  on 7 df,   p=3e-11
+Score (logrank) test = 151191  on 7 df,   p=<2e-16,   Robust = 30.49  p=8e-05
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## dependency_update / file_role
+fg_rows: 790,501
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 790501, number of events= 96350 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored  0.004289  1.004298  0.001620  0.136854
+file_primary_roledependency_update   2.147979  8.567528  0.004546  0.319057
+file_primary_roledocumentation      -0.808831  0.445379  0.005236  0.354738
+file_primary_roleresource_file      -0.895140  0.408550  0.005495  0.536456
+file_primary_rolesource_code        -0.017718  0.982438  0.004541  0.330406
+file_primary_roletest               -1.109983  0.329564  0.004945  0.332057
+file_primary_roleunknown            -0.145216  0.864836  0.005243  0.370710
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored  0.031  0.97500    
+file_primary_roledependency_update   6.732 1.67e-11 ***
+file_primary_roledocumentation      -2.280  0.02260 *  
+file_primary_roleresource_file      -1.669  0.09519 .  
+file_primary_rolesource_code        -0.054  0.95723    
+file_primary_roletest               -3.343  0.00083 ***
+file_primary_roleunknown            -0.392  0.69526    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    1.0043     0.9957    0.7680    1.3133
+file_primary_roledependency_update     8.5675     0.1167    4.5843   16.0117
+file_primary_roledocumentation         0.4454     2.2453    0.2222    0.8927
+file_primary_roleresource_file         0.4086     2.4477    0.1428    1.1692
+file_primary_rolesource_code           0.9824     1.0179    0.5141    1.8774
+file_primary_roletest                  0.3296     3.0343    0.1719    0.6318
+file_primary_roleunknown               0.8648     1.1563    0.4182    1.7885
+
+Concordance= 0.687  (se = 0.041 )
+Likelihood ratio test= 4539573  on 7 df,   p=<2e-16
+Wald test            = 418.4  on 7 df,   p=<2e-16
+Score (logrank) test = 6008912  on 7 df,   p=<2e-16,   Robust = 41.55  p=6e-07
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## merge_release_versioning / file_role
+fg_rows: 499,751
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 499751, number of events= 23781 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored -1.258965  0.283948  0.004750  0.299678
+file_primary_roledependency_update   0.057643  1.059337  0.006116  0.366290
+file_primary_roledocumentation      -0.659210  0.517260  0.006063  0.366216
+file_primary_roleresource_file      -0.164417  0.848388  0.006760  0.488331
+file_primary_rolesource_code        -0.783892  0.456625  0.005696  0.395305
+file_primary_roletest               -2.010092  0.133976  0.007530  0.334182
+file_primary_roleunknown            -1.565140  0.209059  0.007789  0.546336
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored -4.201 2.66e-05 ***
+file_primary_roledependency_update   0.157  0.87495    
+file_primary_roledocumentation      -1.800  0.07185 .  
+file_primary_roleresource_file      -0.337  0.73635    
+file_primary_rolesource_code        -1.983  0.04737 *  
+file_primary_roletest               -6.015 1.80e-09 ***
+file_primary_roleunknown            -2.865  0.00417 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    0.2839      3.522   0.15782    0.5109
+file_primary_roledependency_update     1.0593      0.944   0.51671    2.1718
+file_primary_roledocumentation         0.5173      1.933   0.25234    1.0603
+file_primary_roleresource_file         0.8484      1.179   0.32578    2.2093
+file_primary_rolesource_code           0.4566      2.190   0.21041    0.9909
+file_primary_roletest                  0.1340      7.464   0.06959    0.2579
+file_primary_roleunknown               0.2091      4.783   0.07165    0.6100
+
+Concordance= 0.64  (se = 0.076 )
+Likelihood ratio test= 324301  on 7 df,   p=<2e-16
+Wald test            = 100.7  on 7 df,   p=<2e-16
+Score (logrank) test = 285752  on 7 df,   p=<2e-16,   Robust = 18.56  p=0.01
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## performance / file_role
+fg_rows: 459,764
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 459764, number of events= 12629 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored  0.295948  1.344401  0.007116  0.373517
+file_primary_roledependency_update   0.336264  1.399709  0.030405  0.594141
+file_primary_roledocumentation      -0.324818  0.722659  0.032061  0.554764
+file_primary_roleresource_file       1.266282  3.547638  0.029751  0.960795
+file_primary_rolesource_code         1.523563  4.588547  0.027777  0.437402
+file_primary_roletest                0.350246  1.419417  0.028953  0.526346
+file_primary_roleunknown             0.287381  1.332932  0.029686  0.471331
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored  0.792 0.428169    
+file_primary_roledependency_update   0.566 0.571416    
+file_primary_roledocumentation      -0.586 0.558208    
+file_primary_roleresource_file       1.318 0.187519    
+file_primary_rolesource_code         3.483 0.000495 ***
+file_primary_roletest                0.665 0.505776    
+file_primary_roleunknown             0.610 0.542046    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    1.3444     0.7438    0.6465     2.796
+file_primary_roledependency_update     1.3997     0.7144    0.4368     4.485
+file_primary_roledocumentation         0.7227     1.3838    0.2436     2.144
+file_primary_roleresource_file         3.5476     0.2819    0.5396    23.322
+file_primary_rolesource_code           4.5885     0.2179    1.9470    10.814
+file_primary_roletest                  1.4194     0.7045    0.5059     3.982
+file_primary_roleunknown               1.3329     0.7502    0.5292     3.357
+
+Concordance= 0.657  (se = 0.072 )
+Likelihood ratio test= 51225  on 7 df,   p=<2e-16
+Wald test            = 125.1  on 7 df,   p=<2e-16
+Score (logrank) test = 47302  on 7 df,   p=<2e-16,   Robust = 29.29  p=1e-04
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## feature / file_role
+fg_rows: 1,015,883
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 1015883, number of events= 168616 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored -0.348882  0.705477  0.001868  0.189143
+file_primary_roledependency_update  -0.138624  0.870555  0.005179  0.354701
+file_primary_roledocumentation      -0.216370  0.805437  0.005200  0.315807
+file_primary_roleresource_file       0.082672  1.086186  0.005329  0.388133
+file_primary_rolesource_code         0.751766  2.120742  0.004912  0.232561
+file_primary_roletest                0.138407  1.148442  0.005072  0.247460
+file_primary_roleunknown             0.865288  2.375690  0.005255  0.293417
+                                         z Pr(>|z|)   
+origin_commit_categoryai_coauthored -1.845  0.06511 . 
+file_primary_roledependency_update  -0.391  0.69593   
+file_primary_roledocumentation      -0.685  0.49326   
+file_primary_roleresource_file       0.213  0.83133   
+file_primary_rolesource_code         3.233  0.00123 **
+file_primary_roletest                0.559  0.57595   
+file_primary_roleunknown             2.949  0.00319 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    0.7055     1.4175    0.4869     1.022
+file_primary_roledependency_update     0.8706     1.1487    0.4344     1.745
+file_primary_roledocumentation         0.8054     1.2416    0.4337     1.496
+file_primary_roleresource_file         1.0862     0.9207    0.5076     2.324
+file_primary_rolesource_code           2.1207     0.4715    1.3444     3.345
+file_primary_roletest                  1.1484     0.8707    0.7071     1.865
+file_primary_roleunknown               2.3757     0.4209    1.3367     4.222
+
+Concordance= 0.614  (se = 0.072 )
+Likelihood ratio test= 531584  on 7 df,   p=<2e-16
+Wald test            = 71.4  on 7 df,   p=8e-13
+Score (logrank) test = 524123  on 7 df,   p=<2e-16,   Robust = 22.58  p=0.002
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## refactor_cleanup / file_role
+fg_rows: 866,387
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 866387, number of events= 119919 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored -0.289761  0.748443  0.001970  0.166393
+file_primary_roledependency_update  -1.162247  0.312783  0.003824  0.397159
+file_primary_roledocumentation      -0.466283  0.627330  0.003502  0.379880
+file_primary_roleresource_file      -1.516070  0.219573  0.003907  0.493690
+file_primary_rolesource_code        -0.267271  0.765466  0.003139  0.293883
+file_primary_roletest               -0.961738  0.382228  0.003417  0.337251
+file_primary_roleunknown            -0.362434  0.695980  0.003675  0.316626
+                                         z Pr(>|z|)   
+origin_commit_categoryai_coauthored -1.741  0.08161 . 
+file_primary_roledependency_update  -2.926  0.00343 **
+file_primary_roledocumentation      -1.227  0.21965   
+file_primary_roleresource_file      -3.071  0.00213 **
+file_primary_rolesource_code        -0.909  0.36312   
+file_primary_roletest               -2.852  0.00435 **
+file_primary_roleunknown            -1.145  0.25234   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    0.7484      1.336   0.54016    1.0370
+file_primary_roledependency_update     0.3128      3.197   0.14361    0.6812
+file_primary_roledocumentation         0.6273      1.594   0.29795    1.3208
+file_primary_roleresource_file         0.2196      4.554   0.08344    0.5778
+file_primary_rolesource_code           0.7655      1.306   0.43030    1.3617
+file_primary_roletest                  0.3822      2.616   0.19736    0.7403
+file_primary_roleunknown               0.6960      1.437   0.37418    1.2945
+
+Concordance= 0.602  (se = 0.035 )
+Likelihood ratio test= 500929  on 7 df,   p=<2e-16
+Wald test            = 36.54  on 7 df,   p=6e-06
+Score (logrank) test = 480577  on 7 df,   p=<2e-16,   Robust = 20.75  p=0.004
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## test / file_role
+fg_rows: 724,491
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 724491, number of events= 73443 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored  0.433297  1.542334  0.001619  0.239627
+file_primary_roledependency_update  -0.135940  0.872895  0.011092  0.541370
+file_primary_roledocumentation       0.774536  2.169586  0.010290  0.729659
+file_primary_roleresource_file       0.564605  1.758752  0.010329  1.001089
+file_primary_rolesource_code         0.964664  2.623905  0.010026  0.413492
+file_primary_roletest                2.348190 10.466610  0.009965  0.454101
+file_primary_roleunknown             0.994700  2.703914  0.010467  0.546485
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored  1.808   0.0706 .  
+file_primary_roledependency_update  -0.251   0.8017    
+file_primary_roledocumentation       1.062   0.2885    
+file_primary_roleresource_file       0.564   0.5728    
+file_primary_rolesource_code         2.333   0.0196 *  
+file_primary_roletest                5.171 2.33e-07 ***
+file_primary_roleunknown             1.820   0.0687 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    1.5423    0.64837    0.9643     2.467
+file_primary_roledependency_update     0.8729    1.14561    0.3021     2.522
+file_primary_roledocumentation         2.1696    0.46092    0.5191     9.067
+file_primary_roleresource_file         1.7588    0.56858    0.2472    12.512
+file_primary_rolesource_code           2.6239    0.38111    1.1668     5.901
+file_primary_roletest                 10.4666    0.09554    4.2981    25.488
+file_primary_roleunknown               2.7039    0.36983    0.9265     7.892
+
+Concordance= 0.701  (se = 0.141 )
+Likelihood ratio test= 1449302  on 7 df,   p=<2e-16
+Wald test            = 126.8  on 7 df,   p=<2e-16
+Score (logrank) test = 1445286  on 7 df,   p=<2e-16,   Robust = 17.63  p=0.01
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## documentation / file_role
+fg_rows: 672,364
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 672364, number of events= 68348 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored  0.158231  1.171437  0.002197  0.156015
+file_primary_roledependency_update  -1.012906  0.363162  0.007496  0.419300
+file_primary_roledocumentation       1.628352  5.095472  0.006220  0.407586
+file_primary_roleresource_file       0.175544  1.191895  0.006575  0.757367
+file_primary_rolesource_code        -0.989352  0.371817  0.006599  0.413902
+file_primary_roletest               -2.159795  0.115349  0.008396  0.463934
+file_primary_roleunknown            -0.433479  0.648250  0.007441  0.407100
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored  1.014   0.3105    
+file_primary_roledependency_update  -2.416   0.0157 *  
+file_primary_roledocumentation       3.995 6.47e-05 ***
+file_primary_roleresource_file       0.232   0.8167    
+file_primary_rolesource_code        -2.390   0.0168 *  
+file_primary_roletest               -4.655 3.23e-06 ***
+file_primary_roleunknown            -1.065   0.2870    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    1.1714     0.8537   0.86282    1.5904
+file_primary_roledependency_update     0.3632     2.7536   0.15966    0.8261
+file_primary_roledocumentation         5.0955     0.1963   2.29217   11.3272
+file_primary_roleresource_file         1.1919     0.8390   0.27013    5.2591
+file_primary_rolesource_code           0.3718     2.6895   0.16520    0.8368
+file_primary_roletest                  0.1153     8.6694   0.04646    0.2864
+file_primary_roleunknown               0.6482     1.5426   0.29189    1.4397
+
+Concordance= 0.714  (se = 0.107 )
+Likelihood ratio test= 2156494  on 7 df,   p=<2e-16
+Wald test            = 321  on 7 df,   p=<2e-16
+Score (logrank) test = 2380177  on 7 df,   p=<2e-16,   Robust = 35.12  p=1e-05
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## resource / file_role
+fg_rows: 480,636
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 480636, number of events= 22529 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored  0.592761  1.808976  0.002236  0.501330
+file_primary_roledependency_update  -1.780642  0.168530  0.022897  1.070704
+file_primary_roledocumentation       1.887516  6.602945  0.015777  0.614226
+file_primary_roleresource_file       2.914521 18.439982  0.015716  0.635811
+file_primary_rolesource_code        -0.065486  0.936612  0.015957  0.580362
+file_primary_roletest               -1.956957  0.141288  0.017349  0.897751
+file_primary_roleunknown             1.768398  5.861454  0.015891  0.716460
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored  1.182  0.23706    
+file_primary_roledependency_update  -1.663  0.09630 .  
+file_primary_roledocumentation       3.073  0.00212 ** 
+file_primary_roleresource_file       4.584 4.56e-06 ***
+file_primary_rolesource_code        -0.113  0.91016    
+file_primary_roletest               -2.180  0.02927 *  
+file_primary_roleunknown             2.468  0.01358 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    1.8090    0.55280   0.67717    4.8324
+file_primary_roledependency_update     0.1685    5.93366   0.02067    1.3742
+file_primary_roledocumentation         6.6029    0.15145   1.98111   22.0073
+file_primary_roleresource_file        18.4400    0.05423   5.30343   64.1156
+file_primary_rolesource_code           0.9366    1.06768   0.30030    2.9212
+file_primary_roletest                  0.1413    7.07776   0.02432    0.8209
+file_primary_roleunknown               5.8615    0.17061   1.43931   23.8703
+
+Concordance= 0.669  (se = 0.212 )
+Likelihood ratio test= 2790463  on 7 df,   p=<2e-16
+Wald test            = 246.8  on 7 df,   p=<2e-16
+Score (logrank) test = 2804918  on 7 df,   p=<2e-16,   Robust = 14.65  p=0.04
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## build_config_ci / file_role
+fg_rows: 555,719
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 555719, number of events= 26559 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored -0.541027  0.582150  0.004427  0.268684
+file_primary_roledependency_update  -1.916632  0.147102  0.004606  0.319825
+file_primary_roledocumentation      -1.541592  0.214040  0.004860  0.566356
+file_primary_roleresource_file      -0.959698  0.383008  0.004304  0.983716
+file_primary_rolesource_code        -2.588394  0.075141  0.004056  0.412560
+file_primary_roletest               -3.844900  0.021389  0.007856  0.568207
+file_primary_roleunknown            -1.022686  0.359628  0.004712  0.678588
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored -2.014  0.04405 *  
+file_primary_roledependency_update  -5.993 2.06e-09 ***
+file_primary_roledocumentation      -2.722  0.00649 ** 
+file_primary_roleresource_file      -0.976  0.32927    
+file_primary_rolesource_code        -6.274 3.52e-10 ***
+file_primary_roletest               -6.767 1.32e-11 ***
+file_primary_roleunknown            -1.507  0.13179    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored   0.58215      1.718  0.343819   0.98569
+file_primary_roledependency_update    0.14710      6.798  0.078593   0.27533
+file_primary_roledocumentation        0.21404      4.672  0.070536   0.64950
+file_primary_roleresource_file        0.38301      2.611  0.055702   2.63359
+file_primary_rolesource_code          0.07514     13.308  0.033474   0.16867
+file_primary_roletest                 0.02139     46.754  0.007023   0.06514
+file_primary_roleunknown              0.35963      2.781  0.095113   1.35978
+
+Concordance= 0.761  (se = 0.091 )
+Likelihood ratio test= 671216  on 7 df,   p=<2e-16
+Wald test            = 293.3  on 7 df,   p=<2e-16
+Score (logrank) test = 783951  on 7 df,   p=<2e-16,   Robust = 25.24  p=7e-04
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).
+
+## style_formatting / file_role
+fg_rows: 478,797
+Call:
+coxph(formula = coxFormula, data = fgData, weights = fgwt, control = coxph.control(timefix = FALSE), 
+    cluster = repo)
+
+  n= 478797, number of events= 16029 
+
+                                         coef exp(coef)  se(coef) robust se
+origin_commit_categoryai_coauthored -0.744014  0.475203  0.008323  0.184692
+file_primary_roledependency_update   0.655617  1.926331  0.021050  0.281718
+file_primary_roledocumentation      -0.159022  0.852977  0.022542  0.326684
+file_primary_roleresource_file       0.200022  1.221429  0.021983  0.557185
+file_primary_rolesource_code         1.018906  2.770162  0.020471  0.361428
+file_primary_roletest                0.353389  1.423885  0.020894  0.266976
+file_primary_roleunknown             1.544729  4.686702  0.020801  0.259205
+                                         z Pr(>|z|)    
+origin_commit_categoryai_coauthored -4.028 5.62e-05 ***
+file_primary_roledependency_update   2.327  0.01995 *  
+file_primary_roledocumentation      -0.487  0.62642    
+file_primary_roleresource_file       0.359  0.71961    
+file_primary_rolesource_code         2.819  0.00482 ** 
+file_primary_roletest                1.324  0.18561    
+file_primary_roleunknown             5.959 2.53e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                                    exp(coef) exp(-coef) lower .95 upper .95
+origin_commit_categoryai_coauthored    0.4752     2.1044    0.3309    0.6825
+file_primary_roledependency_update     1.9263     0.5191    1.1090    3.3460
+file_primary_roledocumentation         0.8530     1.1724    0.4496    1.6181
+file_primary_roleresource_file         1.2214     0.8187    0.4098    3.6404
+file_primary_rolesource_code           2.7702     0.3610    1.3641    5.6254
+file_primary_roletest                  1.4239     0.7023    0.8438    2.4028
+file_primary_roleunknown               4.6867     0.2134    2.8199    7.7894
+
+Concordance= 0.572  (se = 0.135 )
+Likelihood ratio test= 75508  on 7 df,   p=<2e-16
+Wald test            = 91.6  on 7 df,   p=<2e-16
+Score (logrank) test = 73131  on 7 df,   p=<2e-16,   Robust = 10.25  p=0.2
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).

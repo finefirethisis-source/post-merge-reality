@@ -1,0 +1,1106 @@
+```{r setup, include=FALSE}
+# loading libraries
+# general use libraries
+library(DBI)
+library(readr)
+library(ggplot2)
+library(lubridate)
+library(gt)
+library(ggvenn)
+library(ggridges)
+# library(hrbrthemes)
+library(gridExtra)
+library(ggpubr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(numbers)
+library(car)
+library(GGally)
+library(dotenv)
+# libraries for survival curves
+library(survival)
+library(survminer)
+library(broom)
+library(xml2)
+library(survey) # for cluster-robust chi-squared test with Rao-Scott correction
+library(rcompanion) # for calculating Cramer's V of chi-squared tests
+library(duckdb) # for handling big data
+library(showtext) # for importing and using custom fonts
+library(sysfonts)
+library(systemfonts)
+library(svglite) # for saving plots as svg to preserve custom font
+library(dplyr) # putting dplyr at the end because for some reason it misbehaves otherwise
+library(lme4) # Poisson GLMMs (RQ1c Models C/D)
+library(DHARMa) # GLMM residual diagnostics
+
+
+# if dplyr is fighting with duckdb when trying to run Step 1 below, restart R session & fully quit R -> run this in console: install.packages(c("dbplyr", "duckdb", "dplyr")) -> then try rerunning this chunk
+# or straight in terminal: pkill -f rsession -> Rscript -e 'install.packages(c("dbplyr", "duckdb", "dplyr"), repos="https://cloud.r-project.org")'
+knitr::opts_chunk$set(echo = TRUE)
+find_repo_root <- function(start = getwd()) {
+  cur <- normalizePath(start, mustWork = TRUE)
+
+  repeat {
+    if (dir.exists(file.path(cur, "csv_full")) &&
+        file.exists(file.path(cur, "filtered_full_sample_repos.csv"))) {
+      return(cur)
+    }
+
+    parent <- dirname(cur)
+    if (identical(parent, cur)) {
+      stop("Could not find repo root containing csv_full/")
+    }
+
+    cur <- parent
+  }
+}
+
+repoRoot <- find_repo_root()
+csvFullDir <- file.path(repoRoot, "csv_full", "")
+visDir <- file.path(repoRoot, "visualizations", "")
+modelsDir <- file.path(repoRoot, "models", "")
+```
+
+# Loading data
+```{r}
+## DO NOT RERUN THIS UNLESS NECESSARY! 
+## Step 0. One-time: convert CSV -> Parquet (run once, then never touch the CSV)
+con <- dbConnect(duckdb())
+# Keeps only analysis-relevant columns; drops line_content, message bodies,
+# author emails, URLs etc., which is most of the 41 GB.
+dbExecute(con, paste0("
+  COPY (
+    SELECT repo, origin_commit_sha, origin_commit_date, origin_commit_category,
+           origin_commit_labels, origin_file, origin_line, current_file, current_line, status,
+           terminal_commit_sha, terminal_commit_date, terminal_commit_category,
+           terminal_commit_labels, terminal_reason, terminal_line
+    FROM read_csv_auto('", csvFullDir, "line_lifecycle.csv', sample_size = -1)
+  ) TO '", csvFullDir, "line_lifecycle.parquet' (FORMAT PARQUET)
+"))
+
+# quick check to see what's in the Parquet file on disk
+dbGetQuery(con, paste0("DESCRIBE SELECT * FROM read_parquet('", csvFullDir, "line_lifecycle.parquet')"))
+```
+
+```{r}
+## Step 1. Connect to the data (RUN EVERY SESSION)
+con <- dbConnect(duckdb())
+ll <- tbl(con, paste0("read_parquet('", csvFullDir, "line_lifecycle.parquet')"))
+
+# commit_classifications 
+commit_classifications <- readr::read_csv(paste0(csvFullDir, "commit_classifications.csv")) %>%
+  mutate(date = lubridate::as_datetime(date),
+         primary_operational_intent = as.factor(primary_operational_intent),
+         maintenance_class = as.factor(maintenance_class))
+# Registering it with DuckDB so joins against ll happen engine-side
+duckdb_register(con, "cc", commit_classifications)
+
+# creating yearMonth var for line_lifecycle data
+ll <- ll %>% mutate(origin_commit_year_month   = substr(as.character(origin_commit_date), 1, 7), 
+                    terminal_commit_year_month = substr(as.character(terminal_commit_date), 1, 7))
+
+# loading other csvs normally
+codebase_agent_share_snapshots <- read_csv(paste0(csvFullDir, "codebase_agent_share_snapshots.csv"))
+# casting snapshot_date and snapshot_commit_date as datetime
+codebase_agent_share_snapshots$snapshot_date <- as_datetime(codebase_agent_share_snapshots$snapshot_date)
+codebase_agent_share_snapshots$snapshot_commit_date <- as_datetime(codebase_agent_share_snapshots$snapshot_commit_date)
+codebase_agent_share_source_snapshots <- read_csv(paste0(csvFullDir, "codebase_agent_share_source_snapshots.csv"))
+
+commit_file_classifications <- read_csv(paste0(csvFullDir, "commit_file_classifications.csv"))
+commit_files <- read_csv(paste0(csvFullDir, "commit_files.csv"))
+commit_lifecycle_summary <- read_csv(paste0(csvFullDir, "commit_lifecycle_summary.csv"))
+commits <- read_csv(paste0(csvFullDir, "commits.csv"))
+repo_summary <- read_csv(paste0(csvFullDir, "repo_summary.csv"))
+
+static_findings <- read_csv(paste0(csvFullDir, "static_findings.csv"))
+# casting commit_date as datetime 
+static_findings$commit_date <- as_datetime(static_findings$commit_date)
+
+supply_chain_findings <- read_csv(paste0(csvFullDir, "supply_chain_findings.csv"))
+# casting commit_date as datetime 
+supply_chain_findings$commit_date <- as_datetime(supply_chain_findings$commit_date)
+
+sonarqube_snapshot_scans <- read_csv(paste0(csvFullDir, "sonarqube_snapshot_scans.csv"))
+# casting snapshot_date and snapshot_commit_date as datetime
+sonarqube_snapshot_scans$snapshot_date <- as_datetime(sonarqube_snapshot_scans$snapshot_date)
+sonarqube_snapshot_scans$snapshot_commit_date <- as_datetime(sonarqube_snapshot_scans$snapshot_commit_date)
+
+static_analysis_summary <- read_csv(paste0(csvFullDir, "static_analysis_summary.csv"))
+supply_chain_summary <- read_csv(paste0(csvFullDir, "supply_chain_summary.csv"))
+
+# loading aggregate no review rate PR data
+pr_no_review_monthly_metrics <- read_csv(paste0(csvFullDir, "combined_pr_no_review_monthly_metrics.csv"))
+pr_no_review_monthly_metrics <- pr_no_review_monthly_metrics %>% 
+  pivot_longer(cols = -repo, names_to = c(".value", "month"), names_pattern = "(.*)_(\\d{4}_\\d{2})") %>% 
+  mutate(month = sub("_", "-", month)) %>% rename(year_month = month)
+# creating per-repo aggregation 
+repo_pr_no_review_aggregate_metrics <-pr_no_review_monthly_metrics %>% group_by(repo) %>% summarise(no_merge_rate = sum(no_review_merged_pr_count) / sum(merged_pr_count))
+```
+
+## Analysis constants setup
+```{r}
+## Analysis constants (RUN EVERY SESSION)
+
+# cache for expensive fits — delete the .rds in modelsDir to force that model to re-fit
+fit_or_load <- function(name, fit_fun) {
+  path <- file.path(modelsDir, paste0(name, ".rds"))
+  if (file.exists(path)) return(readRDS(path))
+  obj <- fit_fun(); saveRDS(obj, path); obj
+}
+
+# for loading models already saved we don't want to recompute
+load_fit <- function(name) {
+  path <- file.path(modelsDir, paste0(name, ".rds"))
+  if (!file.exists(path)) stop("no saved fit at ", path)
+  readRDS(path)
+} 
+
+#filters established and verified during prelim exploration (see Full_Dataset_Exploration.Rmd doc)
+outlier_commit_shas <- c("2b717338b0e02663dfce5142bd636db0b1d3958c","a3f5c98b59b7892866a49ac22ed91cd8c37865d8","038ca6696d9b821b216b8ab06c8dd48aac7750ae","cea8cd84957f4801f3e9ea1f0997fedfbe3c5e35","dc01a470926d8ee353d7627171e0d491bb8e6386","00314a6c4a2a1c422a4cf9a57b15efca1ad0e146","10763bbae6614c3dc569da892ce6453afd0143f4","ec3a5ff1142670bed5f43969581ecd179d2b8d50","66b199403e65ee29364a25cd7b7596e679030e7f","57960940f9a0b6cd9caf0f92c3592be0cad588d5","23a42d5d956b04c49276240875d8dd329eb44642","0fb2e4b1968f9db4f1cf36fe89505f536e82bc94","3760f7ddeba3cd857a4068a5c08df2800c6950ec")
+
+# these are repos we're excluding: statsig-io/docs - because it was deleted so we couldn't collect full data, the rest because according to the data they don't have any ai_coauthored commits
+excluded_repos <- c("statsig-io/docs", "Daylily-Informatics/daylily-ephemeral-cluster", "TypedDevs/bashunit", "tscircuit/contribution-tracker", "tscircuit/tscircuit.com", "github/copilot-cli")
+
+# the observation cutoff date is currently set to the end of the observation period 2025-05-31 (we need this to calculate the survival time for surviving lines)
+observation_start_date <- as.POSIXct("2025-05-01 00:00:00", format = "%Y-%m-%d %H:%M:%S",tz = "UTC")
+observation_cutoff_date <- as.POSIXct("2026-05-31 23:59:59", format = "%Y-%m-%d %H:%M:%S",tz = "UTC")
+
+observation_start_year_month <- "2025-05"
+observation_cutoff_year_month   <- "2026-05"
+calendar_months_in_window <- 13L
+
+ai_labels <- c(
+  "aider",
+  "amazon_q",
+  "claude_code",
+  "cline",
+  "codex",
+  "copilot",
+  "cursor",
+  "devin",
+  "gemini",
+  "jules",
+  "openhands",
+  "replit_agent",
+  "roo_code",
+  "sourcegraph_cody",
+  "sweep",
+  "windsurf"
+)
+
+# other helper functions 
+fmt_num <- function(x) {
+  format(x, big.mark = ",", scientific = FALSE, trim = TRUE)
+}
+
+blank_to_na <- function(x) {
+  x <- as.character(x)
+  x[!nzchar(x)] <- NA_character_
+  x
+}
+
+safe_number <- function(value) {
+  value <- suppressWarnings(as.numeric(value))
+  value[is.na(value)] <- 0
+  value
+}
+
+format_nullable_number <- function(value) {
+  if (length(value) == 0 || is.na(value) || is.nan(value) || is.infinite(value)) {
+    return(NA_real_)
+  }
+  as.numeric(value)
+}
+
+weighted_mean_or_na <- function(values, weights) {
+  idx <- !is.na(values) & !is.na(weights) & weights > 0
+  if (!any(idx)) {
+    return(NA_real_)
+  }
+  stats::weighted.mean(values[idx], weights[idx])
+}
+
+test_label <- function(p_value, estimate, higher_label, lower_label) {
+  if (is.na(p_value) || is.na(estimate) || p_value >= rq2_alpha) {
+    return("no_clear_difference")
+  }
+  if (estimate > 0) {
+    return(higher_label)
+  }
+  if (estimate < 0) {
+    return(lower_label)
+  }
+  "no_clear_difference"
+}
+
+cox_label <- function(p_value, hazard_ratio) {
+  if (is.na(p_value) || is.na(hazard_ratio) || p_value >= rq2_alpha) {
+    return("no_clear_difference")
+  }
+  if (hazard_ratio > 1) {
+    return("ai_higher_termination_hazard")
+  }
+  if (hazard_ratio < 1) {
+    return("ai_lower_termination_hazard")
+  }
+  "no_clear_difference"
+}
+
+ratio_or_na <- function(numerator, denominator) {
+  ifelse(!is.na(denominator) & denominator > 0, numerator / denominator, NA_real_)
+}
+
+log1p_or_na <- function(value) {
+  ifelse(!is.na(value) & value >= 0, log1p(value), NA_real_)
+}
+
+parse_labels <- function(value) {
+  if (length(value) == 0 || is.na(value) || !nzchar(trimws(value))) {
+    return(character())
+  }
+  unique(trimws(unlist(strsplit(value, "[;,]"))))
+}
+
+collapse_languages <- function(language_values, min_repos = rq2_min_language_repos, requested_reference = "") {
+  language_values <- blank_to_na(language_values)
+  language_values[is.na(language_values)] <- "unknown"
+  counts <- sort(table(language_values), decreasing = TRUE)
+  kept_languages <- names(counts[counts >= min_repos])
+  grouped <- ifelse(language_values %in% kept_languages, language_values, "other")
+  grouped_counts <- sort(table(grouped), decreasing = TRUE)
+  levels_ordered <- names(grouped_counts)
+
+  reference <- ""
+  if (nzchar(requested_reference) && requested_reference %in% levels_ordered) {
+    reference <- requested_reference
+  } else if (length(levels_ordered) > 0) {
+    reference <- levels_ordered[[1]]
+  }
+  levels_ordered <- c(reference, sort(setdiff(levels_ordered, reference)))
+  factor(grouped, levels = levels_ordered)
+}
+```
+
+
+## Building full-data weighted line table 
+```{r}
+## Step 2 — build the full-data weighted line table (RUN ONCE unless things change, like Step 0)
+
+# origin file role (confounder): one row per origin commit x file
+duckdb_register(con, "cfc_origin",
+  commit_file_classifications %>% filter(is_origin_commit) %>%
+    distinct(repo, commit_sha, filename, file_primary_role))
+
+# terminal intent (defines the cause-specific events): one row per terminal commit
+duckdb_register(con, "cc_term",
+  commit_classifications %>% distinct(repo, sha, primary_operational_intent))
+
+cutoff_sql <- sprintf("TIMESTAMP '%s'", format(observation_cutoff_date, "%Y-%m-%d %H:%M:%S"))
+
+line_weighted <- ll %>%
+  filter(origin_commit_category != "other_bot",
+         origin_commit_year_month >= observation_start_year_month,
+         origin_commit_year_month <= observation_cutoff_year_month,
+         !(origin_commit_sha %in% outlier_commit_shas),
+         !(repo %in% excluded_repos)) %>%
+  # continuous days to 6 dp; censored -> cutoff, terminated -> terminal commit
+  mutate(survival_days = sql(sprintf(
+    "round(date_diff('microsecond', origin_commit_date,
+            CASE WHEN status = 'survived' THEN %s ELSE terminal_commit_date END) / 86400000000.0, 6)", cutoff_sql))) %>%
+  filter(survival_days >= 0) %>%
+  mutate(survival_days = if_else(survival_days < 0.000001, 0.0000005, survival_days)) %>%  # keep time > 0
+  left_join(tbl(con, "cfc_origin"),
+            by = c("repo", "origin_commit_sha" = "commit_sha", "origin_file" = "filename")) %>%
+  left_join(tbl(con, "cc_term"),
+            by = c("repo", "terminal_commit_sha" = "sha")) %>%
+  mutate(file_primary_role = coalesce(file_primary_role, "unknown")) %>%
+  count(repo, origin_commit_category, file_primary_role, origin_commit_year_month,
+        survival_days, status, primary_operational_intent, name = "weight") %>%
+  collect()
+
+saveRDS(line_weighted, paste0(csvFullDir, "line_weighted.rds"))
+```
+
+```{r}
+## Step 2b — load weighted table + derive event columns (RUN EVERY SESSION)
+line_weighted <- readRDS(paste0(csvFullDir, "line_weighted.rds")) %>%
+  mutate(status                 = factor(status, levels = c("deleted","modified","survived")),
+         origin_commit_category = factor(origin_commit_category, levels = c("not_ai_coauthored","ai_coauthored")),
+         file_primary_role      = factor(file_primary_role),
+         repo                   = factor(repo),
+         event = if_else(status == "survived", 0L, 1L),                          # RQ1a: any termination
+         corrective_cause = factor(case_when(                                    # RQ1c: corrective cause
+           status == "survived" ~ "none",
+           primary_operational_intent %in% c("bug_fix","security_fix","revert") ~ as.character(primary_operational_intent),
+           TRUE ~ "none"),
+           levels = c("none","bug_fix","security_fix","revert")),
+         corrective_event = if_else(corrective_cause %in% c("bug_fix","security_fix","revert"), 1L, 0L))
+```
+
+
+# Data setup 
+
+Creating the dataset for the commit-level analysis that uses terminal commits as the unit of analysis 
+```{r}
+# creating maintenance actions table with one row per (terminal commit x origin group) it maintained
+maint_actions <- ll %>%
+  filter(origin_commit_category != "other_bot",
+         origin_commit_year_month >= "2025-05",
+         origin_commit_year_month <= "2026-05",
+         !(origin_commit_sha %in% outlier_commit_shas),
+         !(repo %in% excluded_repos),
+         status != "survived") %>%
+  distinct(terminal_commit_sha, origin_commit_category) %>%
+  collect()   
+# adding information about each terminal commit's maintenance class
+maint_actions <- maint_actions %>% 
+  left_join(commit_classifications %>%
+              select(terminal_commit_sha = sha, date, maintenance_class, primary_operational_intent, repo),
+            by = "terminal_commit_sha")
+
+# sanity check: are there any rows that have NA values for maintenance class? 
+maint_actions[is.na(maint_actions$maintenance_class), ]
+maint_actions[is.na(maint_actions$primary_operational_intent), ]
+# it looks like none of the rows have NAs so we're good
+
+# adding year_month variable to dataset
+maint_actions <- maint_actions %>% mutate(terminal_commit_year_month = substr(date, 1, 7))
+# casting origin_commit_category as factor 
+maint_actions$origin_commit_category <- factor(maint_actions$origin_commit_category, levels = c("not_ai_coauthored","ai_coauthored")) 
+# casting repo as factor for efficiency
+maint_actions$repo <- factor(maint_actions$repo)
+```
+
+Creating the dataset for the commit-level analysis that uses origin commits as the unit of analysis 
+```{r}
+# creating helper dataset with one row per (origin commit x terminal commit) that terminated at least 1 line in the commit
+origin_terminal_pairs <- ll %>%
+  filter(origin_commit_category != "other_bot",
+         origin_commit_year_month >= "2025-05",
+         origin_commit_year_month <= "2026-05",
+         !(origin_commit_sha %in% outlier_commit_shas),
+         !(repo %in% excluded_repos),
+         status != "survived") %>%
+  distinct(origin_commit_sha, origin_commit_date, origin_commit_category, terminal_commit_sha) %>%
+  collect()  
+# adding information about each terminal commit
+origin_terminal_pairs <- origin_terminal_pairs %>% 
+  left_join(commit_classifications %>%
+              select(terminal_commit_sha = sha, terminal_commit_date = date, maintenance_class, primary_operational_intent, repo),
+            by = "terminal_commit_sha")
+
+# sanity check: are there any rows that have NA values for maintenance class? 
+origin_terminal_pairs[is.na(origin_terminal_pairs$maintenance_class), ]
+origin_terminal_pairs[is.na(origin_terminal_pairs$primary_operational_intent), ]
+# it looks like none of the rows have NAs so we're good
+
+# checking how many unique origin commtis there are in the dataset
+table(origin_terminal_pairs$origin_commit_sha)
+
+origin_terminal_pairs %>% group_by(origin_commit_sha) %>% summarise(n_terminating_commits = n())
+# it looks like there are 232,946 unique origin commits in the table
+
+# flattering strategy FIRST terminal intent: i.e., intent/class of the earliest terminating commit
+origin_commits_first <- origin_terminal_pairs %>%
+  group_by(origin_commit_sha) %>%
+  slice_min(terminal_commit_date, n = 1, with_ties = FALSE) %>%
+  ungroup()
+
+# flattering strategy MODE terminal intent: i.e., intent that terminated the most lines, earliest date breaks ties
+origin_commits_mode <- origin_terminal_pairs %>%
+  group_by(origin_commit_sha, primary_operational_intent) %>%
+  summarise(repo = first(repo),
+            origin_commit_category = first(origin_commit_category),
+            earliest = min(terminal_commit_date),
+            .groups = "drop") %>%
+  distinct(origin_commit_sha, .keep_all = TRUE)
+
+# flattering strategy MODE terminal maintenance class: i.e., maintenance class that terminated the most lines, earliest date breaks ties
+origin_commits_mode_mainteance_class <- origin_terminal_pairs %>%
+  group_by(origin_commit_sha, maintenance_class) %>%
+  summarise(repo = first(repo),
+            origin_commit_category = first(origin_commit_category),
+            earliest = min(terminal_commit_date),
+            .groups = "drop") %>%
+  distinct(origin_commit_sha, .keep_all = TRUE)
+
+
+# creating unified table that has one row per unique origin commit sha, and includes the terminal maintenance class and primary operational intent using both the mode and first operationalizations 
+origin_commits_joined <- origin_commits_mode %>%
+  select(repo, origin_commit_sha, origin_commit_category,
+         primary_operational_intent_mode = primary_operational_intent) %>%
+  left_join(
+    origin_commits_first %>%
+      select(origin_commit_sha,
+             maintenance_class_first = maintenance_class,
+             primary_operational_intent_first = primary_operational_intent),
+    by = "origin_commit_sha"
+  ) %>%
+  left_join(
+    origin_commits_mode_mainteance_class %>%
+      select(origin_commit_sha,
+             maintenance_class_mode = maintenance_class),
+    by = "origin_commit_sha"
+  )
+# sanity check making sure all rows have values for each of the four maintenance classes we care about 
+origin_commits_joined[is.na(origin_commits_joined$maintenance_class_mode), ]
+origin_commits_joined[is.na(origin_commits_joined$maintenance_class_first), ]
+origin_commits_joined[is.na(origin_commits_joined$primary_operational_intent_mode), ]
+origin_commits_joined[is.na(origin_commits_joined$primary_operational_intent_first), ]
+# no NAs looks good
+```
+
+```{r}
+# adding pure source code churn metrics to commits data 
+
+# operationalizing the source code churn for each commit 
+source_code_pure_churn_per_commit <- commit_file_classifications %>% 
+  filter(file_object_tags == "source_code") %>% 
+  group_by(commit_sha) %>% 
+  summarise(additions_source_code_pure = sum(additions), deletions_source_code_pure = sum(deletions), changed_lines_source_code_pure = sum(changed_lines))
+
+source_code_mixed_churn_per_commit <- commit_file_classifications %>% 
+  filter(file_object_tags %in% c("source_code","source_code;config","source_code;dependencies","source_code;docs","source_code;docs;config")) %>% 
+  group_by(commit_sha) %>% 
+  summarise(additions_source_code_mixed = sum(additions), deletions_source_code_mixed = sum(deletions), changed_lines_source_code_mixed = sum(changed_lines))
+
+# operationalizing dependency file churn for each commit
+dependencies_pure_churn_per_commit <- commit_file_classifications %>% 
+  filter(file_object_tags == "dependencies") %>% 
+  group_by(commit_sha) %>% 
+  summarise(additions_dependencies_pure = sum(additions), deletions_dependencies_pure = sum(deletions), changed_lines_dependencies_pure = sum(changed_lines))
+
+dependencies_mixed_churn_per_commit <- commit_file_classifications %>% 
+  filter(file_object_tags %in% c("dependencies", "config;dependencies", "docs;config;dependencies", "docs;dependencies", "source_code;dependencies", "tests;config;dependencies","tests;dependencies","tests;docs;dependencies")) %>% 
+  group_by(commit_sha) %>% 
+  summarise(additions_dependencies_mixed = sum(additions), deletions_dependencies_mixed = sum(deletions), changed_lines_dependencies_mixed = sum(changed_lines))
+
+# adding new metrics to commit table (note not all commits modify source code so these columns will be NAs for some rows) (note only adding the vars we actually need for analysis to minimize bloat)
+commits <- commits %>% left_join(source_code_pure_churn_per_commit %>% select(commit_sha, changed_lines_source_code_pure), by = c("sha" = "commit_sha"))
+#commits <- commits %>% left_join(source_code_mixed_churn_per_commit, by = c("sha" = "commit_sha"))
+commits <- commits %>% left_join(dependencies_pure_churn_per_commit %>% select(commit_sha, changed_lines_dependencies_pure), by = c("sha" = "commit_sha"))
+#commits <- commits %>% left_join(dependencies_mixed_churn_per_commit, by = c("sha" = "commit_sha"))
+
+# deleting helper tables for memory
+rm(source_code_pure_churn_per_commit,source_code_mixed_churn_per_commit,dependencies_pure_churn_per_commit,dependencies_mixed_churn_per_commit); gc()
+
+
+# setting NAs to 0 for commits that were classified (i.e., are in commit_file_classifications) but that didn't have any churn in those pure file categories 
+commits <- commits %>%
+  mutate(
+    changed_lines_source_code_pure = if_else(
+      sha %in% unique(commit_file_classifications$commit_sha) & is.na(changed_lines_source_code_pure),
+      0, changed_lines_source_code_pure),
+    changed_lines_dependencies_pure = if_else(
+      sha %in% unique(commit_file_classifications$commit_sha) & is.na(changed_lines_dependencies_pure),
+      0, changed_lines_dependencies_pure)
+  )
+```
+
+
+# RQ1a. Does agentic code require more post-merge maintenance compared to human code?
+
+## Step 2: Kaplan-Meier survival curve 
+
+```{r dev="ragg_png", dpi=300}
+# Kaplan-Meier survival curve 
+
+## Building curve
+# adding cluster at repo level to address within repo correlations
+km_fit <- survfit(Surv(time = survival_days, event = event) ~ origin_commit_category, weights = weight, cluster = repo, robust = TRUE, data = line_weighted)
+
+## Plotting curve
+overallLineSurvivalCurveByGroup <- ggsurvplot(km_fit, data = line_weighted, legend.title = "", legend.labs = c('Human', 'AI-Coauthored'), palette = c("#8789C0", "#F58F29"), ggtheme = theme_classic(base_family = "Nimbus Roman"), font.family = "Nimbus Roman", conf.int = TRUE, pval = FALSE, conf.int.alpha = 0.1, font.x = c(19), font.y = c(19), font.tickslab = c(19), censor = FALSE, xlab = "Days Since Merge", ylab = "Survival Probability", legend = c(0.85,0.92), font.legend = c(19), font.legend.title = c(19), xlim = c(0, 300))
+overallLineSurvivalCurveByGroup
+
+## Saving curve
+ggsave(paste0(visDir, "overallLineSurvivalCurveByGroup.pdf"), overallLineSurvivalCurveByGroup$plot, width = 9, height = 3, units = "in")
+```
+
+```{r}
+# getting cluster-robust log-rank test (check robust score/Wald test)
+## inferential Cox (total effect): + file_primary_role + strata(repo), repo-clustered, weighted
+cox_rq1a_fit <- fit_or_load("cox_rq1a", function() coxph(
+  Surv(survival_days, event) ~ origin_commit_category + file_primary_role + strata(repo),
+  weights = weight, cluster = repo, data = line_weighted))
+
+# Note: The robust score test here is the cluster-adjusted analogue of the log-rank, and the coefficient gives a hazard ratio with a repo-robust CI
+# robust Wald = z-score = coef / robust se
+# robust 95% CI = exp(coef +- 1.96 * robust se)
+
+#getting the robust score test from summary
+summary(cox_rq1a_fit)
+# Interpreting results of cluster-robust log-rank test. 
+# Results are found on the line starting "Score (logrank) test" 
+# > Score (logrank) test = A  on 1 df,  p = p1,   Robust = B   p = p2
+# The results of the cluster-robust log-rank test are: Robust = B, p = p2
+# Report: χ²(1) = B, p = p2
+```
+Interpreting results of cluster-robust log-rank test:
+After clustering by repository, AI-coauthored lines were not significantly more or less likely to be modified or deleted than human-authored lines (HR = 1.11, cluster-robust 95% CI 0.85 - 1.45, p-value = 0.45). The HR point estimate suggests a ~11% higher termination rate for AI-coauthored lines, but the confidence interval includes 1, so the difference is not distinguishable from zero.
+
+Cox diagnostics 
+```{r}
+# --- DIAGNOSTIC: checking proportional hazards assumptions ---
+# Test/plot: cox.zph() + scaled Schoenfeld residual plot.
+# Want to see: flat beta(t); non-significant per-term and GLOBAL test.
+# Don't want: sloped/curved beta(t) — HR changes over follow-up; report a time-averaged HR or split time.
+# Caveat: at this weighted n the test is hugely overpowered — judge the PLOT, not the p.
+zph <- cox.zph(cox_rq1a_fit)
+zph
+plot(zph)        # estimated β(t) for the AI term over time, with a flat reference at the PH value
+```
+Tips on interpretation: 
+Cox.zph evaluates whether the scaled Schoenfeld residuals trend over time.
+Check the column 'origin_commit_category' in the output, small p-value indicates rejecting proportional hazards null assumption meaning the group effect changes over time (which is the crossing pattern observed in the survival curves.) 
+However, since n=7.5 M the test is very overpowered and likley to flag trivially small deviances as significant so we shouldn't only rely on the p-value here to make this conclusion (we should also look at the plot). 
+The plot shows β(t), i.e., the AI log-hazard-ratio as a function of time. If the curve clearly bends and crosses zero, meaning it starts positive (AI worse early) and trends negative (AI better late) that indicates there's substantive PH violation. 
+Interpreting the plot: The proportional-hazards assumption is formally violated (cox.zph p < 2e-16), but the test is severely overpowered and not cluster-adjusted, so we interpret the violation from the Schoenfeld residual plot, which shows the AI-coauthored coefficient holding roughly flat across most of follow-up with only mild drift in the far right tail — meaning the reported hazard ratio is best read as a time-averaged effect rather than a strictly constant one.
+
+
+### Sensitivity check for calendar time period as cofounder
+Running sensitivity test to confirm effect of calendar period as a confounding variable.
+Plan: Build survival curve on only overlapping part of the data (predetermined to be August 2025 - May 2026) to see if the results weaken, flip, or become too underpowered for reliable conclusion. 
+If any of those things happen, it means calendar period should be accounted for as a cofounder in which case we'll switch to a Cox Proportional Hazards survival model with calendar period as a covariate. 
+
+```{r}
+# overlap window = Aug 2025 onward; origin_commit_date is no longer kept row-level, so use the month key
+line_weighted_overlap <- line_weighted %>%
+  filter(origin_commit_year_month >= "2025-08") %>%
+  mutate(origin_commit_category = droplevels(origin_commit_category))
+
+# survival curve on the overlap window (weighted, repo-clustered)
+km_fit_overlap <- survfit(Surv(survival_days, event) ~ origin_commit_category,
+                          weights = weight, cluster = repo, robust = TRUE, data = line_weighted_overlap)
+
+# running sensitivity test to see if there's a difference 
+gap_at <- function(fit, times) {
+  s <- summary(fit, times = times)
+  tibble(time = s$time, strata = as.character(s$strata), surv = s$surv) %>%
+    pivot_wider(names_from = strata, values_from = surv) %>%
+    # adjust these two strata names to match your output labels:
+    mutate(gap = `origin_commit_category=ai_coauthored` -
+                 `origin_commit_category=not_ai_coauthored`)
+}
+gap_at(km_fit,         c(90, 180, 270))   # full window
+gap_at(km_fit_overlap, c(90, 180, 270))   # overlap window
+
+# deleting line datatable once we're done with this analysis since it's huge 
+rm(line_weighted_overlap)
+gc()
+```
+Interpretation of results: 
+Both models have the same sign at every time point. The gaps are all positive and widen over time. 
+In terms of magnitude, at 90 days the full vs overlap are quite close (0.0165 vs 0.0183), at 180 and 270 days they also remain close (0.0439 vs 0.0403) and (0.0877 vs 0.0930). 
+
+
+# RQ1b 
+
+We treat origin commit as the unit of analysis and characterize each commit's maintenance outcome by the modal terminal commit maintenance class (in cases where an origins commit has multiple terminal commits, which many do). 
+We choose this operationalization because it captures the dominant maintenance class across a commit's lifetime rather than the first or any single downstream touch. We operationalize maintenance type using maintenance_class as the primary outcome given its direct correspondence to the RQ, and report parallel analysis using primary_operational_intent and an alternative first-terminal flattening as sensitivity checks to confirm that results are not an artifact of operationalization choice. 
+
+#### Data setup
+
+Creating the cleaned datasets for the commit-level analysis that uses origin commits as the unit of analysis 
+```{r}
+# creating cleaned version of dataset for each of the four operationalzations of 'maintenance class' that we're using for the origin commit unit of analysis chi-squared tests
+
+# creating cleaned dataset for chi-squared tests on maintenance_class_mode
+# excluding cases where maintenance_class_mode == "unknown"
+origin_commits_cleaned_mc_mode <- origin_commits_joined %>% filter(maintenance_class_mode != "unknown")
+# dropping empty maintenance class level
+origin_commits_cleaned_mc_mode <- origin_commits_cleaned_mc_mode %>% mutate(maintenance_class_mode = droplevels(maintenance_class_mode))
+
+# creating cleaned dataset for chi-squared tests on maintenance_class_first
+# excluding cases where maintenance_class_first == "unknown"
+origin_commits_cleaned_mc_first <- origin_commits_joined %>% filter(maintenance_class_first != "unknown")
+# dropping empty maintenance class level
+origin_commits_cleaned_mc_first <- origin_commits_cleaned_mc_first %>% mutate(maintenance_class_first = droplevels(maintenance_class_first))
+
+# creating cleaned dataset for chi-squared tests on primary_operational_intent_mode
+# excluding cases where primary_operational_intent_mode %in% c("unknown", "mixed")
+origin_commits_cleaned_poi_mode <- origin_commits_joined %>% filter(!(primary_operational_intent_mode %in% c("unknown", "mixed")))
+# dropping empty primary operational intent levels
+origin_commits_cleaned_poi_mode <- origin_commits_cleaned_poi_mode %>% mutate(primary_operational_intent_mode = droplevels(primary_operational_intent_mode))
+
+# creating cleaned dataset for chi-squared tests on primary_operational_intent_first
+# excluding cases where primary_operational_intent_first %in% c("unknown", "mixed")
+origin_commits_cleaned_poi_first <- origin_commits_joined %>% filter(!(primary_operational_intent_first %in% c("unknown", "mixed")))
+# dropping empty primary operational intent levels
+origin_commits_cleaned_poi_first <- origin_commits_cleaned_poi_first %>% mutate(primary_operational_intent_first = droplevels(primary_operational_intent_first))
+```
+
+```{r}
+# creating dataset for Chi-squared test which only includes terminal commits that modify code form a single-group (e.g., human OR agentic code not both), since including terminal commits that modify both would violate the independent observations assumption. 
+# Chi-squared data: single-group commits, excluding unclassifiable maintenance
+pure_actions <- maint_actions %>%
+  group_by(terminal_commit_sha) %>%
+  filter(n_distinct(origin_commit_category) == 1) %>%   # drops straddlers (2 tuples)
+  ungroup() 
+
+table(pure_actions$maintenance_class)
+table(pure_actions$primary_operational_intent)
+
+# creating cleaned dataset for chi-squared tests on maintenance_class
+# creating a version of pure_actions with cases where maintenance_class == "unknown" are filtered out
+pure_actions_maintenance_class <- pure_actions %>% filter(maintenance_class != "unknown")
+# dropping empty maintenance class level
+pure_actions_maintenance_class <- pure_actions_maintenance_class %>% mutate(maintenance_class = droplevels(maintenance_class))
+table(pure_actions_maintenance_class$maintenance_class)
+
+# creating cleaned dataset for chi-squared tests on primary_operational_intent
+# creating a version of pure_actions with cases where primary_operational_intent %in% ("unknown", "mixed") are filtered out
+pure_actions_primary_operational_intent <- pure_actions %>% filter(!(primary_operational_intent %in% c("unknown","mixed")))
+# dropping empty prinary operational intent levels level
+pure_actions_primary_operational_intent <- pure_actions_primary_operational_intent %>% mutate(primary_operational_intent = droplevels(primary_operational_intent))
+table(pure_actions_primary_operational_intent$primary_operational_intent)
+```
+
+### Primary tests - PRIMARY OPERATIONAL INTENT - MAINTENANCE-ACTION LEVEL (i.e., terminal commit unit of analysis)
+Performing Chi-squared test with terminal commit unit of analysis and primary operational intent operationalization 
+```{r}
+# building contingency table 
+chisq_tab_term_POI <- table(pure_actions_primary_operational_intent$origin_commit_category, pure_actions_primary_operational_intent$primary_operational_intent)
+chisq_tab_term_POI
+# cell proportions: within each group, the share of each maintenance type (rows sum to 1)
+round(prop.table(chisq_tab_term_POI, margin = 1), 3)
+# performing naive chi squared test (that doesn't account for within-repo correlations)
+#chisq.test(chisq_tab_term_POI)
+
+# performing chi squared test with Rao-Scott correction and within repo clusters
+des_poi <- svydesign(ids = ~repo, data = pure_actions_primary_operational_intent)
+svychisq(~ origin_commit_category + primary_operational_intent, design = des_poi, statistic="Chisq")
+ 
+# calculating overall association effect size
+cramerV(chisq_tab_term_POI)
+
+saveRDS(
+  list(
+    table = chisq_tab_term_POI,
+    row_proportions = round(prop.table(chisq_tab_term_POI, margin = 1), 3),
+    rao_scott_chisq = svychisq(~ origin_commit_category + primary_operational_intent, design = des_poi, statistic="Chisq"),
+    cramer_v = cramerV(chisq_tab_term_POI)
+  ),
+  file=file.path(modelsDir, "terminal_primary_operational_intent_results.rds")
+)
+```
+Interpreting results: 
+The cluster-robust Rao & Scott corrected x-squared = 910.55 with a p-value 9.319e-07, indicating even after accounting for within-repo clustering, there is a significant difference across the groups. With Cramer V = 0.07349 effect size is small but larger than it was for maintenance class. 
+The corrective signal is driven specifically by bug fixes (0.289 vs 0.230) and the perfective deficit splits between feature work (0.149 vs 0.190) and refactor/cleanup ( 0.059 vs 0.111). Notably, AI-coauthored commits also attract more test-writing downstream (0.102 vs 0.086), which may reflect a need for post-hoc coverage of AI-introduced code.
+TLDR: AI code gets more bug fixes, supports findings from maintenance class chi-squared test showing they get more corrective maintenance. 
+
+
+# RQ1c
+
+## Data Setup
+```{r}
+## corrective_cause / corrective_event now come from Step 2b; origin churn (mediator) is dropped.
+## weighted sanity checks on the corrective labelling:
+line_weighted %>% count(corrective_cause, wt = weight)
+line_weighted %>% count(corrective_cause, origin_commit_category, wt = weight)
+
+# corrective EVENT counts per subtype per group (EPV gate need ~>=10 per parameter)
+line_weighted %>% filter(corrective_event == 1) %>% count(origin_commit_category, corrective_cause, wt = weight)
+# all three subtypes clear the EPV threshold we'd like to see no problem
+
+# where are the security fixes coming from? (make sure it's not all one repo)
+line_weighted %>%
+  filter(corrective_cause == "security_fix") %>%
+  count(repo, origin_commit_category, wt = weight) %>%
+  tidyr::pivot_wider(names_from = origin_commit_category, values_from = n, values_fill = 0)
+# looks like there's a decent distribution 
+```
+
+
+Building CWE → MITRE-1400 category lookup - NOTE only run this chunk once, then just load the cached RDS refrenced in the next chunk in subsequent runs
+```{r}
+## Building  the complete CWE -> MITRE CWE-1400 category lookup (RUN ONCE, then load the cached RDS)
+## Source: MITRE's official CWE-1400 view export. Every CWE is in exactly one of 22 categories.
+tmp_zip <- tempfile(fileext = ".zip")
+download.file("https://cwe.mitre.org/data/xml/views/1400.xml.zip", tmp_zip, mode = "wb")
+xml_name <- unzip(tmp_zip, list = TRUE)$Name[1]
+unzip(tmp_zip, files = xml_name, exdir = tempdir())
+
+doc <- xml2::read_xml(file.path(tempdir(), xml_name))
+xml2::xml_ns_strip(doc)   # drop the cwe namespace so plain xpath works
+
+# the 22 categories (CWE 1396-1417 are 1400-specific): id -> readable name
+cats <- xml2::xml_find_all(doc, "//Category")
+cat_names <-  tibble::tibble(
+  category_id  = as.integer(xml2::xml_attr(cats, "ID")),
+  cwe_category = sub("^Comprehensive Categorization:\\s*", "", xml2::xml_attr(cats, "Name")))
+
+# each category's member weaknesses, pulled from its Has_Member relationships
+cwe_to_category <- map_dfr(cats, function(cat) {
+  members <- xml2::xml_find_all(cat, ".//*[local-name()='Has_Member']")
+  tibble(category_id = as.integer(xml2::xml_attr(cat, "ID")),
+         cwe_id      = as.integer(xml2::xml_attr(members, "CWE_ID")))
+}) %>%
+  left_join(cat_names, by = "category_id") %>%
+  select(cwe_id, cwe_category) %>%
+  distinct()
+
+# sanity: expect ~944 weaknesses, 22 categories, 0 NA  (if nrow is ~0 the element/attr names differ -> inspect xml_structure(doc))
+nrow(cwe_to_category)
+n_distinct(cwe_to_category$cwe_category)
+sum(is.na(cwe_to_category$cwe_category))
+
+cwe_path <- modelsDir %>% file.path("cwe_to_category.rds")
+
+saveRDS(cwe_to_category, cwe_path)
+rm(doc, cats, cat_names, tmp_zip, xml_name); gc()
+```
+
+
+```{r}
+## Adding CWE category to static findings dataset 
+
+# loading CWE categories
+cwe_to_category <- readRDS(cwe_path)
+
+# 2025 CWE Top-25, verified against MITRE's 2025 list. Membership only; rank ignored.
+cwe_top25_2025 <- c(79, 89, 352, 862, 787, 22, 416, 125, 78, 94,
+                    120, 434, 476, 121, 502, 122, 863, 20, 284, 200,
+                    306, 918, 77, 639, 770)
+
+# static findings: pull first CWE id out of metadata_cwe ("CWE-798: ..."), attach category, order severity, flag top25
+static_findings <- static_findings %>%
+  mutate(cwe_id       = as.integer(sub("^CWE-([0-9]+).*", "\\1", metadata_cwe)),
+         severity     = factor(severity, levels = c("INFO", "WARNING", "ERROR"), ordered = TRUE)) %>%
+  left_join(cwe_to_category, by = "cwe_id") %>%
+  mutate(cwe_category = if_else(is.na(cwe_category), "unmapped", cwe_category),
+         cwe_top25    = cwe_id %in% cwe_top25_2025)
+
+# sanity check: introduced findings we couldn't categorize (expect only rules with no CWE -> "unmapped")
+static_findings %>% filter(finding_status == "introduced", cwe_category == "unmapped") %>% count(metadata_cwe)
+# less than 1% of CWEs couldn't be mapped to categories so we're probably food to proceeed
+static_findings %>% count(is_unmapped = cwe_category == "unmapped") %>% mutate(pct = 100 * n / sum(n))
+# and specifically among introduced findings, since that's what Model B / the composition use
+static_findings %>% filter(finding_status == "introduced") %>% count(is_unmapped = cwe_category == "unmapped") %>% mutate(pct = 100 * n / sum(n))
+table(static_findings$cwe_category)
+# checking to make sure the unmapped ones are skewed too heavily twoard either group
+static_findings %>% filter(cwe_category == "unmapped") %>% count(commit_category)
+
+# supply-chain findings: order the OSV severity for the composition cut (no CWEs here)
+supply_chain_findings <- supply_chain_findings %>%
+  mutate(severity = factor(severity, levels = c("LOW", "MODERATE", "HIGH", "CRITICAL"), ordered = TRUE))
+```
+
+
+```{r}
+## Adding source-touch flag + create static count-model frame
+
+# at-risk flag: did the commit touch >= 1 source-code file? (a docs/deps-only commit can't introduce a code finding)
+source_touch <- commit_file_classifications %>%
+  group_by(commit_sha) %>%
+  summarise(has_source = any(file_primary_role == "source_code"), .groups = "drop")
+
+# high-severity (ERROR) introduced count per commit
+static_error_counts <- static_findings %>%
+  filter(finding_status == "introduced", severity == "ERROR") %>%
+  count(commit_sha, name = "introduced_findings_error")
+
+# one row per at-risk, successfully-scanned commit in the window; same outlier exclusions as the line corpus
+static_commit <- static_analysis_summary %>%
+  filter(commit_category %in% c("not_ai_coauthored", "ai_coauthored"),
+         repo != "gitbutlerapp/gitbutler",
+         commit_sha != "66b199403e65ee29364a25cd7b7596e679030e7f",
+         commit_date >= observation_start_date, # making sure we're only looking at commits from May 2025 - May 2026
+         commit_date <= observation_cutoff_date,
+         !(repo %in% excluded_repos),
+         !(commit_sha %in% outlier_commit_shas),
+         after_files_materialized > 0,
+         after_semgrep_returncode == 0,
+         is.na(skipped_reason)) %>%
+  left_join(source_touch, by = "commit_sha") %>%
+  filter(has_source) %>%
+  left_join(commits %>% select(commit_sha = sha, changed_lines, additions, changed_lines_source_code_pure), by = "commit_sha") %>%
+  filter(changed_lines > 0) %>%                                   # need positive exposure for the offset
+  left_join(static_error_counts, by = "commit_sha") %>%
+  mutate(introduced_findings_error = coalesce(introduced_findings_error, 0L),
+         commit_category = factor(commit_category, levels = c("not_ai_coauthored", "ai_coauthored")),
+         repo            = factor(repo)) %>%
+  select(repo, commit_sha, commit_category, commit_date,
+         introduced_findings, removed_findings, introduced_findings_error, changed_lines, additions, changed_lines_source_code_pure)
+
+#rm(static_error_counts); gc()
+
+# sanity: commit counts + outcome distribution by group (check zero-inflation before fitting NB)
+static_commit %>% count(commit_category)
+static_commit %>% group_by(commit_category) %>%
+  summarise(n = n(), mean_introduced = mean(introduced_findings),
+            pct_zero = mean(introduced_findings == 0), .groups = "drop")
+# high zero percentage as expected, the data is sparse justifying the negative binomial approach
+```
+
+
+```{r}
+## Step 1c — dependency-touch flag + OSV count-model frame
+
+# creating dependency touch helper table
+dep_touch <- commit_file_classifications %>% 
+  group_by(commit_sha) %>%
+  summarise(has_dep = any(file_primary_role == "dependency_update"), .groups = "drop")
+
+supply_commit <- supply_chain_summary %>%
+  filter(commit_category %in% c("not_ai_coauthored", "ai_coauthored"),
+         repo != "gitbutlerapp/gitbutler",
+         commit_sha != "66b199403e65ee29364a25cd7b7596e679030e7f",
+         commit_date >= observation_start_date, # making sure we're only looking at commits from May 2025 - May 2026
+         commit_date <= observation_cutoff_date,
+         !(repo %in% excluded_repos),
+         !(commit_sha %in% outlier_commit_shas),
+         after_files_materialized > 0,
+         is.na(skipped_reason)) %>%
+  left_join(dep_touch, by = "commit_sha") %>%
+  filter(has_dep) %>%
+  left_join(commits %>% select(commit_sha = sha, changed_lines, changed_lines_dependencies_pure), by = "commit_sha") %>%
+  filter(changed_lines > 0) %>%
+  mutate(commit_category = factor(commit_category, levels = c("not_ai_coauthored", "ai_coauthored")),
+         repo            = factor(repo)) %>%
+  select(repo, commit_sha, commit_category, commit_date,
+         introduced_findings, removed_findings, changed_lines, changed_lines_dependencies_pure)
+
+#rm(source_touch, dep_touch); gc()
+
+# sanity: OSV is sparse — confirm enough nonzero commits per group to bother modeling
+supply_commit %>% group_by(commit_category) %>%
+  summarise(n = n(), n_with_intro = sum(introduced_findings > 0),
+            mean_introduced = mean(introduced_findings), .groups = "drop")
+commit_file_classifications %>% count(file_primary_role) %>% arrange(desc(n))
+commit_file_classifications %>% count(file_object_tags) %>% arrange(desc(n))
+# the EPV rate looks good we should be ok to make the NB glm
+```
+
+
+### Static finding introduction rate Poisson
+
+#### Building model
+```{r}
+## Model C — do AI commits introduce static findings at a higher per-changed-line rate?
+## Poisson mixed-effects regression, random effect for repo handles within-repo correlation and accounts for repo as a confounder. (exposure = opportunity to introduce a finding).
+
+## Model C — Poisson GLMM: static-finding introduction rate (random intercept for repo)
+## commit grain (one row per commit) so no frequency weight; +1 offset guard kept so no commits are dropped
+glmm_static <- fit_or_load("glmm_rq1c_modelC", function() glmer(
+  introduced_findings ~ commit_category + offset(log(changed_lines_source_code_pure + 1)) + (1 | repo),
+  family = poisson, data = static_commit, control = glmerControl(optimizer = "bobyqa")))
+summary(glmm_static)
+
+# AI vs human Rate Ratio (RR >1 = AI higher)
+exp(fixef(glmm_static)["commit_categoryai_coauthored"])   # rate ratio (RR > 1 = AI higher)
+```
+Interpretation: DONE
+AI commits introduce findings at ~1.14x the human per-source-line change, the difference is also significant (Rate Ratio (RR) = 1.141723, p-value = 1.5e-05). 
+
+#### Diagnostics check
+```{r}
+# DIAGNOSTICS: Poisson GLMM 
+# Source: DHARMa vignette (Hartig) https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html
+# Source: Bolker GLMM FAQ http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html
+# Note: raw/Pearson residual plots are uninformative for GLMMs — use simulated (DHARMa) residuals.
+# =====================================================================
+# --- DIAGNOSTIC: Convergence / singular fit ---
+# Want to see: FALSE, no convergence warnings.
+# Don't want: TRUE (repo variance ~0) or "failed to converge".
+isSingular(glmm_static)
+
+# --- DIAGNOSTIC: Distributional fit ---
+# Test/plot: DHARMa::simulateResiduals(re.form = NULL) -> plot.
+# Want to see: QQ on the diagonal, non-significant KS, flat quantile lines.
+# Don't want: KS deviation / curved quantile lines.
+sim <- DHARMa::simulateResiduals(glmm_static, simulateREs = "user-specified", re.form = NULL)
+pdf(file.path(visDir, "glmm_static_dharma.pdf"), width = 8, height = 6)
+plot(sim)
+dev.off()
+
+# --- DIAGNOSTIC: Overdispersion ---
+# Test: Pearson chi-square / residual df (same as the GLM version, with GLMM-correct df).
+# Want to see: ratio ~1.
+# Don't want: >1 — SEs too small; refit with glmer.nb (same formula).
+rp  <- residuals(glmm_static, type = "pearson")
+rdf <- nobs(glmm_static) - length(fixef(glmm_static)) - length(getME(glmm_static, "theta"))
+c(chisq = sum(rp^2), ratio = sum(rp^2) / rdf, rdf = rdf,
+  p = pchisq(sum(rp^2), df = rdf, lower.tail = FALSE))   # >1 / small p = overdispersed
+
+# --- DIAGNOSTIC: Zero-inflation ---
+# Test: observed zeros vs zeros expected under the fitted Poisson (analytic, no simulation).
+# Want to see: ratio ~1.
+# Don't want: >1 — more zeros than the model predicts; consider a hurdle/ZI model.
+mu <- fitted(glmm_static)                 # conditional means (include offset + repo RE)
+c(observed = sum(getME(glmm_static, "y") == 0),
+  expected = sum(dpois(0, mu)),
+  ratio    = sum(getME(glmm_static, "y") == 0) / sum(dpois(0, mu)))   # >1 = excess zeros
+```
+TLDR Interpretation of Diagnostics: DONE
+Singular fit shows FALSE which means converages
+QQ plot is on the diagonal but KS test shows p =0, Dispersion test is also p = 0, outlier test shows p = 0 as well
+Diagnostics indicate overdispersion, which is expected given the sparsity of the data.
+For overdispersion we see ratio fo 2.711 which is greater than 1, so there is strong evidence of overdispersion beyond what the Poisson model expects.
+For zero-inflation we see ratio of 1.016921 which is very close to 1, so no strong evidence of zero-inflation beyond what the Poisson model expects.
+
+
+### Extension
+#### Building model
+```{r}
+## Model C Extension - do AI commits introduce high-severity static findings at a higher per-changed-line rate? 
+glmm_static_severe <- fit_or_load("glmm_rq1c_modelCext", function() glmer(
+  introduced_findings_error ~ commit_category + offset(log(changed_lines_source_code_pure + 1)) + (1 | repo),
+  family = poisson, data = static_commit, control = glmerControl(optimizer = "bobyqa")))
+summary(glmm_static_severe)
+
+# AI vs human Rate Ratio (RR >1 = AI higher)
+exp(fixef(glmm_static_severe)["commit_categoryai_coauthored"])   # rate ratio (RR > 1 = AI higher)
+```
+Interpretation: DONE
+AI commits introduce high-severity (error) findings at ~1.51x the human per-source-line rate, the difference is significant after repo-clustering (RR = 1.506004, p-value = 4.65e-11).
+
+#### Diagnostics check
+```{r}
+# DIAGNOSTICS: Poisson GLMM 
+# Source: DHARMa vignette (Hartig) https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html
+# Source: Bolker GLMM FAQ http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html
+# Note: raw/Pearson residual plots are uninformative for GLMMs — use simulated (DHARMa) residuals.
+# =====================================================================
+# --- DIAGNOSTIC: Convergence / singular fit ---
+# Want to see: FALSE, no convergence warnings.
+# Don't want: TRUE (repo variance ~0) or "failed to converge".
+isSingular(glmm_static_severe)
+
+# --- DIAGNOSTIC: Distributional fit ---
+# Test/plot: DHARMa::simulateResiduals(re.form = NULL) -> plot.
+# Want to see: QQ on the diagonal, non-significant KS, flat quantile lines.
+# Don't want: KS deviation / curved quantile lines.
+sim <- DHARMa::simulateResiduals(glmm_static_severe, simulateREs = "user-specified", re.form = NULL)
+pdf(file.path(visDir, "glmm_static_severe_dharma.pdf"), width = 8, height = 6)
+plot(sim)
+dev.off()
+
+# --- DIAGNOSTIC: Overdispersion ---
+# Test: Pearson chi-square / residual df (same as the GLM version, with GLMM-correct df).
+# Want to see: ratio ~1.
+# Don't want: >1 — SEs too small; refit with glmer.nb (same formula).
+rp  <- residuals(glmm_static_severe, type = "pearson")
+rdf <- nobs(glmm_static_severe) - length(fixef(glmm_static_severe)) - length(getME(glmm_static_severe, "theta"))
+c(chisq = sum(rp^2), ratio = sum(rp^2) / rdf, rdf = rdf,
+  p = pchisq(sum(rp^2), df = rdf, lower.tail = FALSE))   # >1 / small p = overdispersed
+
+# --- DIAGNOSTIC: Zero-inflation ---
+# Test: observed zeros vs zeros expected under the fitted Poisson (analytic, no simulation).
+# Want to see: ratio ~1.
+# Don't want: >1 — more zeros than the model predicts; consider a hurdle/ZI model.
+mu <- fitted(glmm_static_severe)                 # conditional means (include offset + repo RE)
+c(observed = sum(getME(glmm_static_severe, "y") == 0),
+  expected = sum(dpois(0, mu)),
+  ratio    = sum(getME(glmm_static_severe, "y") == 0) / sum(dpois(0, mu)))   # >1 = excess zeros
+```
+TLDR Interpretation of Diagnostics: DONE
+Singular fit shows FALSE which means converages
+QQ plot is on the diagonal but KS test shows p =0, Dispersion test is also p = 0, outlier test shows p = 0 as well
+Diagnostics indicate overdispersion, which is expected given the sparsity of the data, similar to the previous model.
+For overdispersion we see ratio fo 1.307537e+01 which is only slightly greater than 1, so there is some evidence of overdispersion beyond what the Poisson model expects.
+For zero-inflation we see ratio of 1.016921 which is very close to 1, so no strong evidence of zero-inflation beyond what the Poisson model expects.
+
+### OSV finding introduction rate Poisson
+#### Building model
+```{r}
+## Model D Extension — Poisson GLMM: OSV introduction rate per dependency-file line changed
+## Same as Model D, but exposure is dependency-file churn rather than total commit churn.
+
+glmm_supply_dependency <- fit_or_load("glmm_rq1c_modelDext_dependency_change", function() glmer(
+  introduced_findings ~ commit_category + offset(log(changed_lines_dependencies_pure + 1)) + (1 | repo),
+  family = poisson, data = supply_commit, control = glmerControl(optimizer = "bobyqa")))
+summary(glmm_supply_dependency)
+
+# AI vs human Rate Ratio (RR >1 = AI higher)
+exp(fixef(glmm_supply_dependency)["commit_categoryai_coauthored"])  # rate ratio (RR > 1 = AI higher)
+```
+Interpretation: DONE 
+AI commits introduce dependency findings at ~1.10x the human rate dependency-file line changed, corresponding to roughly a 10.1% higher OSV finding introduction rate. This difference is statistically significant (p = 7.55e-06).
+
+#### Diagnostics check
+```{r}
+# DIAGNOSTICS: Poisson GLMM
+# --- DIAGNOSTIC: Convergence / singular fit ---
+isSingular(glmm_supply_dependency)
+
+# --- DIAGNOSTIC: Distributional fit ---
+sim <- DHARMa::simulateResiduals(glmm_supply_dependency, simulateREs = "user-specified", re.form = NULL)
+pdf(file.path(visDir, "glmm_supply_dependency_dharma.pdf"), width = 8, height = 6)
+plot(sim)
+dev.off()
+
+# --- DIAGNOSTIC: Overdispersion ---
+rp  <- residuals(glmm_supply_dependency, type = "pearson")
+rdf <- nobs(glmm_supply_dependency) - length(fixef(glmm_supply_dependency)) - length(getME(glmm_supply_dependency, "theta"))
+c(chisq = sum(rp^2), ratio = sum(rp^2) / rdf, rdf = rdf,
+  p = pchisq(sum(rp^2), df = rdf, lower.tail = FALSE))
+
+# --- DIAGNOSTIC: Zero-inflation ---
+mu <- fitted(glmm_supply_dependency)
+c(observed = sum(getME(glmm_supply_dependency, "y") == 0),
+  expected = sum(dpois(0, mu)),
+  ratio    = sum(getME(glmm_supply_dependency, "y") == 0) / sum(dpois(0, mu)))
+```
+TLDR Interpretation of Diagnostics: DONE
+Singular fit shows FALSE which means converages
+QQ plot is on the diagonal but KS test shows p =0, Dispersion test is also p = 0, outlier test shows p = 0 as well
+For overdispersion we see ratio fo 1771.557 which is much greater than 1, so there is strong evidence of overdispersion beyond what the Poisson model expects, likely due to the rarity of dependency vulnerabilities in the data.
+For zero-inflation we see ratio of 1.169917 which is close to 1, so no strong evidence of zero-inflation beyond what the Poisson model expects.
+
+### OSV finding high severity introduction rate Poisson 
+#### Building model
+```{r}
+## Model D New Extension — Poisson GLMM: high-severity OSV introduction rate
+## High severity is operationalized as OSV severity HIGH or CRITICAL.
+## Exposure is dependency-file churn.
+supply_high_severity_counts <- supply_chain_findings %>%
+  filter(finding_status == "introduced",
+         as.character(severity) %in% c("HIGH", "CRITICAL")) %>%
+  count(repo, commit_sha, name = "introduced_findings_high_severity")
+
+supply_commit_high_severity <- supply_commit %>%
+  left_join(supply_high_severity_counts, by = c("repo", "commit_sha")) %>%
+  mutate(introduced_findings_high_severity = coalesce(introduced_findings_high_severity, 0L))
+
+glmm_supply_dependency_high_severity <- fit_or_load("glmm_rq1c_modelDext_dependency_high_severity", function() glmer(
+  introduced_findings_high_severity ~ commit_category + offset(log(changed_lines_dependencies_pure + 1)) + (1 | repo),
+  family = poisson, data = supply_commit_high_severity, control = glmerControl(optimizer = "bobyqa")))
+summary(glmm_supply_dependency_high_severity)
+
+# AI vs human Rate Ratio (RR >1 = AI higher)
+exp(fixef(glmm_supply_dependency_high_severity)["commit_categoryai_coauthored"])
+```
+Interpretation: DONE 
+AI commits introduce high-severity dependency findings at ~1.15x the human rate dependency-file line changed, corresponding to roughly a 15.3% higher high-severity OSV finding introduction rate. This difference is statistically significant (p = 1.23e-05).
+
+#### Diagnostics check
+```{r}
+# DIAGNOSTICS: Poisson GLMM
+# --- DIAGNOSTIC: Convergence / singular fit ---
+isSingular(glmm_supply_dependency_high_severity)
+
+# --- DIAGNOSTIC: Distributional fit ---
+sim <- DHARMa::simulateResiduals(glmm_supply_dependency_high_severity, simulateREs = "user-specified", re.form = NULL)
+pdf(file.path(visDir, "glmm_supply_dependency_high_severity_dharma.pdf"), width = 8, height = 6)
+plot(sim)
+dev.off()
+
+# --- DIAGNOSTIC: Overdispersion ---
+rp  <- residuals(glmm_supply_dependency_high_severity, type = "pearson")
+rdf <- nobs(glmm_supply_dependency_high_severity) - length(fixef(glmm_supply_dependency_high_severity)) - length(getME(glmm_supply_dependency_high_severity, "theta"))
+c(chisq = sum(rp^2), ratio = sum(rp^2) / rdf, rdf = rdf,
+  p = pchisq(sum(rp^2), df = rdf, lower.tail = FALSE))
+
+# --- DIAGNOSTIC: Zero-inflation ---
+mu <- fitted(glmm_supply_dependency_high_severity)
+c(observed = sum(getME(glmm_supply_dependency_high_severity, "y") == 0),
+  expected = sum(dpois(0, mu)),
+  ratio    = sum(getME(glmm_supply_dependency_high_severity, "y") == 0) / sum(dpois(0, mu)))
+```
+TLDR Interpretation of Diagnostics: DONE
+Singular fit shows FALSE which means converages
+QQ plot is on the diagonal but KS test shows p =0, Dispersion test is also p = 0, outlier test shows p = 0 as well
+For overdispersion we see ratio fo 852 which is much greater than 1, so there is strong evidence of overdispersion beyond what the Poisson model expects, likely due to the rarity of dependency vulnerabilities in the data.
+For zero-inflation we see ratio of 1.061101 which is close to 1, so no strong evidence of zero-inflation beyond what the Poisson model expects.

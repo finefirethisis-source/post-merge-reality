@@ -1,0 +1,422 @@
+dataset,status,role,category,count
+commit_counts,,Human,commits,338628
+commit_counts,,AI,commits,30893
+commit_counts,,skipped_unknown_role,commits,44232
+static_counts,introduced,AI,all,2182
+static_counts,removed,AI,all,1381
+static_counts,removed,Human,all,9553
+static_counts,introduced,Human,all,14219
+semgrep_severity,introduced,AI,Medium,1270
+semgrep_severity,introduced,AI,High,700
+semgrep_severity,introduced,AI,Unknown,1
+semgrep_severity,introduced,AI,Low,211
+semgrep_severity,introduced,Human,High,3710
+semgrep_severity,introduced,Human,Medium,8490
+semgrep_severity,introduced,Human,Unknown,134
+semgrep_severity,introduced,Human,Low,1885
+semgrep_severity,removed,AI,Medium,800
+semgrep_severity,removed,AI,High,411
+semgrep_severity,removed,AI,Unknown,1
+semgrep_severity,removed,AI,Low,169
+semgrep_severity,removed,Human,High,2666
+semgrep_severity,removed,Human,Medium,5659
+semgrep_severity,removed,Human,Unknown,90
+semgrep_severity,removed,Human,Low,1138
+cwe_top25_bucket,introduced,AI,CWE Top 25,1321
+cwe_top25_bucket,introduced,AI,Other/No CWE,861
+cwe_top25_bucket,introduced,Human,CWE Top 25,8042
+cwe_top25_bucket,introduced,Human,Other/No CWE,6177
+cwe_top25_bucket,removed,AI,CWE Top 25,654
+cwe_top25_bucket,removed,AI,Other/No CWE,727
+cwe_top25_bucket,removed,Human,CWE Top 25,5500
+cwe_top25_bucket,removed,Human,Other/No CWE,4053
+osv_severity,introduced,AI,High,1635
+osv_severity,introduced,AI,Low,292
+osv_severity,introduced,AI,Medium,1776
+osv_severity,introduced,AI,Unknown,262
+osv_severity,introduced,AI,Critical,111
+osv_severity,introduced,Human,High,13258
+osv_severity,introduced,Human,Low,3054
+osv_severity,introduced,Human,Medium,14019
+osv_severity,introduced,Human,Unknown,4247
+osv_severity,introduced,Human,Critical,871
+osv_severity,removed,AI,Low,348
+osv_severity,removed,AI,High,1712
+osv_severity,removed,AI,Medium,1513
+osv_severity,removed,AI,Critical,97
+osv_severity,removed,AI,Unknown,578
+osv_severity,removed,Human,Critical,1388
+osv_severity,removed,Human,Medium,16728
+osv_severity,removed,Human,High,17617
+osv_severity,removed,Human,Low,4637
+osv_severity,removed,Human,Unknown,5132
+cwe_1400_category,introduced,AI,Injection,667
+cwe_1400_category,introduced,AI,Insufficient Verification of Data Authenticity,212
+cwe_1400_category,introduced,AI,Access Control,151
+cwe_1400_category,introduced,AI,Resource Lifecycle Management,122
+cwe_1400_category,introduced,AI,Sensitive Information Exposure,2
+cwe_1400_category,introduced,AI,File Handling,635
+cwe_1400_category,introduced,AI,Resource Control,17
+cwe_1400_category,introduced,AI,Memory Safety,255
+cwe_1400_category,introduced,AI,Improper Input Validation,8
+cwe_1400_category,introduced,AI,Encryption,34
+cwe_1400_category,introduced,AI,Improper Check or Handling of Exceptional Conditions,1
+cwe_1400_category,introduced,AI,Poor Coding Practices,9
+cwe_1400_category,introduced,AI,Improper Neutralization,26
+cwe_1400_category,introduced,AI,Violation of Secure Design Principles,30
+cwe_1400_category,introduced,AI,No CWE,4
+cwe_1400_category,introduced,AI,Randomness,2
+cwe_1400_category,introduced,AI,Concurrency,6
+cwe_1400_category,introduced,AI,Exposed Resource,1
+cwe_1400_category,introduced,Human,Insufficient Verification of Data Authenticity,474
+cwe_1400_category,introduced,Human,Access Control,1520
+cwe_1400_category,introduced,Human,Injection,4176
+cwe_1400_category,introduced,Human,File Handling,3821
+cwe_1400_category,introduced,Human,Improper Neutralization,353
+cwe_1400_category,introduced,Human,Encryption,278
+cwe_1400_category,introduced,Human,Resource Control,369
+cwe_1400_category,introduced,Human,Sensitive Information Exposure,78
+cwe_1400_category,introduced,Human,Resource Lifecycle Management,970
+cwe_1400_category,introduced,Human,Randomness,81
+cwe_1400_category,introduced,Human,No CWE,18
+cwe_1400_category,introduced,Human,Violation of Secure Design Principles,455
+cwe_1400_category,introduced,Human,Improper Input Validation,22
+cwe_1400_category,introduced,Human,Memory Safety,1365
+cwe_1400_category,introduced,Human,Component Interaction,2
+cwe_1400_category,introduced,Human,Poor Coding Practices,175
+cwe_1400_category,introduced,Human,Unmapped CWE,13
+cwe_1400_category,introduced,Human,Exposed Resource,20
+cwe_1400_category,introduced,Human,Concurrency,12
+cwe_1400_category,introduced,Human,Incorrect Calculation,2
+cwe_1400_category,introduced,Human,Protection Mechanism Failure,6
+cwe_1400_category,introduced,Human,Comparison,1
+cwe_1400_category,introduced,Human,Multiple CWE-1400 Categories,8
+cwe_1400_category,removed,AI,Injection,424
+cwe_1400_category,removed,AI,Insufficient Verification of Data Authenticity,202
+cwe_1400_category,removed,AI,Resource Lifecycle Management,61
+cwe_1400_category,removed,AI,Access Control,159
+cwe_1400_category,removed,AI,File Handling,237
+cwe_1400_category,removed,AI,Memory Safety,212
+cwe_1400_category,removed,AI,Violation of Secure Design Principles,23
+cwe_1400_category,removed,AI,Improper Input Validation,5
+cwe_1400_category,removed,AI,Encryption,14
+cwe_1400_category,removed,AI,Poor Coding Practices,8
+cwe_1400_category,removed,AI,Improper Check or Handling of Exceptional Conditions,2
+cwe_1400_category,removed,AI,Improper Neutralization,14
+cwe_1400_category,removed,AI,Randomness,4
+cwe_1400_category,removed,AI,Concurrency,4
+cwe_1400_category,removed,AI,Resource Control,10
+cwe_1400_category,removed,AI,Comparison,1
+cwe_1400_category,removed,AI,No CWE,1
+cwe_1400_category,removed,Human,Insufficient Verification of Data Authenticity,407
+cwe_1400_category,removed,Human,Access Control,1044
+cwe_1400_category,removed,Human,Injection,3362
+cwe_1400_category,removed,Human,File Handling,2142
+cwe_1400_category,removed,Human,Encryption,191
+cwe_1400_category,removed,Human,Resource Lifecycle Management,571
+cwe_1400_category,removed,Human,Component Interaction,12
+cwe_1400_category,removed,Human,Improper Input Validation,10
+cwe_1400_category,removed,Human,Resource Control,263
+cwe_1400_category,removed,Human,Sensitive Information Exposure,42
+cwe_1400_category,removed,Human,Randomness,85
+cwe_1400_category,removed,Human,Violation of Secure Design Principles,265
+cwe_1400_category,removed,Human,Memory Safety,762
+cwe_1400_category,removed,Human,Poor Coding Practices,83
+cwe_1400_category,removed,Human,Unmapped CWE,4
+cwe_1400_category,removed,Human,Improper Neutralization,278
+cwe_1400_category,removed,Human,Improper Check or Handling of Exceptional Conditions,2
+cwe_1400_category,removed,Human,Exposed Resource,9
+cwe_1400_category,removed,Human,Multiple CWE-1400 Categories,4
+cwe_1400_category,removed,Human,Concurrency,5
+cwe_1400_category,removed,Human,No CWE,9
+cwe_1400_category,removed,Human,Protection Mechanism Failure,2
+cwe_1400_category,removed,Human,Comparison,1
+top_cwe,introduced,AI,CWE-94,99
+top_cwe,introduced,AI,CWE-79,159
+top_cwe,introduced,AI,CWE-352,4
+top_cwe,introduced,AI,CWE-639,1
+top_cwe,introduced,AI,CWE-89,95
+top_cwe,introduced,AI,CWE-78,297
+top_cwe,introduced,AI,CWE-706,31
+top_cwe,introduced,AI,CWE-287,5
+top_cwe,introduced,AI,CWE-95,17
+top_cwe,introduced,AI,CWE-939,10
+top_cwe,introduced,AI,CWE-276,1
+top_cwe,introduced,AI,CWE-532,2
+top_cwe,introduced,AI,CWE-601,20
+top_cwe,introduced,AI,CWE-22,634
+top_cwe,introduced,AI,CWE-915,12
+top_cwe,introduced,AI,CWE-134,173
+top_cwe,introduced,AI,CWE-20,8
+top_cwe,introduced,AI,CWE-319,21
+top_cwe,introduced,AI,CWE-415,65
+top_cwe,introduced,AI,CWE-829,4
+top_cwe,introduced,AI,CWE-416,16
+top_cwe,introduced,AI,CWE-1333,74
+top_cwe,introduced,AI,CWE-614,6
+top_cwe,introduced,AI,CWE-269,8
+top_cwe,introduced,AI,CWE-611,2
+top_cwe,introduced,AI,CWE-353,196
+top_cwe,introduced,AI,CWE-252,1
+top_cwe,introduced,AI,CWE-23,1
+top_cwe,introduced,AI,CWE-489,9
+top_cwe,introduced,AI,CWE-150,4
+top_cwe,introduced,AI,CWE-798,31
+top_cwe,introduced,AI,CWE-1004,4
+top_cwe,introduced,AI,CWE-296,3
+top_cwe,introduced,AI,CWE-305,2
+top_cwe,introduced,AI,CWE-250,30
+top_cwe,introduced,AI,CWE-681,1
+top_cwe,introduced,AI,CWE-522,19
+top_cwe,introduced,AI,CWE-125,1
+top_cwe,introduced,AI,CWE-116,4
+top_cwe,introduced,AI,CWE-942,2
+top_cwe,introduced,AI,CWE-327,6
+top_cwe,introduced,AI,CWE-321,1
+top_cwe,introduced,AI,CWE-926,1
+top_cwe,introduced,AI,CWE-913,1
+top_cwe,introduced,AI,CWE-665,9
+top_cwe,introduced,AI,CWE-400,1
+top_cwe,introduced,AI,CWE-338,2
+top_cwe,introduced,AI,CWE-502,4
+top_cwe,introduced,AI,CWE-667,6
+top_cwe,introduced,AI,CWE-732,35
+top_cwe,introduced,AI,CWE-494,1
+top_cwe,introduced,AI,CWE-470,1
+top_cwe,introduced,AI,CWE-328,1
+top_cwe,introduced,AI,CWE-295,3
+top_cwe,introduced,AI,CWE-918,3
+top_cwe,introduced,AI,CWE-776,1
+top_cwe,introduced,AI,CWE-345,11
+top_cwe,introduced,AI,CWE-427,1
+top_cwe,introduced,AI,CWE-117,18
+top_cwe,introduced,Human,CWE-352,41
+top_cwe,introduced,Human,CWE-639,69
+top_cwe,introduced,Human,CWE-601,131
+top_cwe,introduced,Human,CWE-89,1101
+top_cwe,introduced,Human,CWE-79,758
+top_cwe,introduced,Human,CWE-94,216
+top_cwe,introduced,Human,CWE-22,3820
+top_cwe,introduced,Human,CWE-116,37
+top_cwe,introduced,Human,CWE-78,1707
+top_cwe,introduced,Human,CWE-798,207
+top_cwe,introduced,Human,CWE-319,168
+top_cwe,introduced,Human,CWE-95,229
+top_cwe,introduced,Human,CWE-502,208
+top_cwe,introduced,Human,CWE-532,73
+top_cwe,introduced,Human,CWE-706,137
+top_cwe,introduced,Human,CWE-330,14
+top_cwe,introduced,Human,CWE-327,41
+top_cwe,introduced,Human,CWE-321,57
+top_cwe,introduced,Human,CWE-942,35
+top_cwe,introduced,Human,CWE-287,33
+top_cwe,introduced,Human,CWE-939,111
+top_cwe,introduced,Human,CWE-276,9
+top_cwe,introduced,Human,CWE-915,125
+top_cwe,introduced,Human,CWE-328,21
+top_cwe,introduced,Human,CWE-353,357
+top_cwe,introduced,Human,CWE-250,455
+top_cwe,introduced,Human,CWE-20,22
+top_cwe,introduced,Human,CWE-470,36
+top_cwe,introduced,Human,CWE-134,1315
+top_cwe,introduced,Human,CWE-1333,683
+top_cwe,introduced,Human,CWE-732,402
+top_cwe,introduced,Human,CWE-269,61
+top_cwe,introduced,Human,CWE-416,22
+top_cwe,introduced,Human,CWE-415,20
+top_cwe,introduced,Human,CWE-14,2
+top_cwe,introduced,Human,CWE-295,14
+top_cwe,introduced,Human,CWE-787,3
+top_cwe,introduced,Human,CWE-676,10
+top_cwe,introduced,Human,CWE-913,25
+top_cwe,introduced,Human,CWE-16,8
+top_cwe,introduced,Human,CWE-441,1
+top_cwe,introduced,Human,CWE-918,68
+top_cwe,introduced,Human,CWE-614,34
+top_cwe,introduced,Human,CWE-829,61
+top_cwe,introduced,Human,CWE-345,72
+top_cwe,introduced,Human,CWE-346,2
+top_cwe,introduced,Human,CWE-23,1
+top_cwe,introduced,Human,CWE-926,11
+top_cwe,introduced,Human,CWE-611,19
+top_cwe,introduced,Human,CWE-150,213
+top_cwe,introduced,Human,CWE-489,164
+top_cwe,introduced,Human,CWE-117,103
+top_cwe,introduced,Human,CWE-668,15
+top_cwe,introduced,Human,CWE-96,36
+top_cwe,introduced,Human,CWE-296,177
+top_cwe,introduced,Human,CWE-338,67
+top_cwe,introduced,Human,CWE-665,32
+top_cwe,introduced,Human,CWE-667,10
+top_cwe,introduced,Human,CWE-522,12
+top_cwe,introduced,Human,CWE-190,2
+top_cwe,introduced,Human,CWE-311,8
+top_cwe,introduced,Human,CWE-1004,25
+top_cwe,introduced,Human,CWE-300,26
+top_cwe,introduced,Human,CWE-406,9
+top_cwe,introduced,Human,CWE-681,4
+top_cwe,introduced,Human,CWE-1275,22
+top_cwe,introduced,Human,CWE-384,24
+top_cwe,introduced,Human,CWE-73,5
+top_cwe,introduced,Human,CWE-776,12
+top_cwe,introduced,Human,CWE-310,4
+top_cwe,introduced,Human,CWE-400,10
+top_cwe,introduced,Human,CWE-125,4
+top_cwe,introduced,Human,CWE-200,1
+top_cwe,introduced,Human,CWE-494,2
+top_cwe,introduced,Human,CWE-1220,2
+top_cwe,introduced,Human,CWE-262,2
+top_cwe,introduced,Human,CWE-326,6
+top_cwe,introduced,Human,CWE-778,6
+top_cwe,introduced,Human,CWE-697,1
+top_cwe,introduced,Human,CWE-322,2
+top_cwe,introduced,Human,CWE-320,1
+top_cwe,introduced,Human,CWE-272,6
+top_cwe,introduced,Human,CWE-774,4
+top_cwe,introduced,Human,CWE-943,129
+top_cwe,introduced,Human,CWE-521,2
+top_cwe,introduced,Human,CWE-362,2
+top_cwe,introduced,Human,CWE-120,1
+top_cwe,introduced,Human,CWE-476,1
+top_cwe,introduced,Human,CWE-209,4
+top_cwe,introduced,Human,CWE-704,1
+top_cwe,removed,AI,CWE-94,51
+top_cwe,removed,AI,CWE-352,3
+top_cwe,removed,AI,CWE-79,98
+top_cwe,removed,AI,CWE-89,28
+top_cwe,removed,AI,CWE-706,16
+top_cwe,removed,AI,CWE-939,2
+top_cwe,removed,AI,CWE-78,212
+top_cwe,removed,AI,CWE-95,35
+top_cwe,removed,AI,CWE-776,1
+top_cwe,removed,AI,CWE-22,236
+top_cwe,removed,AI,CWE-601,9
+top_cwe,removed,AI,CWE-134,154
+top_cwe,removed,AI,CWE-250,23
+top_cwe,removed,AI,CWE-20,5
+top_cwe,removed,AI,CWE-319,10
+top_cwe,removed,AI,CWE-676,2
+top_cwe,removed,AI,CWE-415,52
+top_cwe,removed,AI,CWE-416,6
+top_cwe,removed,AI,CWE-614,4
+top_cwe,removed,AI,CWE-1333,30
+top_cwe,removed,AI,CWE-798,16
+top_cwe,removed,AI,CWE-353,192
+top_cwe,removed,AI,CWE-489,6
+top_cwe,removed,AI,CWE-252,2
+top_cwe,removed,AI,CWE-116,9
+top_cwe,removed,AI,CWE-918,5
+top_cwe,removed,AI,CWE-23,1
+top_cwe,removed,AI,CWE-522,5
+top_cwe,removed,AI,CWE-269,7
+top_cwe,removed,AI,CWE-1004,2
+top_cwe,removed,AI,CWE-296,4
+top_cwe,removed,AI,CWE-681,1
+top_cwe,removed,AI,CWE-732,96
+top_cwe,removed,AI,CWE-942,1
+top_cwe,removed,AI,CWE-829,3
+top_cwe,removed,AI,CWE-287,9
+top_cwe,removed,AI,CWE-338,4
+top_cwe,removed,AI,CWE-665,8
+top_cwe,removed,AI,CWE-494,1
+top_cwe,removed,AI,CWE-667,4
+top_cwe,removed,AI,CWE-502,10
+top_cwe,removed,AI,CWE-321,1
+top_cwe,removed,AI,CWE-345,6
+top_cwe,removed,AI,CWE-295,2
+top_cwe,removed,AI,CWE-697,1
+top_cwe,removed,AI,CWE-913,2
+top_cwe,removed,AI,CWE-117,5
+top_cwe,removed,Human,CWE-352,47
+top_cwe,removed,Human,CWE-639,47
+top_cwe,removed,Human,CWE-601,99
+top_cwe,removed,Human,CWE-79,695
+top_cwe,removed,Human,CWE-94,177
+top_cwe,removed,Human,CWE-89,735
+top_cwe,removed,Human,CWE-22,2142
+top_cwe,removed,Human,CWE-353,288
+top_cwe,removed,Human,CWE-319,125
+top_cwe,removed,Human,CWE-95,267
+top_cwe,removed,Human,CWE-1333,394
+top_cwe,removed,Human,CWE-14,12
+top_cwe,removed,Human,CWE-78,1376
+top_cwe,removed,Human,CWE-939,42
+top_cwe,removed,Human,CWE-20,10
+top_cwe,removed,Human,CWE-502,192
+top_cwe,removed,Human,CWE-532,40
+top_cwe,removed,Human,CWE-330,49
+top_cwe,removed,Human,CWE-611,11
+top_cwe,removed,Human,CWE-706,57
+top_cwe,removed,Human,CWE-327,27
+top_cwe,removed,Human,CWE-287,25
+top_cwe,removed,Human,CWE-276,4
+top_cwe,removed,Human,CWE-915,54
+top_cwe,removed,Human,CWE-328,12
+top_cwe,removed,Human,CWE-798,119
+top_cwe,removed,Human,CWE-250,265
+top_cwe,removed,Human,CWE-470,17
+top_cwe,removed,Human,CWE-134,738
+top_cwe,removed,Human,CWE-732,329
+top_cwe,removed,Human,CWE-295,15
+top_cwe,removed,Human,CWE-416,8
+top_cwe,removed,Human,CWE-415,6
+top_cwe,removed,Human,CWE-787,3
+top_cwe,removed,Human,CWE-676,7
+top_cwe,removed,Human,CWE-829,64
+top_cwe,removed,Human,CWE-913,16
+top_cwe,removed,Human,CWE-269,30
+top_cwe,removed,Human,CWE-16,4
+top_cwe,removed,Human,CWE-918,62
+top_cwe,removed,Human,CWE-116,30
+top_cwe,removed,Human,CWE-614,14
+top_cwe,removed,Human,CWE-345,70
+top_cwe,removed,Human,CWE-252,2
+top_cwe,removed,Human,CWE-150,184
+top_cwe,removed,Human,CWE-489,76
+top_cwe,removed,Human,CWE-522,25
+top_cwe,removed,Human,CWE-384,19
+top_cwe,removed,Human,CWE-668,3
+top_cwe,removed,Human,CWE-96,26
+top_cwe,removed,Human,CWE-326,11
+top_cwe,removed,Human,CWE-346,1
+top_cwe,removed,Human,CWE-665,33
+top_cwe,removed,Human,CWE-74,2
+top_cwe,removed,Human,CWE-296,138
+top_cwe,removed,Human,CWE-131,1
+top_cwe,removed,Human,CWE-300,17
+top_cwe,removed,Human,CWE-400,1
+top_cwe,removed,Human,CWE-681,2
+top_cwe,removed,Human,CWE-338,36
+top_cwe,removed,Human,CWE-1275,10
+top_cwe,removed,Human,CWE-1004,8
+top_cwe,removed,Human,CWE-73,5
+top_cwe,removed,Human,CWE-125,5
+top_cwe,removed,Human,CWE-321,28
+top_cwe,removed,Human,CWE-776,4
+top_cwe,removed,Human,CWE-926,7
+top_cwe,removed,Human,CWE-117,64
+top_cwe,removed,Human,CWE-667,4
+top_cwe,removed,Human,CWE-494,1
+top_cwe,removed,Human,CWE-778,2
+top_cwe,removed,Human,CWE-1220,2
+top_cwe,removed,Human,CWE-311,2
+top_cwe,removed,Human,CWE-942,7
+top_cwe,removed,Human,CWE-697,1
+top_cwe,removed,Human,CWE-322,2
+top_cwe,removed,Human,CWE-272,1
+top_cwe,removed,Human,CWE-943,84
+top_cwe,removed,Human,CWE-521,1
+top_cwe,removed,Human,CWE-362,1
+top_cwe,removed,Human,CWE-120,1
+top_cwe,removed,Human,CWE-209,2
+top_cwe,removed,Human,CWE-406,3
+top_cwe,removed,Human,CWE-427,1
+top_cwe,removed,Human,CWE-704,1
+lifecycle_outcome,,AI,removed_by_Human,230
+lifecycle_outcome,,AI,not_observed_removed,1575
+lifecycle_outcome,,AI,removed_by_AI,358
+lifecycle_outcome,,AI,removed_by_other_or_unknown,19
+lifecycle_outcome,,Human,removed_by_Human,5189
+lifecycle_outcome,,Human,not_observed_removed,8511
+lifecycle_outcome,,Human,removed_by_AI,409
+lifecycle_outcome,,Human,removed_by_other_or_unknown,110

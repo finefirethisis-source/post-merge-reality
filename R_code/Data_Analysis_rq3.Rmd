@@ -1,0 +1,1196 @@
+```{r setup, include=FALSE}
+# loading libraries
+# general use libraries
+# library(tidyverse)
+# library(RMySQL)
+library(DBI)
+library(readr)
+library(ggplot2)
+library(lubridate)
+library(gt)
+library(ggvenn)
+library(ggridges)
+# library(hrbrthemes)
+library(gridExtra)
+library(ggpubr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(numbers)
+library(car)
+library(GGally)
+library(dotenv)
+# libraries for survival curves
+library(survival)
+library(survminer)
+library(broom)
+library(xml2)
+library(survey) # for cluster-robust chi-squared test with Rao-Scott correction
+library(rcompanion) # for calculating Cramer's V of chi-squared tests
+library(duckdb) # for handling big data
+library(showtext) # for importing and using custom fonts
+library(sysfonts)
+library(systemfonts)
+library(svglite) # for saving plots as svg to preserve custom font
+library(lme4) # Poisson GLMMs
+library(DHARMa) # GLMM residual diagnostics
+library(ineq) # for calculating gini coefficient
+library(tidyverse)
+library(dplyr) # putting dplyr at the end because for some reason it misbehaves otherwise
+library(glmnet) # for LASSO regression 
+library(metafor)
+
+# if dplyr is fighting with duckdb when trying to run Step 1 below, restart R session & fully quit R -> run this in console: install.packages(c("dbplyr", "duckdb", "dplyr")) -> then try rerunning this chunk
+# or straight in terminal: pkill -f rsession -> Rscript -e 'install.packages(c("dbplyr", "duckdb", "dplyr"), repos="https://cloud.r-project.org")'
+knitr::opts_chunk$set(echo = TRUE)
+find_repo_root <- function(start = getwd()) {
+  cur <- normalizePath(start, mustWork = TRUE)
+
+  repeat {
+    if (dir.exists(file.path(cur, "csv_full")) &&
+        file.exists(file.path(cur, "filtered_full_sample_repos.csv"))) {
+      return(cur)
+    }
+
+    parent <- dirname(cur)
+    if (identical(parent, cur)) {
+      stop("Could not find repo root containing csv_full/")
+    }
+
+    cur <- parent
+  }
+}
+
+repoRoot <- find_repo_root()
+csv_full_dir <- file.path(repoRoot, "csv_full", "")
+```
+
+# Loading data
+Loading data workflow:
+In new session: load libraries -> analysis constants setup chunk -> build/load repo-level rq3 table from `csv_full_dir` -> fit repo-level models.
+
+```{r}
+## Analysis constants (RUN EVERY SESSION)
+
+#filters established and verified during prelim exploration (see Full_Dataset_Exploration.Rmd doc)
+outlier_commit_shas <- c("2b717338b0e02663dfce5142bd636db0b1d3958c","a3f5c98b59b7892866a49ac22ed91cd8c37865d8","038ca6696d9b821b216b8ab06c8dd48aac7750ae","cea8cd84957f4801f3e9ea1f0997fedfbe3c5e35","dc01a470926d8ee353d7627171e0d491bb8e6386","00314a6c4a2a1c422a4cf9a57b15efca1ad0e146","10763bbae6614c3dc569da892ce6453afd0143f4","ec3a5ff1142670bed5f43969581ecd179d2b8d50","66b199403e65ee29364a25cd7b7596e679030e7f","57960940f9a0b6cd9caf0f92c3592be0cad588d5","23a42d5d956b04c49276240875d8dd329eb44642","0fb2e4b1968f9db4f1cf36fe89505f536e82bc94","3760f7ddeba3cd857a4068a5c08df2800c6950ec")
+
+# these are repos we're excluding: statsig-io/docs - because it was deleted so we couldn't collect full data, the rest because according to the data they don't have any ai_coauthored commits
+# github/copilot-cli in particular was a separate discover later on, its a cli tool with no source code so we exclueded it for that reason 
+excluded_repos <- c("statsig-io/docs", "Daylily-Informatics/daylily-ephemeral-cluster", "TypedDevs/bashunit", "tscircuit/contribution-tracker", "tscircuit/tscircuit.com", "github/copilot-cli")
+
+observation_start_date <- as.POSIXct("2025-05-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
+observation_cutoff_date <- as.POSIXct("2026-05-31 23:59:59", format = "%Y-%m-%d %H:%M:%S", tz = "UTC") 
+observation_start_year_month <- "2025-05"
+observation_cutoff_year_month <- "2026-05" 
+calendar_months_in_window <- 13L
+rq3_min_language_repos <- 5L
+```
+
+```{r}
+## Connect to the data (RUN EVERY SESSION)
+con <- dbConnect(duckdb())
+ll <- tbl(con, paste0("read_parquet('", csv_full_dir, "line_lifecycle.parquet')"))
+
+# commit_classifications at 200 repos is small enough for RAM
+commit_classifications <- readr::read_csv(paste0(csv_full_dir, "commit_classifications.csv")) %>%
+  mutate(date = lubridate::as_datetime(date),
+         primary_operational_intent = as.factor(primary_operational_intent),
+         maintenance_class = as.factor(maintenance_class))
+# Registering it with DuckDB so joins against ll happen engine-side
+duckdb_register(con, "cc", commit_classifications)
+
+# creating yearMonth var for line_lifecycle data
+ll <- ll %>% mutate(origin_commit_year_month   = substr(as.character(origin_commit_date), 1, 7), 
+                    terminal_commit_year_month = substr(as.character(terminal_commit_date), 1, 7))
+
+# loading other csvs normally
+codebase_agent_share_snapshots <- read_csv(paste0(csv_full_dir, "codebase_agent_share_snapshots.csv"))
+# casting snapshot_date and snapshot_commit_date as datetime
+codebase_agent_share_snapshots$snapshot_date <- as_datetime(codebase_agent_share_snapshots$snapshot_date)
+codebase_agent_share_snapshots$snapshot_commit_date <- as_datetime(codebase_agent_share_snapshots$snapshot_commit_date)
+codebase_agent_share_source_snapshots <- read_csv(paste0(csv_full_dir, "codebase_agent_share_source_snapshots.csv"))
+
+commit_classifications <- read_csv(paste0(csv_full_dir, "commit_classifications.csv"))
+commit_lifecycle_summary <- read_csv(paste0(csv_full_dir, "commit_lifecycle_summary.csv"))
+
+# loading aggregate no review rate PR data
+pr_no_review_monthly_metrics <- read_csv(paste0(csv_full_dir, "combined_pr_no_review_monthly_metrics.csv"))
+pr_no_review_monthly_metrics <- pr_no_review_monthly_metrics %>% 
+  pivot_longer(cols = -repo, names_to = c(".value", "month"), names_pattern = "(.*)_(\\d{4}_\\d{2})") %>% 
+  mutate(month = sub("_", "-", month)) %>% rename(year_month = month)
+# creating per-repo aggregation 
+repo_pr_no_review_aggregate_metrics <-pr_no_review_monthly_metrics %>% group_by(repo) %>% summarise(no_review_rate = sum(no_review_merged_pr_count) / sum(merged_pr_count))
+```
+
+
+## General helpers
+
+```{r}
+blank_to_na <- function(x) {
+  x <- as.character(x)
+  x[!nzchar(x)] <- NA_character_
+  x
+}
+
+safe_number <- function(value) {
+  value <- suppressWarnings(as.numeric(value))
+  value[is.na(value)] <- 0
+  value
+}
+
+format_nullable_number <- function(value) {
+  if (length(value) == 0 || is.na(value) || is.nan(value) || is.infinite(value)) {
+    return(NA_real_)
+  }
+  as.numeric(value)
+}
+
+weighted_mean_or_na <- function(values, weights) {
+  idx <- !is.na(values) & !is.na(weights) & weights > 0
+  if (!any(idx)) {
+    return(NA_real_)
+  }
+  stats::weighted.mean(values[idx], weights[idx])
+}
+
+test_label <- function(p_value, estimate, higher_label, lower_label) {
+  if (is.na(p_value) || is.na(estimate) || p_value >= rq3_alpha) {
+    return("no_clear_difference")
+  }
+  if (estimate > 0) {
+    return(higher_label)
+  }
+  if (estimate < 0) {
+    return(lower_label)
+  }
+  "no_clear_difference"
+}
+
+cox_label <- function(p_value, hazard_ratio) {
+  if (is.na(p_value) || is.na(hazard_ratio) || p_value >= rq3_alpha) {
+    return("no_clear_difference")
+  }
+  if (hazard_ratio > 1) {
+    return("ai_higher_termination_hazard")
+  }
+  if (hazard_ratio < 1) {
+    return("ai_lower_termination_hazard")
+  }
+  "no_clear_difference"
+}
+
+ratio_or_na <- function(numerator, denominator) {
+  ifelse(!is.na(denominator) & denominator > 0, numerator / denominator, NA_real_)
+}
+
+log1p_or_na <- function(value) {
+  ifelse(!is.na(value) & value >= 0, log1p(value), NA_real_)
+}
+
+parse_labels <- function(value) {
+  if (length(value) == 0 || is.na(value) || !nzchar(trimws(value))) {
+    return(character())
+  }
+  unique(trimws(unlist(strsplit(value, "[;,]"))))
+}
+
+collapse_languages <- function(language_values, min_repos = rq3_min_language_repos, requested_reference = "") {
+  language_values <- blank_to_na(language_values)
+  language_values[is.na(language_values)] <- "unknown"
+  counts <- sort(table(language_values), decreasing = TRUE)
+  kept_languages <- names(counts[counts >= min_repos])
+  grouped <- ifelse(language_values %in% kept_languages, language_values, "other")
+  grouped_counts <- sort(table(grouped), decreasing = TRUE)
+  levels_ordered <- names(grouped_counts)
+
+  reference <- ""
+  if (nzchar(requested_reference) && requested_reference %in% levels_ordered) {
+    reference <- requested_reference
+  } else if (length(levels_ordered) > 0) {
+    reference <- levels_ordered[[1]]
+  }
+  levels_ordered <- c(reference, sort(setdiff(levels_ordered, reference)))
+  factor(grouped, levels = levels_ordered)
+}
+
+
+# cache for expensive fits — delete the .rds in modelsDir to force that model to re-fit
+fit_or_load <- function(name, fit_fun) {
+  path <- file.path(modelsDir, paste0(name, ".rds"))
+  if (file.exists(path)) return(readRDS(path))
+  obj <- fit_fun(); saveRDS(obj, path); obj
+}
+
+# for loading models already saved we don't want to recompute
+load_fit <- function(name) {
+  path <- file.path(modelsDir, paste0(name, ".rds"))
+  if (!file.exists(path)) stop("no saved fit at ", path)
+  readRDS(path)
+} 
+
+ai_labels <- c(
+  "aider",
+  "amazon_q",
+  "claude_code",
+  "cline",
+  "codex",
+  "copilot",
+  "cursor",
+  "devin",
+  "gemini",
+  "jules",
+  "openhands",
+  "replit_agent",
+  "roo_code",
+  "sourcegraph_cody",
+  "sweep",
+  "windsurf"
+)
+```
+
+## Build weighted line table from `csv_full_dir`
+
+```{r}
+load_line_weighted_for_rq3 <- function() {
+  # Prefer the compact weighted table if it already exists in csv_full_dir.
+  # This table is much smaller than line_lifecycle because identical line-level
+  # survival records are collapsed and represented by a weight.
+  line_weighted_path <- file.path(csv_full_dir, "line_weighted.rds")
+  if (file.exists(line_weighted_path)) {
+    return(readRDS(line_weighted_path))
+  }
+
+  # If the compact table is unavailable, build it in memory from line_lifecycle.
+  # This fallback does not write any new intermediate files.
+  parquet_path <- file.path(csv_full_dir, "line_lifecycle.parquet")
+  csv_path <- file.path(csv_full_dir, "line_lifecycle.csv")
+  if (file.exists(parquet_path)) {
+    line_lifecycle_source <- paste0("read_parquet('", normalizePath(parquet_path, winslash = "/", mustWork = TRUE), "')")
+  } else if (file.exists(csv_path)) {
+    line_lifecycle_source <- paste0("read_csv_auto('", normalizePath(csv_path, winslash = "/", mustWork = TRUE), "', sample_size = -1)")
+  } else {
+    stop("missing line_lifecycle.parquet and line_lifecycle.csv in ", csv_full_dir)
+  }
+
+  con <- dbConnect(duckdb())
+  ll <- tbl(con, line_lifecycle_source)
+  cutoff_sql <- sprintf("TIMESTAMP '%s'", format(observation_cutoff_date, "%Y-%m-%d %H:%M:%S"))
+
+  line_weighted <- ll %>%
+    # Restrict to the same observation window and exclusions used in the main analysis.
+    mutate(origin_commit_year_month = substr(as.character(origin_commit_date), 1, 7)) %>%
+    filter(origin_commit_category != "other_bot",
+           origin_commit_year_month >= observation_start_year_month,
+           origin_commit_year_month <= observation_cutoff_year_month,
+           !(origin_commit_sha %in% outlier_commit_shas),
+           !(repo %in% excluded_repos)) %>%
+    # Survival time is measured from line creation to termination; surviving lines
+    # are censored at the observation cutoff.
+    mutate(survival_days = sql(sprintf(
+      "round(date_diff('microsecond', origin_commit_date,
+              CASE WHEN status = 'survived' THEN %s ELSE terminal_commit_date END) / 86400000000.0, 6)", cutoff_sql))) %>%
+    filter(survival_days >= 0) %>%
+    # Cox models require strictly positive durations, so exact-zero durations get
+    # a tiny positive value without changing the substantive time scale.
+    mutate(survival_days = if_else(survival_days < 0.000001, 0.0000005, survival_days)) %>%
+    # Collapse identical survival records; weight is the number of lines in that cell.
+    count(repo, origin_commit_category, origin_commit_year_month, survival_days, status, name = "weight") %>%
+    collect()
+
+  dbDisconnect(con, shutdown = TRUE)
+  line_weighted
+}
+
+line_weighted_rq3 <- load_line_weighted_for_rq3()
+```
+
+## Load `csv_full_dir` repo and commit covariates
+
+```{r}
+repo_summary <- read_csv(file.path(csv_full_dir, "repo_summary.csv"), show_col_types = FALSE)
+# excluding the one repo that's a cli tool with no source code 
+repo_summary <- repo_summary %>% filter(repo != "github/copilot-cli")
+
+commit_file_classifications <- read_csv(file.path(csv_full_dir, "commit_file_classifications.csv"))
+
+commit_files <- read_csv(file.path(csv_full_dir, "commit_files.csv"))
+
+sonarqube_snapshot_scans <- read_csv(file.path(csv_full_dir, "sonarqube_snapshot_scans.csv"))
+# casting snapshot_date and snapshot_commit_date as datetime
+sonarqube_snapshot_scans$snapshot_date <- as_datetime(sonarqube_snapshot_scans$snapshot_date)
+sonarqube_snapshot_scans$snapshot_commit_date <- as_datetime(sonarqube_snapshot_scans$snapshot_commit_date)
+
+commits <- read_csv(file.path(csv_full_dir, "commits.csv"), show_col_types = FALSE) %>%
+  mutate(date = as_datetime(date))
+full_sample_repos <- read_csv(file.path(csv_full_dir, "full_sample_repos.csv"), show_col_types = FALSE) %>%
+  transmute(
+    repo = repo_slug,
+    metadata_repo_url = blank_to_na(repo_url),
+    metadata_primary_language = blank_to_na(primary_language),
+    metadata_num_stars = as.numeric(num_stars),
+    metadata_num_forks = as.numeric(num_forks)
+  ) %>%
+  distinct(repo, .keep_all = TRUE)
+
+repo_key_lookup <- repo_summary %>%
+  distinct(repo_key, repo)
+
+# Convert the weighted line table into the survival format used by per-repo Cox models.
+# Each row is a weighted line-survival cell, not an individual physical line.
+line_survival <- line_weighted_rq3 %>%
+  left_join(repo_key_lookup, by = "repo") %>%
+  filter(!is.na(repo_key),
+         origin_commit_category %in% c("not_ai_coauthored", "ai_coauthored")) %>%
+  mutate(origin_commit_category = factor(origin_commit_category, levels = c("not_ai_coauthored", "ai_coauthored")),
+         survival_days_positive = if_else(survival_days > 0, survival_days, 1e-9),
+         event = if_else(status == "survived", 0L, 1L),
+         weight = as.numeric(weight)) %>%
+  filter(!is.na(survival_days_positive),
+         survival_days_positive > 0,
+         event %in% c(0L, 1L),
+         weight > 0)
+
+line_survival %>%
+  summarise(
+    repos = n_distinct(repo_key),
+    rows = n(),
+    weighted_lines = sum(weight),
+    ai_lines = sum(weight[origin_commit_category == "ai_coauthored"]),
+    human_lines = sum(weight[origin_commit_category == "not_ai_coauthored"])
+  )
+```
+
+# Building Meta Regression Models
+
+## Stage 1 Per-repo Cox models
+
+here we define some constants for filtering:
+```{r}
+# The Cox fit threshold prevents unusable models for repos with almost no AI
+# or human line exposure.
+rq3_cox_min_ai_lines <- 100
+rq3_cox_min_human_lines <- 100
+rq3_alpha <- 0.05
+```
+
+```{r}
+empty_cox_result <- function(repo, repo_key, reason) {
+  data.frame(
+    repo = repo,
+    repo_key = repo_key,
+    status = "skipped",
+    reason = reason,
+    n_rows = NA_real_,
+    weighted_lines = NA_real_,
+    ai_lines = NA_real_,
+    human_lines = NA_real_,
+    ai_events = NA_real_,
+    human_events = NA_real_,
+    log_hazard = NA_real_,
+    hazard_ratio = NA_real_,
+    ci_lower = NA_real_,
+    ci_upper = NA_real_,
+    se = NA_real_,
+    p_value = NA_real_,
+    concordance = NA_real_,
+    classification = "skipped",
+    stringsAsFactors = FALSE
+  )
+}
+
+run_cox_for_repo <- function(repo_rows, repo_key) {
+  if (is.null(repo_rows) || nrow(repo_rows) == 0) {
+    return(empty_cox_result(repo_key, repo_key, "no_survival_rows"))
+  }
+
+  repo_name <- unique(repo_rows$repo)
+  repo_name <- if (length(repo_name) > 0) repo_name[[1]] else repo_key
+
+  ai_rows <- repo_rows[repo_rows$origin_commit_category == "ai_coauthored",]
+  human_rows <- repo_rows[repo_rows$origin_commit_category == "not_ai_coauthored",]
+  ai_lines <- sum(ai_rows$weight)
+  human_lines <- sum(human_rows$weight)
+
+  # Skip repos without enough line exposure in both groups to estimate an AI-vs-human contrast.
+  if (ai_lines < rq3_cox_min_ai_lines || human_lines < rq3_cox_min_human_lines) {
+    result <- empty_cox_result(repo_name, repo_key, "below_minimum_group_lines")
+    result$n_rows <- nrow(repo_rows)
+    result$weighted_lines <- sum(repo_rows$weight)
+    result$ai_lines <- ai_lines
+    result$human_lines <- human_lines
+    return(result)
+  }
+
+  # Cox models need both events and censored observations represented after filtering.
+  if (length(unique(repo_rows$event)) < 2) {
+    result <- empty_cox_result(repo_name, repo_key, "insufficient_event_variation")
+    result$n_rows <- nrow(repo_rows)
+    result$weighted_lines <- sum(repo_rows$weight)
+    result$ai_lines <- ai_lines
+    result$human_lines <- human_lines
+    result$ai_events <- sum(ai_rows$event * ai_rows$weight)
+    result$human_events <- sum(human_rows$event * human_rows$weight)
+    return(result)
+  }
+
+  repo_rows$origin_commit_category <- droplevels(repo_rows$origin_commit_category)
+  fit_warnings <- character()
+
+  # Within each repo, estimate whether AI-origin lines have a higher or lower
+  # termination hazard than non-AI-origin lines. The weights expand each collapsed
+  # survival cell back to its line count.
+  fit <- tryCatch(
+    withCallingHandlers(
+      coxph(
+        Surv(survival_days_positive, event) ~ origin_commit_category,
+        data = repo_rows,
+        weights = weight,
+        control = coxph.control(timefix = FALSE)
+      ),
+      warning = function(warn) {
+        fit_warnings <<- c(fit_warnings, conditionMessage(warn))
+        invokeRestart("muffleWarning")
+      }
+    ),
+    error = function(err) err
+  )
+  if (inherits(fit, "error")) {
+    result <- empty_cox_result(repo_name, repo_key, paste0("coxph_error: ", conditionMessage(fit)))
+    result$n_rows <- nrow(repo_rows)
+    result$weighted_lines <- sum(repo_rows$weight)
+    result$ai_lines <- ai_lines
+    result$human_lines <- human_lines
+    result$ai_events <- sum(ai_rows$event * ai_rows$weight)
+    result$human_events <- sum(human_rows$event * human_rows$weight)
+    return(result)
+  }
+
+  fit_summary <- summary(fit)
+  coef_name <- "origin_commit_categoryai_coauthored"
+  if (!(coef_name %in% rownames(fit_summary$coefficients))) {
+    result <- empty_cox_result(repo_name, repo_key, "missing_ai_coefficient")
+    result$n_rows <- nrow(repo_rows)
+    result$weighted_lines <- sum(repo_rows$weight)
+    result$ai_lines <- ai_lines
+    result$human_lines <- human_lines
+    result$ai_events <- sum(ai_rows$event * ai_rows$weight)
+    result$human_events <- sum(human_rows$event * human_rows$weight)
+    return(result)
+  }
+
+  coef_row <- fit_summary$coefficients[coef_name,]
+  ci_row <- fit_summary$conf.int[coef_name,]
+  # pulling robust se if possible 
+  se_value <- if ("robust se" %in% colnames(fit_summary$coefficients)) {
+    coef_row[["robust se"]]
+  } else {
+    coef_row[["se(coef)"]]
+  }
+  hazard_ratio <- format_nullable_number(ci_row[["exp(coef)"]])
+  p_value <- format_nullable_number(coef_row[["Pr(>|z|)"]])
+
+  # Store one Cox estimate per repo. This becomes the outcome in the repo-level rq3 models.
+  data.frame(
+    repo = repo_name,
+    repo_key = repo_key,
+    status = "fit",
+    reason = paste(unique(fit_warnings), collapse = " | "),
+    n_rows = nrow(repo_rows),
+    weighted_lines = sum(repo_rows$weight),
+    ai_lines = ai_lines,
+    human_lines = human_lines,
+    ai_events = sum(ai_rows$event * ai_rows$weight),
+    human_events = sum(human_rows$event * human_rows$weight),
+    log_hazard = format_nullable_number(coef_row[["coef"]]),
+    hazard_ratio = hazard_ratio,
+    ci_lower = format_nullable_number(ci_row[["lower .95"]]),
+    ci_upper = format_nullable_number(ci_row[["upper .95"]]),
+    # updating to pull the robust SE
+    #se = format_nullable_number(coef_row[["se(coef)"]]),
+    se = format_nullable_number(se_value),
+    p_value = p_value,
+    concordance = format_nullable_number(fit_summary$concordance[[1]]),
+    classification = cox_label(p_value, hazard_ratio),
+    stringsAsFactors = FALSE
+  )
+}
+
+line_survival_by_repo <- split(line_survival, line_survival$repo_key)
+rq3_cox_results <- map_dfr(names(line_survival_by_repo), ~ run_cox_for_repo(line_survival_by_repo[[.x]], .x))
+
+rq3_cox_results %>% count(status, classification)
+```
+should say something like: 
+1     fit ai_higher_termination_hazard 77
+2     fit  ai_lower_termination_hazard 89
+3     fit          no_clear_difference 14
+4 skipped                      skipped  3
+
+
+
+## Stage 2 random-effects meta-regression
+
+### Data Prep
+
+#### Build repo-level modeling dataset
+```{r}
+# making clean dataset for analysis 
+analysis_repos <- repo_summary %>%
+  distinct(repo_key, repo) %>%        # repo = the slug (owner/name)
+  arrange(repo) %>% select(repo, repo_key)
+```
+
+
+```{r}
+# adding one-off variables to dataset
+
+## adding num_stars and primary_langugage from full_sample_repos
+analysis_repos <- analysis_repos %>% left_join(full_sample_repos %>% select(repo, metadata_num_stars, metadata_primary_language), by = "repo")
+# check to see if there's any repos with null values 
+analysis_repos[is.na(analysis_repos$metadata_num_stars), ]
+analysis_repos[is.na(analysis_repos$metadata_primary_language), ]
+
+## adding binary flag for whether repo has AGENTS.md file
+# creating regex pattern for search
+agent_cfg_pattern <- regex(
+  "(^|/)(agents\\.md)$",
+  ignore_case = TRUE
+)
+# creating flag and adding to repo
+analysis_repos <- analysis_repos %>%
+  left_join(
+    commit_files %>%
+      filter(str_detect(filename, agent_cfg_pattern)) %>%
+      group_by(repo_key) %>%
+      # prefer a root-level file, else earliest-seen; take its first date 
+      arrange(str_detect(filename, "/"), commit_date, .by_group = TRUE) %>%
+      summarise(
+        hasAGENTSmd = 1L,
+        .groups = "drop"
+      ),
+    by = "repo_key"
+  ) %>%
+  mutate(hasAGENTSmd = replace_na(hasAGENTSmd, 0L))
+# casting hasAGENTSmd flag to binary factor 
+#analysis_repos <- analysis_repos %>% mutate(hasAGENTSmd = factor(hasAGENTSmd,levels = c(0, 1)))
+# check to see if there's any repos with null values 
+analysis_repos[is.na(analysis_repos$hasAGENTSmd), ]
+
+# adding repo aggregate no review rate
+analysis_repos <- analysis_repos %>% left_join(repo_pr_no_review_aggregate_metrics, by = "repo")
+``` 
+
+
+```{r}
+# adding remaining metrics to main analysis table 
+## adding agent_type_labor_concentration_churn and agent_type_labor_concentration_commits metrics
+# operationalzing agent_type_labor_concentration_churn and agent_type_labor_concentration_commits ()
+# HHI (Herfindahl-Hirschman Index) = sum of squared shares; here, each AI agent's share of the repo's AI labor (by churn or by commits)
+# HHI value ranges from 1/k (work split evenly across k agents) to 1 (a single agent does everything). 
+# Used over Gini because we have few discrete categories (<=6 agents) rather than a continuous size distribution, and HHI reads directly as "how concentrated is AI work in one tool"
+agent_concentration <- commits %>%
+  filter(date >= observation_start_date,
+         date <= observation_cutoff_date,
+         category == "ai_coauthored",          
+         !(repo %in% excluded_repos),
+         !(sha %in% outlier_commit_shas)) %>%   
+  separate_rows(labels, sep = ";") %>%
+  mutate(label = str_trim(str_to_lower(labels))) %>%
+  filter(label %in% ai_labels) %>%
+  group_by(repo_key, label) %>%
+  summarise(
+    agent_churn   = sum(coalesce(as.numeric(changed_lines), 0)),  
+    agent_commits = n(),
+    .groups = "drop_last"
+  ) %>%
+  summarise(
+    agent_type_labor_concentration_churn   = sum((agent_churn   / sum(agent_churn))^2),
+    agent_type_labor_concentration_commits = sum((agent_commits / sum(agent_commits))^2),
+    .groups = "drop"
+  )
+
+# adding to analysis repos dataset
+analysis_repos <- analysis_repos %>%
+  left_join(agent_concentration, by = "repo_key")
+
+# checking to see if any repos have NA value 
+analysis_repos[is.na(analysis_repos$agent_type_labor_concentration_churn), ]
+analysis_repos[is.na(analysis_repos$agent_type_labor_concentration_commits), ]
+
+
+## adding num_maintainers and num_contributors to dataset
+# num maintainers = the smallest set of (non-bot) contributors who, ranked by commit count, together account for >=80% of the repo's commits (Pareto/core-developer rule)
+# num contributors = the number of (non-bot) contributors who authored at least one commit to the repo in the observation window
+# calculating number of maintainers per repo 
+maintainer_counts <- commits %>%
+  filter(date >= observation_start_date,
+         date <= observation_cutoff_date,
+         category != "other_bot", # excluding bot commits from total commit count 
+         !(repo %in% excluded_repos),
+         !(sha %in% outlier_commit_shas)) %>%
+  mutate(
+    contributor = coalesce(author_login, git_author_name)  # identity, login preferred
+  ) %>%
+  filter(!is.na(contributor)) %>%
+  count(repo_key, contributor, name = "n_commits") %>%   # commits per contributor per repo
+  arrange(repo_key, desc(n_commits)) %>%
+  group_by(repo_key) %>%
+  mutate(
+    cum_share = cumsum(n_commits) / sum(n_commits),
+    # rank at which cumulative share first reaches 0.80
+    first_at_80 = which(cum_share >= 0.80)[1]
+  ) %>%
+  summarise(
+    num_contributors = n(),
+    num_maintainers  = first(first_at_80),   # smallest set covering >=80%
+    .groups = "drop"
+  )
+
+# adding to analysis repos dataset
+analysis_repos <- analysis_repos %>%
+  left_join(maintainer_counts, by = "repo_key")
+
+# checking to see if any repos have NA value 
+analysis_repos[is.na(analysis_repos$num_maintainers), ]
+analysis_repos[is.na(analysis_repos$num_contributors), ]
+
+
+# calculating ai_source_code_share: fraction of AI changed lines landing in source_code files
+ai_source_code_share <- commits %>%
+  filter(date >= observation_start_date,
+         date <= observation_cutoff_date,
+         category == "ai_coauthored",
+         !(repo %in% excluded_repos),
+         !(sha %in% outlier_commit_shas)) %>%
+  distinct(repo_key, sha) %>%
+  inner_join(commit_file_classifications, by = c("repo_key", "sha" = "commit_sha")) %>%
+  group_by(repo_key) %>%
+  summarise(
+    ai_source_code_share = sum(changed_lines[file_primary_role == "source_code"], na.rm = TRUE) /
+                           sum(changed_lines, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+# calculating ai_contribution_concentration: gini of AI commit sizes (changed_lines per commit) 
+# Gini coefficient (ai_contribution_concentration) values range from [0, 1]
+# ai_contribution_concentration: Gini of per-commit AI churn within a repo, in [0,1]. 
+# higher number = more concentrated (a few large AI commits account for most AI churn); lower number = more evenly spread (AI churn distributed across similar-sized commits).
+ai_contribution_concentration <- commits %>%
+  filter(date >= observation_start_date,
+         date <= observation_cutoff_date,
+         category == "ai_coauthored",
+         !(repo %in% excluded_repos),
+         !(sha %in% outlier_commit_shas)) %>%
+  filter(!is.na(changed_lines)) %>%        # drop only true NAs (Gini errors on them)
+  group_by(repo_key) %>%
+  summarise(
+    ai_contribution_concentration = ineq::Gini(changed_lines),
+    .groups = "drop"
+  )
+
+
+# calculating test_file_change_share : n touches in test files / n touches all classified files 
+test_file_change_share <- commit_file_classifications %>%
+  semi_join(
+    commits %>%
+      filter(date >= observation_start_date,
+             date <= observation_cutoff_date,
+             category != "other_bot",          
+             !(repo %in% excluded_repos),
+             !(sha %in% outlier_commit_shas)),
+    by = c("repo_key", "commit_sha" = "sha")
+  ) %>%
+  group_by(repo_key) %>%
+  summarise(
+    test_file_change_share = mean(file_primary_role == "test", na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+# calculating SonarQube snapshot based metrics: note window-filtered
+sonar_window <- sonarqube_snapshot_scans %>%
+  filter(snapshot_date >= observation_start_date,
+         snapshot_date <= observation_cutoff_date,
+         !(repo %in% excluded_repos),
+         scan_status == "ok", # drop failed scans
+         !is.na(metric_ncloc)) %>%   # keep only usable snapshots)                     
+  mutate(technical_debt_index = metric_sqale_index / metric_ncloc)
+
+sonar_metrics <- sonar_window %>%
+  group_by(repo_key) %>%
+  arrange(snapshot_index, .by_group = TRUE) %>%
+  summarise(
+    technical_debt_index_start          = first(technical_debt_index),
+    technical_debt_index_last           = last(technical_debt_index),
+    technical_debt_index_avg            = mean(technical_debt_index, na.rm = TRUE),
+    metric_duplicated_lines_density_start = first(metric_duplicated_lines_density),
+    metric_duplicated_lines_density_last  = last(metric_duplicated_lines_density),
+    metric_duplicated_lines_density_avg   = mean(metric_duplicated_lines_density, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+# adding to analysis repos dataset
+analysis_repos <- analysis_repos %>%
+  left_join(ai_source_code_share,          by = "repo_key") %>%
+  left_join(ai_contribution_concentration, by = "repo_key") %>%
+  left_join(test_file_change_share,        by = "repo_key") %>%
+  left_join(sonar_metrics,                 by = "repo_key")
+
+
+# Summarise commit activity to one row per repo. These variables describe how
+# active the repo is, how much churn it has, and how much of that work is AI-coauthored.
+# note excluding bot comits from commit counts as per standard practice
+commit_activity_summary <- commits %>%
+  filter(date >= observation_start_date,
+         date <= observation_cutoff_date,
+         category != "other_bot", # excluding bot commits from total commit count 
+         !(repo %in% excluded_repos),
+         !(sha %in% outlier_commit_shas)) %>%
+  mutate(commit_month = substr(as.character(date), 1, 7),
+         changed_lines = coalesce(as.numeric(changed_lines), 0)) %>%
+  group_by(repo_key, repo) %>%
+  summarise(
+    total_commits_in_window = n(),
+    total_line_churn_in_window = sum(changed_lines, na.rm = TRUE),
+    ai_commits_in_window = sum(category == "ai_coauthored", na.rm = TRUE),
+    ai_line_churn_in_window = sum(changed_lines[category == "ai_coauthored"], na.rm = TRUE),
+    ai_commit_share = ratio_or_na(ai_commits_in_window, total_commits_in_window),
+    ai_line_churn_share = ratio_or_na(ai_line_churn_in_window, total_line_churn_in_window),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    log1p_total_commits_in_window = log1p_or_na(total_commits_in_window),
+    log1p_total_line_churn_in_window = log1p_or_na(total_line_churn_in_window))
+
+
+# adding to analysis repos dataset
+analysis_repos <- analysis_repos %>%
+  left_join(commit_activity_summary %>%  select(repo_key, total_commits_in_window,total_line_churn_in_window,ai_commits_in_window, ai_line_churn_in_window, ai_commit_share, ai_line_churn_share),by = "repo_key")
+
+
+#deleting all the helper tables once metrics have been added to the main table
+rm(ai_source_code_share, ai_contribution_concentration, test_file_change_share, sonar_window, sonar_metrics, commit_activity_summary, agent_concentration); gc()
+```
+
+building stage 2 dataset 
+```{r}
+# join per-repo Stage 1 effect (gap + SE + event counts) onto the repo factors
+stage2_data <- rq3_cox_results %>%
+  filter(status == "fit") %>%
+  transmute(
+    repo, repo_key,
+    yi  = as.numeric(log_hazard),     # per-repo AI-vs-human log hazard ratio (the gap)
+    sei = as.numeric(se),             # robust SE of that gap
+    ai_events    = as.numeric(ai_events),
+    human_events = as.numeric(human_events)
+  ) %>%
+  left_join(analysis_repos, by = c("repo", "repo_key"))
+```
+
+
+
+#### Pre-modeling data checks
+
+
+```{r}
+### Inspect the distributions of each variable, look for outliers
+
+################################
+##### ai_line_churn_share  #####
+################################
+summary(stage2_data$ai_line_churn_share)
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram()
+# moderate right-skew not too bad probably better to keep as-is
+
+
+############################
+##### ai_commit_share  #####
+############################
+summary(stage2_data$ai_commit_share)
+ggplot(stage2_data, aes(x = ai_commit_share)) + 
+  geom_histogram()
+ggplot(stage2_data, aes(x = ai_commit_share, y = yi)) +
+  geom_point(alpha = 0.5, color = "#F58F29") +
+  geom_smooth(method = "lm", se = FALSE, color = "#59A14F") +
+  labs(title = "gap vs ai_commit_share", y = "gap") + theme_minimal()
+
+
+##########################
+##### no_review_rate  #####
+##########################
+stage2_data$no_review_rate
+summary(stage2_data$no_review_rate)
+ggplot(stage2_data, aes(x = no_review_rate)) + 
+  geom_histogram()
+# most repos have a pretty low no merge rate (3rd quartile = 0.15) but there are some outliers
+ggplot(stage2_data, aes(x = no_review_rate, y = yi)) +
+  geom_point(alpha = 0.5, color = "#F58F29") +
+  geom_smooth(method = "lm", se = FALSE, color = "#59A14F") +
+  labs(title = "gap vs no_review_rate", y = "gap") + theme_minimal()
+
+
+
+# TODO go through and finish inspecting the rest of the variables 
+# <ONLY DO THIS FOR THE MODELS INCLUDED IN THE COVARIATE LIST NOT ALL OF THEM>
+# mods = technical_dept_index_start + num_contributors + ai_source_code_share + test_file_change_share + no_review_rate
+
+
+#########################################
+##### ai_contribution_concentration  #####
+#########################################
+stage2_data$ai_contribution_concentration
+
+summary(stage2_data$ai_line_churn_share)
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram()
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram() +
+  scale_x_log10()
+
+#########################################
+##### test_file_change_share  #####
+#########################################
+stage2_data$test_file_change_share
+
+summary(stage2_data$ai_line_churn_share)
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram()
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram() +
+  scale_x_log10()
+
+
+#########################################
+##### technical_debt_index_start  #####
+#########################################
+stage2_data$technical_debt_index_start
+
+
+summary(stage2_data$ai_line_churn_share)
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram()
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram() +
+  scale_x_log10()
+
+#########################################
+##### ai_source_code_share  #####
+#########################################
+stage2_data$ai_source_code_share
+
+summary(stage2_data$ai_line_churn_share)
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram()
+ggplot(stage2_data, aes(x = ai_line_churn_share)) + 
+  geom_histogram() +
+  scale_x_log10()
+
+#########################################
+##### hasAGENTSmd (binary) #####
+#########################################
+table(stage2_data$hasAGENTSmd)
+ggplot(stage2_data, aes(x = factor(hasAGENTSmd), y = yi)) +
+  geom_boxplot(fill = "#8789C0") +
+  labs(title = "gap by hasAGENTSmd", x = "hasAGENTSmd (0/1)", y = "gap") + theme_minimal()
+
+###########################################
+##### metadata_primary_language  (categorical)      #####
+###########################################
+table(stage2_data$metadata_primary_language, useNA = "ifany")
+# TODO: many levels; bin < rq3_min_language_repos into "other" via collapse_languages(). 
+# note this factor is expensive in model (one slot per level) 
+
+```
+
+```{r}
+
+stage2_model_data <- stage2_data %>%
+  mutate(hasAGENTSmd = as.integer(as.character(hasAGENTSmd))) %>%   # clean 0/1
+  # rma needs a valid gap + positive SE; drop rows missing any chosen covariate
+  filter(!is.na(yi), !is.na(sei), sei > 0) %>%
+  filter(ai_events >= 10, human_events >= 10) %>% # excluding repos that don't have at least 10 events in both groups 
+  tidyr::drop_na(ai_line_churn_share, ai_contribution_concentration,
+                 test_file_change_share, technical_debt_index_start,
+                 ai_source_code_share, hasAGENTSmd)
+
+# report eligible vs modeled so a silent drop from missing covariates is visible
+n_eligible <- sum(!is.na(stage2_data$yi) & !is.na(stage2_data$sei) & stage2_data$sei > 0)
+cat("eligible repos (valid gap + se):", n_eligible, "\n")
+cat("repos in model:", nrow(stage2_model_data), "\n")
+cat("dropped for missing covariate values:", n_eligible - nrow(stage2_model_data), "\n")
+
+
+cat("\nStage 1 per-repo Cox hazard classification counts:\n")
+rq3_cox_results %>%
+  count(status, classification, name = "repos") %>%
+  arrange(status, classification) %>%
+  as.data.frame() %>%
+  print(row.names = FALSE)
+
+cat("\nStage 2 modeled repo hazard classification counts:\n")
+rq3_cox_results %>%
+  semi_join(stage2_model_data %>% select(repo_key), by = "repo_key") %>%
+  count(status, classification, name = "repos") %>%
+  arrange(status, classification) %>%
+  as.data.frame() %>%
+  print(row.names = FALSE)
+```
+
+#### Trying to determine which factors to include in rq3 model
+
+```{r}
+# Yi-vs-Vis Plots
+library(tidyr)
+candidate_mods <- c("metadata_num_stars", "hasAGENTSmd", "no_review_rate",
+"agent_type_labor_concentration_churn", "agent_type_labor_concentration_commits",
+"num_contributors", "num_maintainers", "ai_source_code_share",
+"ai_contribution_concentration", "test_file_change_share",
+"technical_debt_index_start", "technical_debt_index_last", "technical_debt_index_avg",
+"metric_duplicated_lines_density_start", "metric_duplicated_lines_density_last",
+"metric_duplicated_lines_density_avg", "total_commits_in_window",
+"total_line_churn_in_window", "ai_commits_in_window", "ai_line_churn_in_window",
+"ai_commit_share", "ai_line_churn_share")
+
+
+
+# scatter of the gap against every candidate, with a loess + linear line
+# look for: shapeless cloud (flat, no signal) vs a trend or curve (worth modeling)
+stage2_model_data %>%
+  select(yi, all_of(candidate_mods)) %>%
+  pivot_longer(-yi, names_to = "moderator", values_to = "value") %>%
+  ggplot(aes(value, yi)) +
+  geom_point(alpha = 0.4, color = "#F58F29") +
+  geom_smooth(method = "loess", se = FALSE, color = "#8789C0") +
+  geom_smooth(method = "lm", se = FALSE, color = "#59A14F", linetype = 2) +
+  facet_wrap(~ moderator, scales = "free_x") +
+  labs(y = "per-repo gap (yi)") + theme_minimal()
+
+
+
+# version with lagged skwewd vars
+stage2_model_data %>%
+  transmute(
+    yi,
+    log_total_commits = log1p(total_commits_in_window),
+    log_total_churn   = log1p(total_line_churn_in_window),
+    log_ai_commits    = log1p(ai_commits_in_window),
+    log_ai_churn      = log1p(ai_line_churn_in_window),
+    log_num_contributors = log1p(num_contributors),
+    log_num_maintainers  = log1p(num_maintainers),
+    log_ai_line_churn_in_window = log1p(ai_line_churn_in_window),
+    log_technical_debt_index_start = log1p(technical_debt_index_start),
+    log_metric_duplicated_lines_density_last = log1p(metric_duplicated_lines_density_last),
+    log_stars         = log1p(metadata_num_stars)
+  ) %>%
+  pivot_longer(-yi, names_to = "moderator", values_to = "value") %>%
+  ggplot(aes(value, yi)) +
+  geom_point(alpha = 0.4, color = "#F58F29") +
+  geom_smooth(method = "loess", se = FALSE, color = "#8789C0") +
+  geom_smooth(method = "lm", se = FALSE, color = "#59A14F", linetype = 2) +
+  facet_wrap(~ moderator, scales = "free_x") +
+  labs(y = "per-repo gap (yi)", title = "gap vs LOGGED count moderators") +
+  theme_minimal()
+```
+
+
+```{r}
+## LASSO over the full candidate set to screen which moderators carry signal
+set.seed(1)
+
+# building the predictor matrix
+# logging the skewed count/churn vars so LASSO sees them
+lasso_df <- stage2_model_data %>%
+  mutate(
+    log_total_commits   = log1p(total_commits_in_window),
+    log_total_churn     = log1p(total_line_churn_in_window),
+    log_ai_commits      = log1p(ai_commits_in_window),
+    log_ai_churn        = log1p(ai_line_churn_in_window),
+    log_num_contributors= log1p(num_contributors),
+    log_num_maintainers = log1p(num_maintainers),
+    log_stars           = log1p(metadata_num_stars),
+    primary_language_grouped = collapse_languages(metadata_primary_language,
+                                                  min_repos = rq3_min_language_repos)
+  )
+
+# the full candidate set (logged counts + raw bounded vars + binary + language)
+predictor_vars <- c(
+  "log_stars", "hasAGENTSmd", "no_review_rate",
+  "agent_type_labor_concentration_churn", "agent_type_labor_concentration_commits",
+  "log_num_contributors", "log_num_maintainers",
+  "ai_source_code_share", "ai_contribution_concentration", "test_file_change_share",
+  "technical_debt_index_start", "technical_debt_index_last", "technical_debt_index_avg",
+  "metric_duplicated_lines_density_start", "metric_duplicated_lines_density_last",
+  "metric_duplicated_lines_density_avg",
+  "log_total_commits", "log_total_churn", "log_ai_commits", "log_ai_churn",
+  "ai_commit_share", "ai_line_churn_share",
+  "primary_language_grouped"
+)
+
+# model.matrix expands the language factor into dummies and standardizes happens in glmnet
+X <- model.matrix(~ . - 1, data = lasso_df[, predictor_vars])
+y <- lasso_df$yi
+# weight each repo by its precision so LASSO respects the meta-analytic structure
+w <- 1 / (lasso_df$sei^2 + rq3_rma$tau2) ## TODO FIX THIS LINE where is rq3_rma
+
+fit_path <- glmnet(X, y, weights = w, alpha = 1, standardize = TRUE)
+
+# which variables enter FIRST as the penalty relaxes = strongest signal
+# read left-to-right: the order variables become non-zero is the ranking
+plot(fit_path, xvar = "lambda", label = TRUE)
+
+# table with ranking values: for each variable, the largest lambda at which it's non-zero
+# (bigger = enters earlier = stronger)
+betas <- as.matrix(fit_path$beta)
+entry_lambda <- apply(betas, 1, function(b) {
+  nz <- which(b != 0)
+  if (length(nz) == 0) NA else fit_path$lambda[min(nz)]
+})
+tibble(variable = rownames(betas), enters_at_lambda = entry_lambda) %>%
+  filter(!is.na(enters_at_lambda)) %>%
+  arrange(desc(enters_at_lambda)) %>%
+  print(n = Inf)
+```
+
+
+```{r}
+## Descriptive: do repos with more of these practices show higher overall survival?
+## NOTE: this is the LEVEL (avg survival), not the AI-vs-human gap — exploratory context
+# pulling per-repo overall survival rate from repo_summary
+survival_explore <- analysis_repos %>%
+  left_join(repo_summary %>% select(repo_key, survival_rate), by = "repo_key")
+
+# binning the continuous practices into terciles (low/med/high) so patterns are visible
+survival_binned <- survival_explore %>%
+  transmute(
+    survival_rate,
+    `Stars`                              = ntile(metadata_num_stars, 3),
+    `Agent labor concentration (churn)`  = ntile(agent_type_labor_concentration_churn, 3),
+    `Agent labor concentration (commits)`= ntile(agent_type_labor_concentration_commits, 3),
+    `No Review Rate`                     = ntile(no_review_rate, 3),
+    `Num contributors`                   = ntile(num_contributors, 3),
+    `Num maintainers`                    = ntile(num_maintainers, 3),
+    `AI source-code share`               = ntile(ai_source_code_share, 3),
+    `AI contribution concentration`      = ntile(ai_contribution_concentration, 3),
+    `Test file change share`             = ntile(test_file_change_share, 3),
+    `Technical debt (start)`             = ntile(technical_debt_index_start, 3),
+    `Technical debt (last)`              = ntile(technical_debt_index_last, 3),
+    `Technical debt (avg)`               = ntile(technical_debt_index_avg, 3),
+    `Duplicated density (start)`         = ntile(metric_duplicated_lines_density_start, 3),
+    `Duplicated density (last)`          = ntile(metric_duplicated_lines_density_last, 3),
+    `Duplicated density (avg)`           = ntile(metric_duplicated_lines_density_avg, 3),
+    `Total commits`                      = ntile(total_commits_in_window, 3),
+    `Total line churn`                   = ntile(total_line_churn_in_window, 3),
+    `AI commits`                         = ntile(ai_commits_in_window, 3),
+    `AI line churn`                      = ntile(ai_line_churn_in_window, 3),
+    `AI commit share`                    = ntile(ai_commit_share, 3),
+    `AI churn share`                     = ntile(ai_line_churn_share, 3)
+  )
+
+# survival by each binned practice
+survival_binned %>%
+  pivot_longer(-survival_rate, names_to = "practice", values_to = "tercile") %>%
+  filter(!is.na(tercile)) %>%
+  ggplot(aes(factor(tercile), survival_rate)) +
+  geom_boxplot(fill = "#8789C0") +
+  facet_wrap(~ practice, scales = "free", ncol = 4) +     # 3 per row
+  labs(x = "tercile (1 = low, 3 = high)", y = "repo avg survival rate",
+       title = "Overall survival by practice tercile") +
+  theme_minimal()
+
+```
+
+
+#### Building Model
+```{r}
+ggplot(stage2_model_data, aes(x=num_maintainers, y=no_review_rate)) + geom_point()
+ggplot(stage2_model_data, aes(x = num_maintainers, y = yi)) +
+  geom_point(alpha = 0.5, color = "#F58F29") +
+  geom_smooth(method = "lm", se = FALSE, color = "#59A14F") +
+  labs(title = "gap vs no_review_rate", y = "gap") + theme_minimal()
+```
+
+
+```{r}
+# fitting model random-effects meta-regression 
+# yi = per-repo gap, sei = its SE. rma weights each repo by 1/(sei^2 + tau^2)
+# internally (do NOT pass weights). REML estimates tau^2; knha = small-sample CIs
+# mods = technical_dept_index_start + num_contributors + ai_source_code_share + test_file_change_share +  ai_line_churn_share + no_review_rate
+rq3_rma <- rma(
+  yi   = yi,
+  sei  = sei,
+  mods = ~ technical_debt_index_start + 
+    num_contributors +
+    ai_source_code_share  + 
+    test_file_change_share + 
+    ai_line_churn_share + 
+    no_review_rate,
+  data   = stage2_model_data,
+  method = "REML",
+  test   = "knha")
+summary(rq3_rma)
+
+# tau^2 = residual between-repo variance in gap; I^2 = real heterogeneity share;
+# R^2 = % of true between-repo variance the moderators explain (i.e., the explanatory power of the model)
+c(tau2 = rq3_rma$tau2, I2 = rq3_rma$I2, R2 = rq3_rma$R2)
+
+# coefficients on the hazard-ratio scale. HR_mult > 1: widens AI penalty; < 1: narrows
+rq3_rma_table <- tibble(
+  moderator = rownames(rq3_rma$beta),
+  est_logHR = as.numeric(rq3_rma$beta),
+  HR_mult   = exp(as.numeric(rq3_rma$beta)),
+  ci_low    = exp(rq3_rma$ci.lb),
+  ci_high   = exp(rq3_rma$ci.ub),
+  p         = rq3_rma$pval
+)
+rq3_rma_table
+```
+Interpretation: 
+Across 177 repositories, we find statistically significant evidence that the AI-vs-human maintenance gap depends on repository characteristics rather than varying at random (F(6,170) = 2.86, p = .011), with the rate of merging code without review emerging as the strongest individual predictor (HR = 1.75 per SD, 95% CI [1.01, 3.04], p = .046): repos that more often skip review have AI code that gets churned out faster relative to human code. Technical debt and limited test infrastructure show non-significant effects in the same direction (HR = 1.47 and 1.90, both p > .10), pointing to a coherent picture in which weaker engineering safeguards widen the AI penalty.
+The fact that the model as a whole is significant while only one individual predictor reaches significance suggests two drivers: 
+(1) Missing covariates: Our covariate set captures part of the signal but is likely incomplete — the characteristics driving the remaining heterogeneity may be finer-grained or unmeasured here
+(2) Underpowered model: With 177 repositories individual moderator effects of the magnitude observed here (e.g., HR = 1.47 for technical debt) may be real but cannot be reliably distinguished from chance at this sample size. Confirming these directional effects would require a larger sample
+
+```{r}
+## Diagnostics
+# 1. collinearity (rma won't warn): parallel lm -> VIF. >5 moderate, >10 high.
+car::vif(lm(yi ~ technical_debt_index_start + num_contributors + ai_source_code_share  + test_file_change_share + ai_line_churn_share + no_review_rate,data = stage2_model_data))
+# all VIF < 2 good
+
+# 2. influential repos (huge-SE near-separation fits, size spread): any one repo driving it?
+rq3_influence <- influence(rq3_rma)
+plot(rq3_influence)
+rq3_influence$inf[rq3_influence$inf$infl == "*", ]
+# no influential repos
+
+# 3. residual normality
+qqnorm(residuals(rq3_rma, type = "rstandard")); qqline(residuals(rq3_rma, type = "rstandard"))
+# clean qq plot
+```
+
+```{r}
+# checking to see if the model is underpowered 
+# how big an effect can we detect? simulate moderators with known effects,
+set.seed(1)
+detect_rate <- function(true_beta, n_sim = 200) {
+  hits <- replicate(n_sim, {
+    x <- rnorm(nrow(stage2_model_data))                 
+    tau <- sqrt(rq3_rma$tau2)
+    yi_sim <- true_beta * x + rnorm(nrow(stage2_model_data), 0, tau) +
+              rnorm(nrow(stage2_model_data), 0, stage2_model_data$sei)
+    fit <- rma(yi = yi_sim, sei = stage2_model_data$sei, mods = ~ x,
+               method = "REML", test = "knha")
+    fit$pval[2] < 0.05
+  })
+  mean(hits)
+}
+# detection rate (power) for per-SD effects of these sizes on the log-HR scale:
+tibble(
+  beta_logHR = c(0.1, 0.2, 0.3, 0.5),
+  HR_per_SD  = exp(c(0.1, 0.2, 0.3, 0.5)),
+  power      = sapply(c(0.1, 0.2, 0.3, 0.5), detect_rate)
+)
+```

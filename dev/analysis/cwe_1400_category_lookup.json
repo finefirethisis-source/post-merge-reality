@@ -1,0 +1,3819 @@
+{
+  "categories": {
+    "CWE-1396": "Access Control",
+    "CWE-1397": "Comparison",
+    "CWE-1398": "Component Interaction",
+    "CWE-1399": "Memory Safety",
+    "CWE-1401": "Concurrency",
+    "CWE-1402": "Encryption",
+    "CWE-1403": "Exposed Resource",
+    "CWE-1404": "File Handling",
+    "CWE-1405": "Improper Check or Handling of Exceptional Conditions",
+    "CWE-1406": "Improper Input Validation",
+    "CWE-1407": "Improper Neutralization",
+    "CWE-1408": "Incorrect Calculation",
+    "CWE-1409": "Injection",
+    "CWE-1410": "Insufficient Control Flow Management",
+    "CWE-1411": "Insufficient Verification of Data Authenticity",
+    "CWE-1412": "Poor Coding Practices",
+    "CWE-1413": "Protection Mechanism Failure",
+    "CWE-1414": "Randomness",
+    "CWE-1415": "Resource Control",
+    "CWE-1416": "Resource Lifecycle Management",
+    "CWE-1417": "Sensitive Information Exposure",
+    "CWE-1418": "Violation of Secure Design Principles"
+  },
+  "duplicates": {},
+  "lookup": {
+    "CWE-1004": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1007": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-102": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-1021": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1022": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1023": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-1024": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-1025": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-103": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1037": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-1038": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-1039": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-104": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1041": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1042": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1043": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1044": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1045": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1046": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1047": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1048": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1049": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-105": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1050": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1051": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1052": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1053": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1054": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1055": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1056": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1057": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1058": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1059": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-106": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1060": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1061": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1062": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1063": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1064": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1065": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1066": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1067": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1068": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1069": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-107": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1070": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1071": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1072": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1073": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1074": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1075": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1076": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1077": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-1078": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1079": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-108": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1080": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1082": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1083": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1084": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1085": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1086": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1087": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1088": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1089": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-109": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1090": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1091": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1092": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1093": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1094": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1095": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1096": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1097": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1098": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1099": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-11": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-110": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1100": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1101": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1102": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1103": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1104": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-1105": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1106": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1107": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1108": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1109": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-111": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1110": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1111": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1112": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1113": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1114": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1115": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1116": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1117": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1118": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1119": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-112": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1120": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1121": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1122": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1123": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1124": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1125": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1126": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1127": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-113": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-114": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-115": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-116": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-1164": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-117": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-1173": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1174": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1176": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1177": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-118": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1188": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1189": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-119": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1190": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-1191": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1192": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-1193": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-12": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-120": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1204": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-1209": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-121": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-122": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1220": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1221": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1222": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1223": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1224": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1229": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-123": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1230": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1231": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1232": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1233": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1234": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1235": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1236": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-1239": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-124": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1240": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-1241": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-1242": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1243": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1244": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1245": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1246": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1247": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-1248": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1249": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-125": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1250": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1251": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-1252": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1253": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1254": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-1255": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-1256": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1257": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1258": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1259": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-126": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1260": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1261": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-1262": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1263": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1264": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1265": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-1266": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1267": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1268": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1269": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-127": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1270": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1271": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1272": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1273": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-1274": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1275": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1276": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1277": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-1278": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1279": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-128": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-1280": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-1281": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-1282": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-1283": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1284": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1285": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1286": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1287": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1288": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-1289": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-129": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1290": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1291": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1292": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1293": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-1294": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1295": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-1296": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1297": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1298": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-1299": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-13": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-130": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-1300": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-1301": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1302": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1303": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-1304": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-131": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1310": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-1311": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1312": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1313": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1314": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1315": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1316": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1317": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1318": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1319": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1320": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1321": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-1322": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-1323": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1325": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1326": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1327": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-1328": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1329": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-1330": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1331": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-1332": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-1333": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1334": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1335": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-1336": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-1338": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-1339": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-134": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-1341": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-1342": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-135": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-1351": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-1357": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-138": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-1384": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-1385": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-1386": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1389": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1390": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1391": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1392": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1393": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1394": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-1395": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-14": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-140": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-141": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-1419": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-142": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-1420": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1421": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1422": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1423": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-1426": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-1427": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-1428": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-1429": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-143": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-1431": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-1434": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-144": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-145": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-146": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-147": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-148": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-149": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-15": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-150": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-151": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-152": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-153": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-154": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-155": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-156": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-157": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-158": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-159": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-160": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-161": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-162": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-163": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-164": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-165": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-166": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-167": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-168": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-170": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-172": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-173": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-174": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-175": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-176": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-177": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-178": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-179": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-180": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-181": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-182": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-183": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-184": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-185": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-186": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-187": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-188": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-190": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-191": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-192": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-193": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-194": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-195": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-196": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-197": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-198": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-20": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-200": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-201": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-202": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-203": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-204": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-205": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-206": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-207": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-208": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-209": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-210": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-211": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-212": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-213": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-214": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-215": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-219": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-22": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-220": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-221": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-222": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-223": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-224": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-226": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-228": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-229": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-23": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-230": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-231": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-232": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-233": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-234": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-235": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-236": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-237": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-238": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-239": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-24": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-240": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-241": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-242": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-243": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-244": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-245": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-246": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-248": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-25": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-250": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-252": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-253": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-256": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-257": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-258": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-259": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-26": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-260": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-261": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-262": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-263": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-266": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-267": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-268": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-269": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-27": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-270": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-271": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-272": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-273": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-274": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-276": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-277": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-278": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-279": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-28": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-280": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-281": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-282": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-283": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-284": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-285": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-286": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-287": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-288": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-289": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-29": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-290": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-291": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-293": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-294": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-295": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-296": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-297": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-298": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-299": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-30": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-300": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-301": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-302": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-303": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-304": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-305": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-306": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-307": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-308": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-309": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-31": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-311": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-312": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-313": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-314": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-315": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-316": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-317": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-318": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-319": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-32": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-321": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-322": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-323": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-324": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-325": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-326": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-327": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-328": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-329": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-33": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-330": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-331": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-332": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-333": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-334": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-335": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-336": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-337": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-338": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-339": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-34": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-340": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-341": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-342": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-343": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-344": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-345": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-346": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-347": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-348": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-349": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-35": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-350": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-351": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-352": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-353": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-354": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-356": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-357": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-358": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-359": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-36": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-360": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-362": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-363": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-364": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-366": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-367": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-368": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-369": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-37": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-370": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-372": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-374": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-375": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-377": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-378": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-379": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-38": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-382": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-383": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-384": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-385": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-386": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-39": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-390": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-391": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-392": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-393": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-394": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-395": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-396": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-397": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-40": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-400": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-401": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-402": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-403": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-404": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-405": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-406": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-407": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-408": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-409": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-41": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-410": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-412": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-413": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-414": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-415": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-416": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-419": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-42": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-420": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-421": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-422": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-424": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-425": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-426": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-427": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-428": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-43": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-430": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-431": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-432": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-433": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-434": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-435": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-436": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-437": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-439": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-44": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-440": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-441": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-444": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-446": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-447": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-448": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-449": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-45": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-450": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-451": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-453": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-454": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-455": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-456": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-457": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-459": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-46": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-460": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-462": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-463": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-464": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-466": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-467": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-468": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-469": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-47": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-470": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-471": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-472": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-473": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-474": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-475": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-476": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-477": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-478": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-479": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-48": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-480": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-481": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-482": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-483": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-484": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-486": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-487": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-488": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-489": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-49": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-491": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-492": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-493": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-494": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-495": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-496": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-497": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-498": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-499": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-5": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-50": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-500": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-501": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-502": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-506": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-507": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-508": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-509": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-51": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-510": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-511": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-512": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-514": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-515": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-52": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-520": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-521": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-522": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-523": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-524": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-525": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-526": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-527": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-528": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-529": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-53": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-530": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-531": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-532": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-535": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-536": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-537": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-538": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-539": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-54": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-540": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-541": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-543": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-544": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-546": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-547": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-548": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-549": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-55": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-550": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-551": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-552": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-553": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-554": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-555": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-556": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-558": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-56": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-560": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-561": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-562": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-563": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-564": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-565": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-566": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-567": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-568": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-57": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-570": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-571": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-572": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-573": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-574": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-575": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-576": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-577": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-578": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-579": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-58": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-580": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-581": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-582": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-583": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-584": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-585": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-586": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-587": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-588": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-589": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-59": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-590": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-591": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-593": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-594": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-595": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-597": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-598": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-599": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-6": {
+      "category": "Randomness",
+      "category_cwe_id": "CWE-1414"
+    },
+    "CWE-600": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-601": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-602": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-603": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-605": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-606": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-607": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-608": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-609": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-61": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-610": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-611": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-612": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-613": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-614": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-615": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-616": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-617": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-618": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-619": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-62": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-620": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-621": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-622": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-623": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-624": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-625": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-626": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-627": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-628": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-636": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-637": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-638": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-639": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-64": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-640": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-641": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-642": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-643": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-644": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-645": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-646": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-647": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-648": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-649": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-65": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-650": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-651": {
+      "category": "Sensitive Information Exposure",
+      "category_cwe_id": "CWE-1417"
+    },
+    "CWE-652": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-653": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-654": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-655": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-656": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-657": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-66": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-662": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-663": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-664": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-665": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-666": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-667": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-668": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-669": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-67": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-670": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-671": {
+      "category": "Violation of Secure Design Principles",
+      "category_cwe_id": "CWE-1418"
+    },
+    "CWE-672": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-673": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-674": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-675": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-676": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-680": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-681": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-682": {
+      "category": "Incorrect Calculation",
+      "category_cwe_id": "CWE-1408"
+    },
+    "CWE-683": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-684": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-685": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-686": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-687": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-688": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-689": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-69": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-690": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-691": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-692": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-693": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-694": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-695": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-696": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-697": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-698": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-7": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-703": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-704": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-705": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-706": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-707": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-708": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-710": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-72": {
+      "category": "File Handling",
+      "category_cwe_id": "CWE-1404"
+    },
+    "CWE-73": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-732": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-733": {
+      "category": "Component Interaction",
+      "category_cwe_id": "CWE-1398"
+    },
+    "CWE-74": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-749": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-75": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-754": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-755": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-756": {
+      "category": "Improper Check or Handling of Exceptional Conditions",
+      "category_cwe_id": "CWE-1405"
+    },
+    "CWE-757": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-758": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-759": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-76": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-760": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-761": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-762": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-763": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-764": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-765": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-766": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-767": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-768": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-77": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-770": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-771": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-772": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-773": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-774": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-775": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-776": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-777": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-778": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-779": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-78": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-780": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-781": {
+      "category": "Improper Input Validation",
+      "category_cwe_id": "CWE-1406"
+    },
+    "CWE-782": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-783": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-784": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-785": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-786": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-787": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-788": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-789": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-79": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-790": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-791": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-792": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-793": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-794": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-795": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-796": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-797": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-798": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-799": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-8": {
+      "category": "Exposed Resource",
+      "category_cwe_id": "CWE-1403"
+    },
+    "CWE-80": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-804": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-805": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-806": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-807": {
+      "category": "Protection Mechanism Failure",
+      "category_cwe_id": "CWE-1413"
+    },
+    "CWE-81": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-82": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-820": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-821": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-822": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-823": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-824": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-825": {
+      "category": "Memory Safety",
+      "category_cwe_id": "CWE-1399"
+    },
+    "CWE-826": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-827": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-828": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-829": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-83": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-830": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-831": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-832": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-833": {
+      "category": "Concurrency",
+      "category_cwe_id": "CWE-1401"
+    },
+    "CWE-834": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-835": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-836": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-837": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-838": {
+      "category": "Improper Neutralization",
+      "category_cwe_id": "CWE-1407"
+    },
+    "CWE-839": {
+      "category": "Comparison",
+      "category_cwe_id": "CWE-1397"
+    },
+    "CWE-84": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-841": {
+      "category": "Insufficient Control Flow Management",
+      "category_cwe_id": "CWE-1410"
+    },
+    "CWE-842": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-843": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-85": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-86": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-862": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-863": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-87": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-88": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-89": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-9": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-90": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-908": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-909": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-91": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-910": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-911": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-912": {
+      "category": "Poor Coding Practices",
+      "category_cwe_id": "CWE-1412"
+    },
+    "CWE-913": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-914": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-915": {
+      "category": "Resource Control",
+      "category_cwe_id": "CWE-1415"
+    },
+    "CWE-916": {
+      "category": "Encryption",
+      "category_cwe_id": "CWE-1402"
+    },
+    "CWE-917": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-918": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-920": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-921": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-922": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-923": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-924": {
+      "category": "Insufficient Verification of Data Authenticity",
+      "category_cwe_id": "CWE-1411"
+    },
+    "CWE-925": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-926": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-927": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-93": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-939": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-94": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-940": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-941": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-942": {
+      "category": "Access Control",
+      "category_cwe_id": "CWE-1396"
+    },
+    "CWE-943": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-95": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-96": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-97": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    },
+    "CWE-98": {
+      "category": "Resource Lifecycle Management",
+      "category_cwe_id": "CWE-1416"
+    },
+    "CWE-99": {
+      "category": "Injection",
+      "category_cwe_id": "CWE-1409"
+    }
+  },
+  "metadata": {
+    "catalog": {
+      "date": "2026-04-30",
+      "name": "VIEW LIST: CWE-1400: Comprehensive Categorization for Software Assurance Trends",
+      "version": "4.20"
+    },
+    "category_count": 22,
+    "category_prefix_removed": "Comprehensive Categorization: ",
+    "duplicate_member_count": 0,
+    "mapped_cwe_count": 944,
+    "source_xml": "1400.xml",
+    "view_id": "1400",
+    "view_name": "Comprehensive Categorization for Software Assurance Trends"
+  }
+}

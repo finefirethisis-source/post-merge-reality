@@ -1,0 +1,326 @@
+
+```{r setup, include=FALSE}
+# loading libraries
+# general use libraries
+# library(tidyverse)
+# library(RMySQL)
+library(DBI)
+library(readr)
+library(ggplot2)
+library(lubridate)
+library(gt)
+library(ggvenn)
+library(ggridges)
+# library(hrbrthemes)
+library(gridExtra)
+library(ggpubr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(numbers)
+library(car)
+library(GGally)
+library(dotenv)
+# libraries for survival curves
+library(survival)
+library(survminer)
+library(broom)
+library(xml2)
+library(survey) # for cluster-robust chi-squared test with Rao-Scott correction
+library(rcompanion) # for calculating Cramer's V of chi-squared tests
+library(duckdb) # for handling big data
+library(showtext) # for importing and using custom fonts
+library(sysfonts)
+library(systemfonts)
+library(svglite) # for saving plots as svg to preserve custom font
+library(lme4) # Poisson GLMMs
+library(DHARMa) # GLMM residual diagnostics
+library(ineq) # for calculating gini coefficient
+library(tidyverse)
+library(dplyr) # putting dplyr at the end because for some reason it misbehaves otherwise
+library(glmnet) # for LASSO regression 
+library(metafor)
+
+# if dplyr is fighting with duckdb when trying to run Step 1 below, restart R session & fully quit R -> run this in console: install.packages(c("dbplyr", "duckdb", "dplyr")) -> then try rerunning this chunk
+# or straight in terminal: pkill -f rsession -> Rscript -e 'install.packages(c("dbplyr", "duckdb", "dplyr"), repos="https://cloud.r-project.org")'
+knitr::opts_chunk$set(echo = TRUE)
+find_repo_root <- function(start = getwd()) {
+  cur <- normalizePath(start, mustWork = TRUE)
+
+  repeat {
+    if (dir.exists(file.path(cur, "csv_full")) &&
+        file.exists(file.path(cur, "filtered_full_sample_repos.csv"))) {
+      return(cur)
+    }
+
+    parent <- dirname(cur)
+    if (identical(parent, cur)) {
+      stop("Could not find repo root containing csv_full/")
+    }
+
+    cur <- parent
+  }
+}
+
+repoRoot <- find_repo_root()
+csv_full_dir <- file.path(repoRoot, "csv_full", "")
+```
+
+# rq2 
+
+# Loading data
+Loading data workflow:
+
+```{r}
+## Analysis constants (RUN EVERY SESSION)
+
+#filters established and verified during prelim exploration (see Full_Dataset_Exploration.Rmd doc)
+outlier_commit_shas <- c("2b717338b0e02663dfce5142bd636db0b1d3958c","a3f5c98b59b7892866a49ac22ed91cd8c37865d8","038ca6696d9b821b216b8ab06c8dd48aac7750ae","cea8cd84957f4801f3e9ea1f0997fedfbe3c5e35","dc01a470926d8ee353d7627171e0d491bb8e6386","00314a6c4a2a1c422a4cf9a57b15efca1ad0e146","10763bbae6614c3dc569da892ce6453afd0143f4","ec3a5ff1142670bed5f43969581ecd179d2b8d50","66b199403e65ee29364a25cd7b7596e679030e7f","57960940f9a0b6cd9caf0f92c3592be0cad588d5","23a42d5d956b04c49276240875d8dd329eb44642","0fb2e4b1968f9db4f1cf36fe89505f536e82bc94","3760f7ddeba3cd857a4068a5c08df2800c6950ec")
+
+# these are repos we're excluding: statsig-io/docs - because it was deleted so we couldn't collect full data, the rest because according to the data they don't have any ai_coauthored commits
+# github/copilot-cli in particular was a separate discover later on, its a cli tool with no source code so we exclueded it for that reason 
+excluded_repos <- c("statsig-io/docs", "Daylily-Informatics/daylily-ephemeral-cluster", "TypedDevs/bashunit", "tscircuit/contribution-tracker", "tscircuit/tscircuit.com", "github/copilot-cli")
+
+observation_start_date <- as.POSIXct("2025-05-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
+observation_cutoff_date <- as.POSIXct("2026-05-31 23:59:59", format = "%Y-%m-%d %H:%M:%S", tz = "UTC") 
+observation_start_year_month <- "2025-05"
+observation_cutoff_year_month <- "2026-05" 
+```
+
+##  Model 1A: Binomial mixed-effects regression of corrective commit rate (Lagged AI code share)
+
+Question: Does the overall corrective commit rate rise as the previous month's Agentic code-share snapshot increases?
+```{r}
+rq2_panel_csv_path <- paste0(csv_full_dir, "rq2_repo_week_panel.csv")
+
+rq2_min_total_commits <- 3L
+
+rq2_last_finite <- function(values) {
+  values <- values[!is.na(values) & is.finite(values)]
+  if (length(values) == 0) {
+    return(NA_real_)
+  }
+  tail(values, 1)
+}
+
+rq2_week_panel_raw <- read_csv(rq2_panel_csv_path, show_col_types = FALSE)
+rq2_week_column <- intersect(c("week", "week_date", "repo_week"), names(rq2_week_panel_raw))
+if (length(rq2_week_column) == 0) {
+  stop("rq2_repo_week_panel.csv must contain one of these week columns: week, week_date, repo_week")
+}
+rq2_week_column <- rq2_week_column[[1]]
+
+rq2_week_panel <- rq2_week_panel_raw %>%
+  mutate(
+    week_date = as.Date(as.character(.data[[rq2_week_column]])),
+    repo_month = format(week_date, "%Y-%m"),
+    month_start = as.Date(paste0(repo_month, "-01")),
+    ai_share = as.numeric(ai_share),
+    total_commits = as.numeric(total_commits),
+    corrective_commits = as.numeric(corrective_commits),
+    ai_total_commits = as.numeric(ai_total_commits),
+    human_total_commits = as.numeric(human_total_commits),
+    human_corrective_commits = as.numeric(human_corrective_commits)
+  ) %>%
+  filter(repo_month >= observation_start_year_month,
+         repo_month <= observation_cutoff_year_month,
+         !(repo %in% excluded_repos))
+
+rq2_panel_lagged_code_share <- rq2_week_panel %>%
+  arrange(repo_key, week_date) %>%
+  group_by(repo_key, repo, repo_month, month_start) %>%
+  summarise(
+    # Use the last observed weekly code-share snapshot in the month, then lag it
+    # by one month below. 
+    ai_share_month = rq2_last_finite(ai_share),
+    total_commits = sum(total_commits, na.rm = TRUE),
+    corrective_commits = sum(corrective_commits, na.rm = TRUE),
+    ai_commits = sum(ai_total_commits, na.rm = TRUE),
+    human_total_commits = sum(human_total_commits, na.rm = TRUE),
+    human_corrective_commits = sum(human_corrective_commits, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(repo_key, month_start) %>%
+  group_by(repo_key) %>%
+  mutate(
+    living_line_ai_share_lag1 = lag(ai_share_month, 1),
+    ai_commit_share = if_else(total_commits > 0, ai_commits / total_commits, NA_real_),
+    obs_id_base = row_number()
+  ) %>%
+  ungroup()
+
+rq2_panel_lagged_code_share %>%
+  summarise(
+    repo_months = n(),
+    repos = n_distinct(repo_key),
+    months = n_distinct(repo_month),
+    repo_months_with_lagged_share = sum(!is.na(living_line_ai_share_lag1)),
+    mean_lagged_agentic_code_share = mean(living_line_ai_share_lag1, na.rm = TRUE)
+  )
+
+rq2_prepare_glmer_data <- function(panel, successes_col, trials_col, size_col = trials_col) {
+  panel %>%
+    filter(!is.na(living_line_ai_share_lag1),
+           is.finite(living_line_ai_share_lag1),
+           !is.na(.data[[successes_col]]),
+           !is.na(.data[[trials_col]]),
+           !is.na(.data[[size_col]]),
+           is.finite(.data[[successes_col]]),
+           is.finite(.data[[trials_col]]),
+           is.finite(.data[[size_col]]),
+           total_commits >= rq2_min_total_commits,
+           .data[[trials_col]] > 0,
+           .data[[size_col]] > 0,
+           .data[[successes_col]] >= 0,
+           .data[[successes_col]] <= .data[[trials_col]],
+           !is.na(repo_key),
+           nzchar(repo_key)) %>%
+    mutate(
+      successes = round(.data[[successes_col]]),
+      trials = round(.data[[trials_col]]),
+      failures = trials - successes,
+      log_trials = log(as.numeric(.data[[size_col]])),
+      repo_key = factor(repo_key)
+    ) %>%
+    filter(successes >= 0,
+           failures >= 0,
+           trials > 0,
+           is.finite(log_trials)) %>%
+    arrange(repo_key, month_start) %>%
+    mutate(obs_id = factor(row_number()))
+}
+
+rq2_corrective_model_data <- rq2_prepare_glmer_data(
+  rq2_panel_lagged_code_share,
+  successes_col = "corrective_commits",
+  trials_col = "total_commits",
+  size_col = "total_commits"
+)
+
+rq2_corrective_lagged_code_share_fit <- glmer(
+  cbind(successes, failures) ~
+    living_line_ai_share_lag1 +
+    log_trials +
+    (1 | repo_key) +
+    (1 | obs_id),
+  data = rq2_corrective_model_data,
+  family = binomial(link = "logit"),
+  control = glmerControl(optimizer = "bobyqa")
+)
+
+summary(rq2_corrective_lagged_code_share_fit)
+isSingular(rq2_corrective_lagged_code_share_fit)
+VarCorr(rq2_corrective_lagged_code_share_fit)
+
+# diagnostics 
+# --- DIAGNOSTIC: Convergence / singular fit ---
+# Want to see: FALSE, no convergence warnings.
+# Don't want: TRUE (repo variance ~0) or "failed to converge".
+isSingular(rq2_corrective_lagged_code_share_fit)
+
+# --- DIAGNOSTIC: Distributional fit ---
+# Test/plot: DHARMa::simulateResiduals(re.form = NULL) -> plot.
+# Want to see: QQ on the diagonal, non-significant KS, flat quantile lines.
+# Don't want: KS deviation / curved quantile lines.
+rq2_corrective_sim <- DHARMa::simulateResiduals(
+  rq2_corrective_lagged_code_share_fit,
+  simulateREs = "user-specified",
+  re.form = NULL
+)
+plot(rq2_corrective_sim)
+
+# --- DIAGNOSTIC: Overdispersion ---
+# Test: Pearson chi-square / residual df (same as the GLM version, with GLMM-correct df)
+# Want to see: ratio ~1.
+# Don't want: >1 — SEs too small; refit with glmer.nb (same formula).
+rq2_corrective_rp <- residuals(rq2_corrective_lagged_code_share_fit, type = "pearson")
+rq2_corrective_rdf <- nobs(rq2_corrective_lagged_code_share_fit) -
+  length(fixef(rq2_corrective_lagged_code_share_fit)) -
+  length(getME(rq2_corrective_lagged_code_share_fit, "theta"))
+c(chisq = sum(rq2_corrective_rp^2),
+  ratio = sum(rq2_corrective_rp^2) / rq2_corrective_rdf,
+  rdf = rq2_corrective_rdf,
+  p = pchisq(sum(rq2_corrective_rp^2), df = rq2_corrective_rdf, lower.tail = FALSE))
+
+# --- DIAGNOSTIC: Zero-success check ---
+# Grouped-binomial model: observed repo-months with zero corrective commits vs
+# expected zero-success rows under the fitted binomial probabilities.
+rq2_corrective_successes <- rq2_corrective_model_data$successes
+rq2_corrective_trials <- rq2_corrective_model_data$trials
+rq2_corrective_p_hat <- fitted(rq2_corrective_lagged_code_share_fit)
+c(observed = sum(rq2_corrective_successes == 0),
+  expected = sum(dbinom(0, size = rq2_corrective_trials, prob = rq2_corrective_p_hat)),
+  ratio = sum(rq2_corrective_successes == 0) /
+    sum(dbinom(0, size = rq2_corrective_trials, prob = rq2_corrective_p_hat)))
+```
+
+
+##  Model 1B: Binomial mixed-effects regression of human corrective commit rate (Lagged AI code share)
+
+Question: Does the human-authored corrective commit rate rise as the previous month's Agentic code-share snapshot increases?
+```{r}
+rq2_human_corrective_model_data <- rq2_prepare_glmer_data(
+  rq2_panel_lagged_code_share,
+  successes_col = "human_corrective_commits",
+  trials_col = "human_total_commits",
+  size_col = "human_total_commits"
+)
+
+rq2_human_corrective_lagged_code_share_fit <- glmer(
+  cbind(successes, failures) ~
+    living_line_ai_share_lag1 +
+    log_trials +
+    (1 | repo_key) +
+    (1 | obs_id),
+  data = rq2_human_corrective_model_data,
+  family = binomial(link = "logit"),
+  control = glmerControl(optimizer = "bobyqa")
+)
+
+summary(rq2_human_corrective_lagged_code_share_fit)
+isSingular(rq2_human_corrective_lagged_code_share_fit)
+VarCorr(rq2_human_corrective_lagged_code_share_fit)
+
+# diagnostics 
+# --- DIAGNOSTIC: Convergence / singular fit ---
+# Want to see: FALSE, no convergence warnings.
+# Don't want: TRUE (repo variance ~0) or "failed to converge".
+isSingular(rq2_human_corrective_lagged_code_share_fit)
+
+# --- DIAGNOSTIC: Distributional fit ---
+# Test/plot: DHARMa::simulateResiduals(re.form = NULL) -> plot.
+# Want to see: QQ on the diagonal, non-significant KS, flat quantile lines.
+# Don't want: KS deviation / curved quantile lines.
+rq2_human_corrective_sim <- DHARMa::simulateResiduals(
+  rq2_human_corrective_lagged_code_share_fit,
+  simulateREs = "user-specified",
+  re.form = NULL
+)
+plot(rq2_human_corrective_sim)
+
+# --- DIAGNOSTIC: Overdispersion ---
+# Test: Pearson chi-square / residual df (same as the GLM version, with GLMM-correct df)
+# Want to see: ratio ~1.
+# Don't want: >1 — SEs too small; refit with glmer.nb (same formula).
+rq2_human_corrective_rp <- residuals(rq2_human_corrective_lagged_code_share_fit, type = "pearson")
+rq2_human_corrective_rdf <- nobs(rq2_human_corrective_lagged_code_share_fit) -
+  length(fixef(rq2_human_corrective_lagged_code_share_fit)) -
+  length(getME(rq2_human_corrective_lagged_code_share_fit, "theta"))
+c(chisq = sum(rq2_human_corrective_rp^2),
+  ratio = sum(rq2_human_corrective_rp^2) / rq2_human_corrective_rdf,
+  rdf = rq2_human_corrective_rdf,
+  p = pchisq(sum(rq2_human_corrective_rp^2), df = rq2_human_corrective_rdf, lower.tail = FALSE))
+
+# --- DIAGNOSTIC: Zero-success check ---
+# Grouped-binomial model: observed repo-months with zero human corrective commits
+# vs expected zero-success rows under the fitted binomial probabilities.
+rq2_human_corrective_successes <- rq2_human_corrective_model_data$successes
+rq2_human_corrective_trials <- rq2_human_corrective_model_data$trials
+rq2_human_corrective_p_hat <- fitted(rq2_human_corrective_lagged_code_share_fit)
+c(observed = sum(rq2_human_corrective_successes == 0),
+  expected = sum(dbinom(0, size = rq2_human_corrective_trials, prob = rq2_human_corrective_p_hat)),
+  ratio = sum(rq2_human_corrective_successes == 0) /
+    sum(dbinom(0, size = rq2_human_corrective_trials, prob = rq2_human_corrective_p_hat)))
+```
+
+
