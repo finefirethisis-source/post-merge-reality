@@ -1,7 +1,7 @@
 ### Do These Violent Delights Have Violent Ends? Measuring the Post-Merge Fate of Agentic Code
 
 <p align="center">
-    <a href="https://arxiv.org/TEMP"><img src="https://img.shields.io/badge/📃-Arxiv-b31b1b?style=for-the-badge"></a>
+    <a href="https://arxiv.org/pdf/2607.09902"><img src="https://img.shields.io/badge/📃-Arxiv-b31b1b?style=for-the-badge"></a>
     <a href="https://post-merge-reality.github.io"><img src="https://img.shields.io/badge/🌐-Webpage-3d85c6?style=for-the-badge"></a>
     <a href="https://github.com/post-merge-reality/post-merge-reality/blob/master/LICENSE"><img src="https://img.shields.io/badge/Apache-LICENSE-b0aeaf?style=for-the-badge"></a>
 </p>
@@ -284,7 +284,6 @@ Run `R_code/Data_Analysis_rq3.Rmd` after the RQ1 weighted line table exists. The
              Measuring the Post-Merge Fate of Agentic Code},
   author  = {Xia, Chunqiu Steven and Miller, Courtney},
   year    = {2026},
-  journal = {arXiv preprint arXiv:temp},
-  url     = {https://arxiv.org/pdf/temp}
+  journal = {arXiv preprint arXiv:2607.09902},
 }
 ```
