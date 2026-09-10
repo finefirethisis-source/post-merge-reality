@@ -1,171 +1,360 @@
 from __future__ import annotations
 
 import csv
-import gzip
+import hashlib
 import json
-from collections import defaultdict
+import shutil
+from collections import Counter, defaultdict
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-FINEGRAY = Path("dev/analysis/output_rq1/rq1_fine_gray_maintenance_class_line_data.csv.gz")
-MODEL = Path("dev/analysis/output_rq1/rq1_fine_gray_model_summary.csv")
+from src.webscrape import github_commit_scraper as gcs
+
 RQ1A = Path("dev/analysis/output_rq1a_explore/rq1_origin_commit_maintenance_summary.csv")
 RQ1B = Path("dev/analysis/output_rq1b_explore/rq1b_origin_commit_terminal_maintenance_summary.csv")
+META = Path("filtered_full_sample_repos.csv")
 OUTPUT = Path("techledger_phase0/checkpoint_summary.json")
-HORIZON = 180.0
+WORK = Path("/tmp/techledger_exact180")
+MATURE_CUTOFF = datetime(2025, 12, 2, 23, 59, 59, tzinfo=timezone.utc)
+HORIZON_DAYS = 180.0
+PILOT_REPOS = 3
 
 
-def aj_cif_at_horizon(rows_by_time: dict[float, dict[str, float]], total_weight: float, horizon: float) -> dict:
-    y = float(total_weight)
-    survival = 1.0
-    cif_corrective = 0.0
-    events_corrective = 0.0
-    events_competing = 0.0
-    censored_before_horizon = 0.0
+def parse_dt(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 
-    for t in sorted(rows_by_time):
-        if t > horizon or y <= 0:
+
+def as_int(value: str | None) -> int:
+    try:
+        return int(float(value or 0))
+    except ValueError:
+        return 0
+
+
+def is_test_repo(repo: str) -> bool:
+    h = int(hashlib.sha256(repo.encode("utf-8")).hexdigest()[:8], 16)
+    return h % 10 < 3
+
+
+def pct(n: float, d: float) -> float | None:
+    return n / d if d else None
+
+
+def median(values: list[float]) -> float | None:
+    if not values:
+        return None
+    s = sorted(values)
+    m = len(s) // 2
+    return s[m] if len(s) % 2 else (s[m - 1] + s[m]) / 2.0
+
+
+def read_assets_and_labels():
+    assets_by_repo: dict[str, dict[str, dict]] = defaultdict(dict)
+    commit_label: dict[tuple[str, str], str] = {}
+    label_conflicts = 0
+
+    with RQ1A.open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            repo = (row.get("repo") or row.get("repo_key") or "").strip()
+            sha = (row.get("origin_commit_sha") or "").strip()
+            if not repo or not sha:
+                continue
+            maintenance = (row.get("origin_maintenance_class") or "").strip()
+            if maintenance:
+                key = (repo, sha)
+                prior = commit_label.get(key)
+                if prior and prior != maintenance:
+                    label_conflicts += 1
+                else:
+                    commit_label[key] = maintenance
+
+            if (row.get("origin_primary_operational_intent") or "").strip() != "feature":
+                continue
+            tracked = as_int(row.get("tracked_line_count"))
+            if tracked < 20:
+                continue
+            dt = parse_dt(row.get("origin_commit_date"))
+            if dt is None or dt > MATURE_CUTOFF:
+                continue
+            assets_by_repo[repo][sha] = {
+                "sha": sha,
+                "origin_date": dt,
+                "tracked_packaged": tracked,
+                "origin_role": (row.get("origin_role") or "").strip(),
+            }
+
+    # RQ1B's first-terminal SHA/class pair supplies labels for many commits that
+    # may not themselves have introduced tracked lines and therefore may be absent
+    # from RQ1A as origin commits.
+    with RQ1B.open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            repo = (row.get("repo") or row.get("repo_key") or "").strip()
+            sha = (row.get("first_terminal_commit_sha") or "").strip()
+            maintenance = (row.get("first_terminal_maintenance_class") or "").strip()
+            if not repo or not sha or sha == "mixed" or not maintenance or maintenance == "mixed":
+                continue
+            key = (repo, sha)
+            prior = commit_label.get(key)
+            if prior and prior != maintenance:
+                label_conflicts += 1
+            else:
+                commit_label[key] = maintenance
+
+    return assets_by_repo, commit_label, label_conflicts
+
+
+def select_pilot(assets_by_repo: dict[str, dict[str, dict]]) -> list[dict]:
+    metadata = {}
+    with META.open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            repo = (row.get("repo_slug") or "").strip()
+            if repo:
+                metadata[repo] = row
+
+    candidates = []
+    for repo, assets in assets_by_repo.items():
+        n = len(assets)
+        if not 40 <= n <= 140:
+            continue
+        m = metadata.get(repo, {})
+        branch = (m.get("branch_checked") or "").strip() or "main"
+        candidates.append({
+            "repo": repo,
+            "branch": branch,
+            "assets": n,
+            "language": (m.get("primary_language") or "").strip(),
+            "prs": as_int(m.get("num_PRs")),
+            "min_monthly_commits": as_int(m.get("min_monthly_commits_observed")),
+            "test_split": is_test_repo(repo),
+        })
+
+    # Prefer modest repositories and ~75 target assets; keep language diversity
+    # when possible. This is only a pipeline-validation pilot, not inference.
+    candidates.sort(key=lambda x: (x["prs"] if x["prs"] > 0 else 10**9, abs(x["assets"] - 75), x["repo"]))
+    selected = []
+    languages = set()
+    for c in candidates:
+        if c["language"] and c["language"] in languages:
+            continue
+        selected.append(c)
+        if c["language"]:
+            languages.add(c["language"])
+        if len(selected) == PILOT_REPOS:
             break
-        counts = rows_by_time[t]
-        d_corr = counts.get("corrective", 0.0)
-        d_other = counts.get("other_event", 0.0)
-        cens = counts.get("censored", 0.0)
-        d_all = d_corr + d_other
-        if d_all > y + 1e-9:
-            raise RuntimeError(f"events exceed risk set at t={t}: events={d_all}, risk={y}")
-        if y > 0:
-            cif_corrective += survival * (d_corr / y)
-            survival *= 1.0 - (d_all / y)
-        y -= d_all + cens
-        events_corrective += d_corr
-        events_competing += d_other
-        censored_before_horizon += cens
+    if len(selected) < PILOT_REPOS:
+        for c in candidates:
+            if c in selected:
+                continue
+            selected.append(c)
+            if len(selected) == PILOT_REPOS:
+                break
+    return selected
 
+
+def reconcile_and_measure(repo: str, assets: dict[str, dict], line_path: Path, commit_label: dict[tuple[str, str], str]) -> dict:
+    raw_counts = Counter()
+    corrective_180 = Counter()
+    terminal_within_180 = Counter()
+    unlabeled_terminal_lines = Counter()
+    labeled_terminal_lines = Counter()
+    unlabeled_terminal_shas = set()
+    labeled_terminal_shas = set()
+
+    with line_path.open("r", encoding="utf-8") as handle:
+        for text in handle:
+            row = json.loads(text)
+            sha = row.get("origin_commit_sha")
+            if sha not in assets:
+                continue
+            raw_counts[sha] += 1
+            terminal_date = parse_dt(row.get("terminal_commit_date"))
+            if terminal_date is None:
+                continue
+            age = (terminal_date - assets[sha]["origin_date"]).total_seconds() / 86400.0
+            if age < 0 or age > HORIZON_DAYS:
+                continue
+            terminal_within_180[sha] += 1
+            terminal_sha = (row.get("terminal_commit_sha") or "").strip()
+            klass = commit_label.get((repo, terminal_sha)) if terminal_sha else None
+            if klass:
+                labeled_terminal_lines[sha] += 1
+                labeled_terminal_shas.add(terminal_sha)
+                if klass == "corrective":
+                    corrective_180[sha] += 1
+            else:
+                unlabeled_terminal_lines[sha] += 1
+                if terminal_sha:
+                    unlabeled_terminal_shas.add(terminal_sha)
+
+    per_asset = []
+    exact_tracked_matches = 0
+    total_packaged = 0
+    total_raw = 0
+    for sha, asset in assets.items():
+        raw = raw_counts[sha]
+        packaged = asset["tracked_packaged"]
+        if raw == packaged:
+            exact_tracked_matches += 1
+        total_packaged += packaged
+        total_raw += raw
+        per_asset.append({
+            "sha": sha,
+            "role": asset["origin_role"],
+            "tracked": raw,
+            "tracked_packaged": packaged,
+            "corrective_180": corrective_180[sha],
+            "terminal_180": terminal_within_180[sha],
+            "unlabeled_terminal_180": unlabeled_terminal_lines[sha],
+        })
+
+    usable = [a for a in per_asset if a["tracked"] > 0]
+    total_corrective = sum(a["corrective_180"] for a in usable)
+    total_tracked = sum(a["tracked"] for a in usable)
+    zero_share = pct(sum(1 for a in usable if a["corrective_180"] == 0), len(usable))
+    ranked = sorted(usable, key=lambda a: a["corrective_180"], reverse=True)
+    topn = max(1, round(len(ranked) * 0.10)) if ranked else 0
+    top10_capture = pct(sum(a["corrective_180"] for a in ranked[:topn]), total_corrective)
+
+    role_stats = {}
+    for role in ("AI", "Human"):
+        rs = [a for a in usable if a["role"] == role]
+        tr = sum(a["tracked"] for a in rs)
+        corr = sum(a["corrective_180"] for a in rs)
+        role_stats[role] = {
+            "assets": len(rs),
+            "tracked_lines": tr,
+            "corrective_180_lines": corr,
+            "line_weighted_corrective_fraction": pct(corr, tr),
+            "median_asset_corrective_fraction": median([a["corrective_180"] / a["tracked"] for a in rs if a["tracked"]]),
+        }
+
+    labeled = sum(labeled_terminal_lines.values())
+    unlabeled = sum(unlabeled_terminal_lines.values())
     return {
-        "initial_weighted_lines": total_weight,
-        "day180_corrective_cumulative_incidence": cif_corrective,
-        "day180_event_free_survival": survival,
-        "corrective_events_observed_by_day180": events_corrective,
-        "competing_events_observed_by_day180": events_competing,
-        "censored_before_day180": censored_before_horizon,
-        "risk_set_remaining_after_day180_processing": y,
+        "target_assets": len(assets),
+        "raw_assets_seen": len(usable),
+        "exact_tracked_line_count_matches": exact_tracked_matches,
+        "exact_tracked_match_share": pct(exact_tracked_matches, len(assets)),
+        "packaged_tracked_lines": total_packaged,
+        "reconstructed_tracked_lines": total_raw,
+        "reconstructed_to_packaged_line_ratio": pct(total_raw, total_packaged),
+        "terminal_lines_within_180": sum(terminal_within_180.values()),
+        "labeled_terminal_lines_within_180": labeled,
+        "unlabeled_terminal_lines_within_180": unlabeled,
+        "terminal_line_label_coverage": pct(labeled, labeled + unlabeled),
+        "unique_labeled_terminal_shas": len(labeled_terminal_shas),
+        "unique_unlabeled_terminal_shas": len(unlabeled_terminal_shas),
+        "total_corrective_180_lines": total_corrective,
+        "aggregate_corrective_180_fraction": pct(total_corrective, total_tracked),
+        "zero_corrective_asset_share": zero_share,
+        "top10_asset_share_of_corrective_180_burden": top10_capture,
+        "by_origin_role": role_stats,
     }
+
+
+def scrape_repo(repo_info: dict, assets: dict[str, dict], commit_label: dict[tuple[str, str], str]) -> dict:
+    repo = repo_info["repo"]
+    branch = repo_info["branch"]
+    repo_dir = WORK / "repos" / repo.replace("/", "__")
+    output_root = WORK / "output"
+    if repo_dir.exists():
+        shutil.rmtree(repo_dir)
+    repo_dir = gcs.ensure_local_repo(repo, WORK / "repos", skip_fetch=False, full_clone=False)
+    try:
+        earliest = min(a["origin_date"] for a in assets.values())
+        latest = max(a["origin_date"] for a in assets.values())
+        since = earliest - timedelta(days=2)
+        horizon_end = latest + timedelta(days=HORIZON_DAYS, seconds=1)
+
+        branch_commits, _true_head = gcs.fetch_branch_commits(repo, repo_dir, branch, since=since)
+        observation_commits = [c for c in branch_commits if gcs.commit_datetime(c) <= horizon_end]
+        available = {c["sha"] for c in observation_commits}
+        target_shas = set(assets) & available
+        missing_origins = sorted(set(assets) - target_shas)
+        origin_commits = [c for c in observation_commits if c["sha"] in target_shas]
+        if not origin_commits:
+            raise RuntimeError(f"No target origin commits found for {repo}")
+        branch_end_sha = observation_commits[-1]["sha"]
+
+        detailed = gcs.add_git_file_changes(repo, repo_dir, observation_commits)
+        detailed_by_sha = {c["sha"]: c for c in detailed}
+        origin_detailed = [detailed_by_sha[c["sha"]] for c in origin_commits]
+
+        gcs.write_outputs(
+            origin_detailed,
+            output_root / repo.replace("/", "__"),
+            repo_dir,
+            blame_workers=2,
+            branch=branch,
+            branch_end_sha=branch_end_sha,
+            blame_since=since,
+            lifecycle_commits=detailed,
+            lifecycle_origin_shas=target_shas,
+        )
+
+        line_path = output_root / repo.replace("/", "__") / "line_lifecycle.jsonl"
+        measured = reconcile_and_measure(repo, {sha: assets[sha] for sha in target_shas}, line_path, commit_label)
+        measured["missing_target_origin_commits"] = len(missing_origins)
+        measured["branch"] = branch
+        measured["observation_endpoint_sha"] = branch_end_sha
+        measured["earliest_target_origin"] = earliest.isoformat()
+        measured["latest_target_origin"] = latest.isoformat()
+        measured["observation_horizon_end"] = horizon_end.isoformat()
+        return measured
+    finally:
+        gcs.remove_cloned_repo_dir(repo_dir)
 
 
 def main() -> None:
-    # Audit the committed compact asset summaries.
-    with RQ1A.open("r", encoding="utf-8", newline="") as handle:
-        rq1a_header = next(csv.reader(handle))
-    with RQ1B.open("r", encoding="utf-8", newline="") as handle:
-        rq1b_header = next(csv.reader(handle))
+    if WORK.exists():
+        shutil.rmtree(WORK)
+    WORK.mkdir(parents=True, exist_ok=True)
 
-    # Recompute a day-180 provenance anchor from the packaged weighted line-survival table.
-    by_group_time: dict[str, dict[float, dict[str, float]]] = defaultdict(
-        lambda: defaultdict(lambda: defaultdict(float))
-    )
-    total_by_group: dict[str, float] = defaultdict(float)
-    finegray_header: list[str] = []
-    row_count = 0
+    assets_by_repo, commit_label, label_conflicts = read_assets_and_labels()
+    pilot = select_pilot(assets_by_repo)
+    if len(pilot) < PILOT_REPOS:
+        raise RuntimeError(f"Could only select {len(pilot)} pilot repositories")
 
-    with gzip.open(FINEGRAY, "rt", encoding="utf-8", newline="") as handle:
-        reader = csv.DictReader(handle)
-        finegray_header = list(reader.fieldnames or [])
-        for row in reader:
-            row_count += 1
-            group = (row.get("origin_group") or "").strip()
-            if group not in {"AI", "Human"}:
-                continue
-            weight = float(row.get("weight") or 0)
-            if weight <= 0:
-                continue
-            t = float(row.get("survival_days_positive") or row.get("survival_days") or 0)
-            observed = int(float(row.get("event_observed") or 0))
-            event_type = (row.get("event_type") or "").strip()
-            total_by_group[group] += weight
-            if observed:
-                key = "corrective" if event_type == "corrective" else "other_event"
-            else:
-                key = "censored"
-            by_group_time[group][t][key] += weight
-
-    cif = {
-        group: aj_cif_at_horizon(by_group_time[group], total_by_group[group], HORIZON)
-        for group in ("AI", "Human")
-    }
-    ai_cif = cif["AI"]["day180_corrective_cumulative_incidence"]
-    human_cif = cif["Human"]["day180_corrective_cumulative_incidence"]
-    cif["comparison"] = {
-        "AI_to_Human_day180_CIF_ratio": ai_cif / human_cif if human_cif else None,
-        "AI_minus_Human_day180_CIF_percentage_points": (ai_cif - human_cif) * 100.0,
-    }
-
-    # Read the authors' fitted corrective provenance effect as the sanity anchor.
-    paper_corrective = None
-    with MODEL.open("r", encoding="utf-8", newline="") as handle:
-        for row in csv.DictReader(handle):
-            if (row.get("event_type") or "").strip() == "corrective" and (row.get("status") or "").strip() == "fit":
-                paper_corrective = {
-                    "subhazard_ratio": float(row["subhazard_ratio"]),
-                    "ci_lower": float(row["ci_lower"]),
-                    "ci_upper": float(row["ci_upper"]),
-                    "wald_p_value": float(row["wald_p_value"]),
-                    "weighted_lines": int(float(row["weighted_lines"])),
-                    "human_lines": int(float(row["human_lines"])),
-                    "ai_lines": int(float(row["ai_lines"])),
-                }
-                break
-
-    asset_exact180_possible = (
-        "origin_commit_sha" in finegray_header
-        and "survival_days" in finegray_header
-        and "event_type" in finegray_header
-    )
+    results = {}
+    failures = []
+    for info in pilot:
+        repo = info["repo"]
+        try:
+            results[repo] = scrape_repo(repo, assets_by_repo[repo], commit_label)
+        except Exception as exc:
+            failures.append({"repo": repo, "error": str(exc)[:4000]})
+            break
 
     summary = {
-        "purpose": "Correct the TechLedger experiment outcome to an exact 180-day horizon and audit whether the packaged repository can support that outcome per admitted asset.",
-        "required_asset_level_fields": [
-            "origin_commit_sha",
-            "origin_commit_date",
-            "origin provenance",
-            "one row or otherwise recoverable timing for each original line's first terminal intervention",
-            "terminal maintenance class",
-        ],
-        "packaged_data_audit": {
-            "rq1a_asset_summary_has_origin_commit_sha": "origin_commit_sha" in rq1a_header,
-            "rq1a_asset_summary_has_only_first_termination_days_not_each_line_event_time": "first_termination_days" in rq1a_header,
-            "rq1b_asset_summary_has_origin_commit_sha": "origin_commit_sha" in rq1b_header,
-            "rq1b_asset_summary_has_total_corrective_line_count": "terminal_corrective_line_count" in rq1b_header,
-            "rq1b_asset_summary_has_first_termination_days": "first_termination_days" in rq1b_header,
-            "rq1b_asset_summary_has_per_corrective_line_event_times": False,
-            "finegray_weighted_line_table_rows": row_count,
-            "finegray_has_survival_days": "survival_days" in finegray_header,
-            "finegray_has_event_type": "event_type" in finegray_header,
-            "finegray_has_origin_provenance": "origin_group" in finegray_header,
-            "finegray_has_origin_commit_sha": "origin_commit_sha" in finegray_header,
-            "finegray_has_origin_feature_intent": False,
-            "exact_day180_burden_per_asset_recoverable_from_packaged_files": asset_exact180_possible,
+        "purpose": "Validate reconstruction of exact 180-day corrective burden per feature admission using the authors' own line-lifecycle scraper on a small pilot.",
+        "horizon_days": HORIZON_DAYS,
+        "asset_definition": "feature-classified origin commit with >=20 packaged tracked lines and origin date <= 2025-12-02",
+        "pilot_selection": pilot,
+        "terminal_label_source": "Packaged RQ1A origin_maintenance_class plus RQ1B first_terminal_commit_sha/class mapping; no new LLM classification.",
+        "commit_label_map_size": len(commit_label),
+        "commit_label_conflicts": label_conflicts,
+        "results": results,
+        "failures": failures,
+        "success_criteria": {
+            "all_selected_repos_complete": len(failures) == 0 and len(results) == len(pilot),
+            "tracked_line_reconciliation_target": ">=95% exact asset matches and reconstructed/package aggregate ratio near 1.0",
+            "terminal_classification_coverage_target": ">=95% of within-180 terminal lines labeled",
         },
-        "why_asset_exact180_is_not_recoverable": (
-            "The per-commit RQ1b table retains the total number of corrective first-intervention lines across the full follow-up but not the event time of each of those lines. "
-            "The Fine-Gray table retains line event time and provenance but deliberately compresses away origin_commit_sha. Therefore corrective lines occurring after day 180 cannot be removed from each specific asset without the raw line_lifecycle data."
-        ),
-        "day180_population_provenance_anchor": cif,
-        "authors_corrective_fine_gray_anchor": paper_corrective,
-        "invalidated_prior_techledger_results": [
-            "corrective-burden concentration based on variable follow-up through 2026-05-31",
-            "size/activity/Sonar burden baselines based on that variable-follow-up asset outcome",
-            "individual marker screen based on that variable-follow-up asset outcome",
-        ],
-        "still_valid_descriptive_finding": (
-            "The source paper's provenance effect remains a valid external/statistical anchor; this checkpoint separately estimates the day-180 population cumulative incidence from its packaged weighted survival table."
-        ),
-        "next_required_data": (
-            "Raw line_lifecycle data (or an equivalent table preserving origin_commit_sha, terminal event class, and terminal event time) is required before rerunning TechLedger's per-asset 180-day experiments correctly."
-        ),
-        "guardrail": "Do not use the old per-asset corrective counts for further TechLedger modeling once exact 180-day follow-up is adopted.",
+        "guardrail": "This pilot validates the corrected outcome pipeline only. Do not infer TechLedger marker effects from three selected repositories.",
+        "next_if_success": "Scale the same exact-180 reconstruction across the study repositories in batches, then rerun burden concentration and marker screening on equal follow-up.",
     }
-
     OUTPUT.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2, sort_keys=True))
+    if failures:
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":
