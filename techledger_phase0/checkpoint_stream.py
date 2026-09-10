@@ -4,9 +4,14 @@ import csv
 import hashlib
 import json
 import shutil
+import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from src.webscrape import github_commit_scraper as gcs
 
@@ -91,9 +96,6 @@ def read_assets_and_labels():
                 "origin_role": (row.get("origin_role") or "").strip(),
             }
 
-    # RQ1B's first-terminal SHA/class pair supplies labels for many commits that
-    # may not themselves have introduced tracked lines and therefore may be absent
-    # from RQ1A as origin commits.
     with RQ1B.open("r", encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
             repo = (row.get("repo") or row.get("repo_key") or "").strip()
@@ -136,8 +138,6 @@ def select_pilot(assets_by_repo: dict[str, dict[str, dict]]) -> list[dict]:
             "test_split": is_test_repo(repo),
         })
 
-    # Prefer modest repositories and ~75 target assets; keep language diversity
-    # when possible. This is only a pipeline-validation pilot, not inference.
     candidates.sort(key=lambda x: (x["prs"] if x["prs"] > 0 else 10**9, abs(x["assets"] - 75), x["repo"]))
     selected = []
     languages = set()
