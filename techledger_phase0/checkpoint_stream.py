@@ -92,3 +92,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# Triggered after workflow creation so Actions can detect the path change.
