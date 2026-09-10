@@ -1,104 +1,391 @@
 {
-  "cohort_and_join": {
-    "assets_missing_prior_week_panel_context": 207,
-    "assets_with_prior_week_panel_context": 18462,
-    "matched_corrective_outcomes": 18462,
-    "mature_substantive_feature_assets_before_panel_join": 18669,
-    "repo_overlap": 0,
-    "test_assets": 6142,
-    "test_repositories": 51,
-    "train_assets": 12320,
-    "train_repositories": 129
-  },
-  "held_out_actual_top10pct_burden_share": 0.8707950011084017,
-  "interpretation_guardrail": "This controls repository-level recent activity and codebase health, not file/subsystem-local pre-admission churn. Persistence of residual concentration would justify a stronger local-churn baseline before TechLedger-specific predictors.",
-  "leakage_control": "An admission in week W receives repository context only from W-1; admission-week and all post-admission fields are excluded.",
-  "models": {
-    "activity_churn": {
-      "features": [
-        "asset_tracked_lines",
-        "is_ai_origin",
-        "total_commits",
-        "total_changed_lines",
-        "corrective_commits",
-        "corrective_rate",
-        "tracked_line_churn_rate",
-        "living_tracked_lines_at_week_start"
-      ],
-      "test_metrics": {
-        "actual_burden_captured_by_top10pct_predicted": 0.6242933939259587,
-        "actual_burden_captured_by_top20pct_predicted": 0.7520505431168255,
-        "log_count_pearson": 0.41712146467489364,
-        "log_count_r2": -0.38076769942336686,
-        "mean_poisson_deviance": 79.83965884770294,
-        "observed_corrective_lines": 144352.0,
-        "positive_excess_lines": 91312.0803324792,
-        "positive_excess_share_of_observed": 0.6325653980026547,
-        "predicted_corrective_lines": 163498.0519623416,
-        "prediction_to_observed_ratio": 1.1326344765735257,
-        "test_assets": 6142,
-        "top10pct_share_of_positive_excess": 0.9606066458733119
-      },
-      "train_only_calibration_scale": 1.000000000000029
+  "all_eligible": [
+    {
+      "ai_feature_assets": 5,
+      "forks": 268,
+      "mature_feature_assets": 100,
+      "min_monthly_commits_observed": 195,
+      "primary_language": "TypeScript",
+      "prs": 2037,
+      "repo": "hey-api/openapi-ts",
+      "stars": 3511
     },
-    "activity_churn_sonar": {
-      "features": [
-        "asset_tracked_lines",
-        "is_ai_origin",
-        "total_commits",
-        "total_changed_lines",
-        "corrective_commits",
-        "corrective_rate",
-        "tracked_line_churn_rate",
-        "living_tracked_lines_at_week_start",
-        "sonar_ncloc",
-        "sonar_issue_count",
-        "sonar_bug_count",
-        "sonar_vulnerability_count",
-        "sonar_code_smell_count",
-        "sonar_complexity",
-        "sonar_cognitive_complexity",
-        "sonar_duplicated_lines_density",
-        "sonar_maintainability_effort"
-      ],
-      "test_metrics": {
-        "actual_burden_captured_by_top10pct_predicted": 0.6244804367102638,
-        "actual_burden_captured_by_top20pct_predicted": 0.7531520172910663,
-        "log_count_pearson": 0.4087602392288317,
-        "log_count_r2": -0.3482644675853037,
-        "mean_poisson_deviance": 86.73101163171131,
-        "observed_corrective_lines": 144352.0,
-        "positive_excess_lines": 97668.14589568858,
-        "positive_excess_share_of_observed": 0.6765971091199885,
-        "predicted_corrective_lines": 154634.6797409605,
-        "prediction_to_observed_ratio": 1.0712333721802296,
-        "test_assets": 6142,
-        "top10pct_share_of_positive_excess": 0.9587662871120076
-      },
-      "train_only_calibration_scale": 1.0000000000000087
+    {
+      "ai_feature_assets": 77,
+      "forks": 726,
+      "mature_feature_assets": 100,
+      "min_monthly_commits_observed": 225,
+      "primary_language": "Rust",
+      "prs": 4717,
+      "repo": "jdx/mise",
+      "stars": 21310
     },
-    "size_only": {
-      "features": [
-        "asset_tracked_lines"
-      ],
-      "test_metrics": {
-        "actual_burden_captured_by_top10pct_predicted": 0.6357445688317446,
-        "actual_burden_captured_by_top20pct_predicted": 0.7582853025936599,
-        "log_count_pearson": 0.4281087005286947,
-        "log_count_r2": -0.3494810459117239,
-        "mean_poisson_deviance": 70.11276140345926,
-        "observed_corrective_lines": 144352.0,
-        "positive_excess_lines": 90978.60633532093,
-        "positive_excess_share_of_observed": 0.6302552533759209,
-        "predicted_corrective_lines": 152607.31479540895,
-        "prediction_to_observed_ratio": 1.0571887801721414,
-        "test_assets": 6142,
-        "top10pct_share_of_positive_excess": 0.9605458648800208
-      },
-      "train_only_calibration_scale": 0.9999999999999889
+    {
+      "ai_feature_assets": 6,
+      "forks": 232,
+      "mature_feature_assets": 97,
+      "min_monthly_commits_observed": 139,
+      "primary_language": "TypeScript",
+      "prs": 5960,
+      "repo": "web-infra-dev/rsbuild",
+      "stars": 2997
+    },
+    {
+      "ai_feature_assets": 14,
+      "forks": 10662,
+      "mature_feature_assets": 94,
+      "min_monthly_commits_observed": 246,
+      "primary_language": "Ruby",
+      "prs": 11264,
+      "repo": "Homebrew/brew",
+      "stars": 45401
+    },
+    {
+      "ai_feature_assets": 30,
+      "forks": 675,
+      "mature_feature_assets": 92,
+      "min_monthly_commits_observed": 23,
+      "primary_language": "TypeScript",
+      "prs": 3277,
+      "repo": "microsoft/vscode-pull-request-github",
+      "stars": 2487
+    },
+    {
+      "ai_feature_assets": 2,
+      "forks": 626,
+      "mature_feature_assets": 89,
+      "min_monthly_commits_observed": 114,
+      "primary_language": "TypeScript",
+      "prs": 6020,
+      "repo": "medplum/medplum",
+      "stars": 2008
+    },
+    {
+      "ai_feature_assets": 1,
+      "forks": 75,
+      "mature_feature_assets": 82,
+      "min_monthly_commits_observed": 234,
+      "primary_language": "Ruby",
+      "prs": 4098,
+      "repo": "fjordllc/bootcamp",
+      "stars": 294
+    },
+    {
+      "ai_feature_assets": 17,
+      "forks": 30,
+      "mature_feature_assets": 81,
+      "min_monthly_commits_observed": 83,
+      "primary_language": "JavaScript",
+      "prs": 527,
+      "repo": "thedotmack/claude-mem",
+      "stars": 408
+    },
+    {
+      "ai_feature_assets": 5,
+      "forks": 18,
+      "mature_feature_assets": 79,
+      "min_monthly_commits_observed": 73,
+      "primary_language": "Go",
+      "prs": 567,
+      "repo": "volcano-sh/kthena",
+      "stars": 64
+    },
+    {
+      "ai_feature_assets": 3,
+      "forks": 235,
+      "mature_feature_assets": 122,
+      "min_monthly_commits_observed": 18,
+      "primary_language": "CSS",
+      "prs": 390,
+      "repo": "Floorp-Projects/Floorp",
+      "stars": 7747
+    },
+    {
+      "ai_feature_assets": 16,
+      "forks": 299,
+      "mature_feature_assets": 126,
+      "min_monthly_commits_observed": 45,
+      "primary_language": "Dart",
+      "prs": 1849,
+      "repo": "serverpod/serverpod",
+      "stars": 2936
+    },
+    {
+      "ai_feature_assets": 6,
+      "forks": 1173,
+      "mature_feature_assets": 127,
+      "min_monthly_commits_observed": 120,
+      "primary_language": "Go",
+      "prs": 7757,
+      "repo": "temporalio/temporal",
+      "stars": 16547
+    },
+    {
+      "ai_feature_assets": 7,
+      "forks": 319,
+      "mature_feature_assets": 71,
+      "min_monthly_commits_observed": 72,
+      "primary_language": "Rust",
+      "prs": 2720,
+      "repo": "Azure/azure-sdk-for-rust",
+      "stars": 859
+    },
+    {
+      "ai_feature_assets": 52,
+      "forks": 2012,
+      "mature_feature_assets": 132,
+      "min_monthly_commits_observed": 227,
+      "primary_language": "Python",
+      "prs": 12054,
+      "repo": "PrefectHQ/prefect",
+      "stars": 20806
+    },
+    {
+      "ai_feature_assets": 1,
+      "forks": 0,
+      "mature_feature_assets": 65,
+      "min_monthly_commits_observed": 12,
+      "primary_language": "TypeScript",
+      "prs": 740,
+      "repo": "blinkk/rootjs",
+      "stars": 13
+    },
+    {
+      "ai_feature_assets": 6,
+      "forks": 20,
+      "mature_feature_assets": 63,
+      "min_monthly_commits_observed": 39,
+      "primary_language": "Go",
+      "prs": 1286,
+      "repo": "DefangLabs/defang",
+      "stars": 144
+    },
+    {
+      "ai_feature_assets": 3,
+      "forks": 25,
+      "mature_feature_assets": 61,
+      "min_monthly_commits_observed": 24,
+      "primary_language": "Rust",
+      "prs": 455,
+      "repo": "nyx-space/anise",
+      "stars": 176
+    },
+    {
+      "ai_feature_assets": 4,
+      "forks": 9,
+      "mature_feature_assets": 57,
+      "min_monthly_commits_observed": 29,
+      "primary_language": "C#",
+      "prs": 722,
+      "repo": "AArnott/Nerdbank.MessagePack",
+      "stars": 125
+    },
+    {
+      "ai_feature_assets": 0,
+      "forks": 176,
+      "mature_feature_assets": 56,
+      "min_monthly_commits_observed": 191,
+      "primary_language": "Python",
+      "prs": 3283,
+      "repo": "elastic/docs-content",
+      "stars": 23
+    },
+    {
+      "ai_feature_assets": 2,
+      "forks": 3629,
+      "mature_feature_assets": 146,
+      "min_monthly_commits_observed": 257,
+      "primary_language": "C#",
+      "prs": 13101,
+      "repo": "abpframework/abp",
+      "stars": 13911
+    },
+    {
+      "ai_feature_assets": 50,
+      "forks": 137,
+      "mature_feature_assets": 54,
+      "min_monthly_commits_observed": 40,
+      "primary_language": "Go",
+      "prs": 1775,
+      "repo": "cloudposse/atmos",
+      "stars": 1185
+    },
+    {
+      "ai_feature_assets": 5,
+      "forks": 1550,
+      "mature_feature_assets": 51,
+      "min_monthly_commits_observed": 53,
+      "primary_language": "C#",
+      "prs": 4732,
+      "repo": "MudBlazor/MudBlazor",
+      "stars": 9825
+    },
+    {
+      "ai_feature_assets": 0,
+      "forks": 7,
+      "mature_feature_assets": 51,
+      "min_monthly_commits_observed": 43,
+      "primary_language": "Go",
+      "prs": 585,
+      "repo": "perber/leafwiki",
+      "stars": 21
+    },
+    {
+      "ai_feature_assets": 10,
+      "forks": 65,
+      "mature_feature_assets": 44,
+      "min_monthly_commits_observed": 47,
+      "primary_language": "TypeScript",
+      "prs": 2345,
+      "repo": "Azure/typespec-azure",
+      "stars": 23
+    },
+    {
+      "ai_feature_assets": 0,
+      "forks": 10,
+      "mature_feature_assets": 41,
+      "min_monthly_commits_observed": 89,
+      "primary_language": "C#",
+      "prs": 151,
+      "repo": "valentinbreiz/nativeaot-patcher",
+      "stars": 31
+    },
+    {
+      "ai_feature_assets": 30,
+      "forks": 8123,
+      "mature_feature_assets": 161,
+      "min_monthly_commits_observed": 87,
+      "primary_language": "TypeScript",
+      "prs": 14842,
+      "repo": "mattermost/mattermost",
+      "stars": 34383
+    },
+    {
+      "ai_feature_assets": 46,
+      "forks": 3174,
+      "mature_feature_assets": 201,
+      "min_monthly_commits_observed": 147,
+      "primary_language": "Python",
+      "prs": 26251,
+      "repo": "Azure/azure-sdk-for-python",
+      "stars": 5395
+    },
+    {
+      "ai_feature_assets": 1,
+      "forks": 3863,
+      "mature_feature_assets": 216,
+      "min_monthly_commits_observed": 102,
+      "primary_language": "Rust",
+      "prs": 16021,
+      "repo": "aptos-labs/aptos-core",
+      "stars": 6385
     }
-  },
-  "outcome": "terminal_corrective_line_count, a lower-bound first-intervention corrective burden measure",
-  "purpose": "Test whether ordinary repository activity/churn observable before admission explains the heavy-tailed corrective burden.",
-  "validation_split": "Entire repositories are deterministically split ~70/30 by SHA-256 hash; no repository appears in both train and test."
+  ],
+  "eligible_repositories": 28,
+  "next_step_if_approved_by_results": "Clone a small subset with git --filter=blob:none and compute 30/90-day pre-admission churn only for files touched by each origin commit.",
+  "pilot_eligibility": "deterministic held-out repo; 40-250 mature substantive feature assets",
+  "purpose": "Select a small held-out-repository pilot for file-local pre-admission churn enrichment.",
+  "recommended_first_pilot": [
+    {
+      "ai_feature_assets": 5,
+      "forks": 268,
+      "mature_feature_assets": 100,
+      "min_monthly_commits_observed": 195,
+      "primary_language": "TypeScript",
+      "prs": 2037,
+      "repo": "hey-api/openapi-ts",
+      "stars": 3511
+    },
+    {
+      "ai_feature_assets": 77,
+      "forks": 726,
+      "mature_feature_assets": 100,
+      "min_monthly_commits_observed": 225,
+      "primary_language": "Rust",
+      "prs": 4717,
+      "repo": "jdx/mise",
+      "stars": 21310
+    },
+    {
+      "ai_feature_assets": 6,
+      "forks": 232,
+      "mature_feature_assets": 97,
+      "min_monthly_commits_observed": 139,
+      "primary_language": "TypeScript",
+      "prs": 5960,
+      "repo": "web-infra-dev/rsbuild",
+      "stars": 2997
+    },
+    {
+      "ai_feature_assets": 14,
+      "forks": 10662,
+      "mature_feature_assets": 94,
+      "min_monthly_commits_observed": 246,
+      "primary_language": "Ruby",
+      "prs": 11264,
+      "repo": "Homebrew/brew",
+      "stars": 45401
+    },
+    {
+      "ai_feature_assets": 30,
+      "forks": 675,
+      "mature_feature_assets": 92,
+      "min_monthly_commits_observed": 23,
+      "primary_language": "TypeScript",
+      "prs": 3277,
+      "repo": "microsoft/vscode-pull-request-github",
+      "stars": 2487
+    },
+    {
+      "ai_feature_assets": 2,
+      "forks": 626,
+      "mature_feature_assets": 89,
+      "min_monthly_commits_observed": 114,
+      "primary_language": "TypeScript",
+      "prs": 6020,
+      "repo": "medplum/medplum",
+      "stars": 2008
+    },
+    {
+      "ai_feature_assets": 1,
+      "forks": 75,
+      "mature_feature_assets": 82,
+      "min_monthly_commits_observed": 234,
+      "primary_language": "Ruby",
+      "prs": 4098,
+      "repo": "fjordllc/bootcamp",
+      "stars": 294
+    },
+    {
+      "ai_feature_assets": 17,
+      "forks": 30,
+      "mature_feature_assets": 81,
+      "min_monthly_commits_observed": 83,
+      "primary_language": "JavaScript",
+      "prs": 527,
+      "repo": "thedotmack/claude-mem",
+      "stars": 408
+    },
+    {
+      "ai_feature_assets": 5,
+      "forks": 18,
+      "mature_feature_assets": 79,
+      "min_monthly_commits_observed": 73,
+      "primary_language": "Go",
+      "prs": 567,
+      "repo": "volcano-sh/kthena",
+      "stars": 64
+    },
+    {
+      "ai_feature_assets": 3,
+      "forks": 235,
+      "mature_feature_assets": 122,
+      "min_monthly_commits_observed": 18,
+      "primary_language": "CSS",
+      "prs": 390,
+      "repo": "Floorp-Projects/Floorp",
+      "stars": 7747
+    }
+  ],
+  "test_repositories_total": 51
 }
