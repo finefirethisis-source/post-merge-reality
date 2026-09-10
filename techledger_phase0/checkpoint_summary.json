@@ -1,122 +1,109 @@
 {
-  "first_termination_days_distribution": {
-    "max": 390.83221064814813,
-    "n": 176532,
-    "p50": 3.931076388888889,
-    "p75": 26.87008969907407,
-    "p90": 89.87554050925925,
-    "p95": 146.09405671296292,
-    "p99": 259.9443662037037
+  "all_feature_assets": {
+    "aggregate_termination_rate": 0.2876415525256894,
+    "asset_count": 52148,
+    "burden_concentration": {
+      "top_10pct": {
+        "asset_count": 5215,
+        "burden_share": 0.8394503165510329,
+        "burden_to_size_ratio": 1.4953308040004503,
+        "tracked_line_share": 0.5613810096770936
+      },
+      "top_1pct": {
+        "asset_count": 521,
+        "burden_share": 0.5373014632046391,
+        "burden_to_size_ratio": 1.9489192954250287,
+        "tracked_line_share": 0.27569200246819975
+      },
+      "top_20pct": {
+        "asset_count": 10430,
+        "burden_share": 0.9233405226553218,
+        "burden_to_size_ratio": 1.360531232576882,
+        "tracked_line_share": 0.6786617613375112
+      },
+      "top_5pct": {
+        "asset_count": 2607,
+        "burden_share": 0.7442481582000358,
+        "burden_to_size_ratio": 1.6096708397258455,
+        "tracked_line_share": 0.4623604651537292
+      }
+    },
+    "terminated_line_distribution": {
+      "p50": 11.0,
+      "p90": 194.3000000000029,
+      "p99": 1678.1199999999953
+    },
+    "termination_rate_distribution": {
+      "p50": 0.18334416991764196,
+      "p75": 0.5957500428963624,
+      "p90": 0.9886492281303604,
+      "p95": 1.0,
+      "p99": 1.0
+    },
+    "total_terminated_lines": 7591351,
+    "total_tracked_lines": 26391705,
+    "tracked_line_distribution": {
+      "p50": 81.0,
+      "p90": 823.0,
+      "p99": 5949.5899999999965
+    },
+    "zero_burden_asset_share": 0.18934570836848968
   },
-  "input": "dev/analysis/output_rq1a_explore/rq1_origin_commit_maintenance_summary.csv",
-  "origin_roles": {
-    "AI": 29100,
-    "Human": 218248
+  "definition": {
+    "asset": "origin commit classified as feature",
+    "important_limit": "This is a lower-bound first-intervention proxy, not total lifetime maintenance effort.",
+    "normalized_burden_proxy": "terminated original lines / original tracked lines",
+    "raw_burden_proxy": "count of original tracked lines later modified or deleted at least once",
+    "substantive_asset_threshold": "at least 20 tracked lines"
   },
-  "row_count": 247348,
-  "schema": [
-    "repo_key",
-    "repo",
-    "origin_commit_sha",
-    "origin_role",
-    "origin_commit_category",
-    "origin_commit_date",
-    "origin_primary_operational_intent",
-    "origin_maintenance_class",
-    "tracked_line_count",
-    "survived_line_count",
-    "modified_line_count",
-    "deleted_line_count",
-    "terminated_line_count",
-    "terminated_by_ai_line_count",
-    "terminated_by_human_line_count",
-    "terminated_by_bot_line_count",
-    "terminated_by_unknown_line_count",
-    "survival_rate",
-    "termination_rate",
-    "any_termination",
-    "first_termination_days"
-  ],
-  "termination_rate_distribution": {
-    "max": 1.0,
-    "n": 247348,
-    "p50": 0.18666666666666668,
-    "p75": 0.75,
-    "p90": 1.0,
-    "p95": 1.0,
-    "p99": 1.0
-  },
-  "top_origin_intents": [
-    [
-      "bug_fix",
-      58908
-    ],
-    [
-      "feature",
-      52148
-    ],
-    [
-      "documentation",
-      34879
-    ],
-    [
-      "test",
-      23149
-    ],
-    [
-      "refactor_cleanup",
-      22149
-    ],
-    [
-      "dependency_update",
-      15683
-    ],
-    [
-      "build_config_ci",
-      12738
-    ],
-    [
-      "resource",
-      8266
-    ],
-    [
-      "merge_release_versioning",
-      4949
-    ],
-    [
-      "style_formatting",
-      4028
-    ],
-    [
-      "performance",
-      3976
-    ],
-    [
-      "unknown",
-      2866
-    ],
-    [
-      "security_fix",
-      1757
-    ],
-    [
-      "revert",
-      1536
-    ],
-    [
-      "mixed",
-      316
-    ]
-  ],
-  "tracked_line_count_distribution": {
-    "max": 440587.0,
-    "n": 247348,
-    "p50": 23.0,
-    "p75": 110.0,
-    "p90": 393.0,
-    "p95": 823.0,
-    "p99": 3775.0599999999977
-  },
-  "unique_origin_assets": 247348,
-  "unique_repositories": 182
+  "substantive_feature_assets": {
+    "aggregate_termination_rate": 0.28723154025450803,
+    "asset_count": 38846,
+    "burden_concentration": {
+      "top_10pct": {
+        "asset_count": 3885,
+        "burden_share": 0.8038287370867125,
+        "burden_to_size_ratio": 1.5494738208132617,
+        "tracked_line_share": 0.5187752940961677
+      },
+      "top_1pct": {
+        "asset_count": 388,
+        "burden_share": 0.5062364894821231,
+        "burden_to_size_ratio": 2.00160374058156,
+        "tracked_line_share": 0.2529154393641559
+      },
+      "top_20pct": {
+        "asset_count": 7769,
+        "burden_share": 0.8948290437797721,
+        "burden_to_size_ratio": 1.4178685196073921,
+        "tracked_line_share": 0.6311086193151043
+      },
+      "top_5pct": {
+        "asset_count": 1942,
+        "burden_share": 0.7070962099835741,
+        "burden_to_size_ratio": 1.6607068268948963,
+        "tracked_line_share": 0.42578027532148227
+      }
+    },
+    "terminated_line_distribution": {
+      "p50": 24.0,
+      "p90": 266.0,
+      "p99": 2208.100000000006
+    },
+    "termination_rate_distribution": {
+      "p50": 0.1710029168153791,
+      "p75": 0.5142857142857142,
+      "p90": 0.8966454272863569,
+      "p95": 0.992763451005058,
+      "p99": 1.0
+    },
+    "total_terminated_lines": 7551524,
+    "total_tracked_lines": 26290720,
+    "tracked_line_distribution": {
+      "p50": 152.0,
+      "p90": 1077.5,
+      "p99": 7823.200000000012
+    },
+    "zero_burden_asset_share": 0.12289553621994542
+  }
 }
