@@ -1,109 +1,111 @@
 {
-  "all_feature_assets": {
-    "aggregate_termination_rate": 0.2876415525256894,
-    "asset_count": 52148,
-    "burden_concentration": {
-      "top_10pct": {
-        "asset_count": 5215,
-        "burden_share": 0.8394503165510329,
-        "burden_to_size_ratio": 1.4953308040004503,
-        "tracked_line_share": 0.5613810096770936
-      },
-      "top_1pct": {
-        "asset_count": 521,
-        "burden_share": 0.5373014632046391,
-        "burden_to_size_ratio": 1.9489192954250287,
-        "tracked_line_share": 0.27569200246819975
-      },
-      "top_20pct": {
-        "asset_count": 10430,
-        "burden_share": 0.9233405226553218,
-        "burden_to_size_ratio": 1.360531232576882,
-        "tracked_line_share": 0.6786617613375112
-      },
-      "top_5pct": {
-        "asset_count": 2607,
-        "burden_share": 0.7442481582000358,
-        "burden_to_size_ratio": 1.6096708397258455,
-        "tracked_line_share": 0.4623604651537292
-      }
-    },
-    "terminated_line_distribution": {
-      "p50": 11.0,
-      "p90": 194.3000000000029,
-      "p99": 1678.1199999999953
-    },
-    "termination_rate_distribution": {
-      "p50": 0.18334416991764196,
-      "p75": 0.5957500428963624,
-      "p90": 0.9886492281303604,
-      "p95": 1.0,
-      "p99": 1.0
-    },
-    "total_terminated_lines": 7591351,
-    "total_tracked_lines": 26391705,
-    "tracked_line_distribution": {
-      "p50": 81.0,
-      "p90": 823.0,
-      "p99": 5949.5899999999965
-    },
-    "zero_burden_asset_share": 0.18934570836848968
-  },
   "definition": {
     "asset": "origin commit classified as feature",
-    "important_limit": "This is a lower-bound first-intervention proxy, not total lifetime maintenance effort.",
-    "normalized_burden_proxy": "terminated original lines / original tracked lines",
-    "raw_burden_proxy": "count of original tracked lines later modified or deleted at least once",
-    "substantive_asset_threshold": "at least 20 tracked lines"
+    "burden_proxy": "count of original tracked lines later modified or deleted at least once",
+    "important_limit": "lower-bound first-intervention proxy, not total lifetime maintenance effort",
+    "maturity_rule": "origin date on or before 2025-12-02, giving at least 180 days before 2026-05-31 observation end",
+    "substantive_threshold": "at least 20 tracked lines"
   },
-  "substantive_feature_assets": {
-    "aggregate_termination_rate": 0.28723154025450803,
-    "asset_count": 38846,
-    "burden_concentration": {
-      "top_10pct": {
-        "asset_count": 3885,
-        "burden_share": 0.8038287370867125,
-        "burden_to_size_ratio": 1.5494738208132617,
-        "tracked_line_share": 0.5187752940961677
+  "mature_substantive_features": {
+    "aggregate_termination_rate": 0.3896106317569743,
+    "asset_count": 18669,
+    "termination_rate_p50": 0.3125,
+    "termination_rate_p90": 0.96,
+    "top_10pct_raw_burden_concentration": {
+      "asset_count": 1867,
+      "burden_share": 0.7542088708905546,
+      "burden_to_size_ratio": 1.3427372380937077,
+      "tracked_line_share": 0.5616950580452431
+    },
+    "zero_burden_asset_share": 0.06267073758637313
+  },
+  "size_band_results": {
+    "100-249": {
+      "aggregate_termination_rate": 0.3974055095907042,
+      "asset_count": 4620,
+      "termination_rate_p50": 0.3113980822765233,
+      "termination_rate_p90": 0.9541284403669725,
+      "top_10pct_raw_burden_concentration": {
+        "asset_count": 462,
+        "burden_share": 0.29056818489717395,
+        "burden_to_size_ratio": 2.2737400398443253,
+        "tracked_line_share": 0.12779305452925396
       },
-      "top_1pct": {
-        "asset_count": 388,
-        "burden_share": 0.5062364894821231,
-        "burden_to_size_ratio": 2.00160374058156,
-        "tracked_line_share": 0.2529154393641559
+      "zero_burden_asset_share": 0.04523809523809524
+    },
+    "1000+": {
+      "aggregate_termination_rate": 0.3939466321394079,
+      "asset_count": 1571,
+      "termination_rate_p50": 0.27016592738623296,
+      "termination_rate_p90": 0.9193228610645112,
+      "top_10pct_raw_burden_concentration": {
+        "asset_count": 157,
+        "burden_share": 0.6157030854767316,
+        "burden_to_size_ratio": 1.5066276549153175,
+        "tracked_line_share": 0.4086630717735884
       },
-      "top_20pct": {
-        "asset_count": 7769,
-        "burden_share": 0.8948290437797721,
-        "burden_to_size_ratio": 1.4178685196073921,
-        "tracked_line_share": 0.6311086193151043
+      "zero_burden_asset_share": 0.008274984086569064
+    },
+    "20-49": {
+      "aggregate_termination_rate": 0.4298458592893711,
+      "asset_count": 4399,
+      "termination_rate_p50": 0.3548387096774194,
+      "termination_rate_p90": 1.0,
+      "top_10pct_raw_burden_concentration": {
+        "asset_count": 440,
+        "burden_share": 0.27645084242463364,
+        "burden_to_size_ratio": 2.1800598872472996,
+        "tracked_line_share": 0.1268088294462866
       },
-      "top_5pct": {
-        "asset_count": 1942,
-        "burden_share": 0.7070962099835741,
-        "burden_to_size_ratio": 1.6607068268948963,
-        "tracked_line_share": 0.42578027532148227
-      }
+      "zero_burden_asset_share": 0.1241191179813594
     },
-    "terminated_line_distribution": {
-      "p50": 24.0,
-      "p90": 266.0,
-      "p99": 2208.100000000006
+    "250-499": {
+      "aggregate_termination_rate": 0.3724734336857891,
+      "asset_count": 2573,
+      "termination_rate_p50": 0.2737430167597765,
+      "termination_rate_p90": 0.9322643716714252,
+      "top_10pct_raw_burden_concentration": {
+        "asset_count": 257,
+        "burden_share": 0.2833362894643491,
+        "burden_to_size_ratio": 2.4483894838747133,
+        "tracked_line_share": 0.11572353636152428
+      },
+      "zero_burden_asset_share": 0.030314807617567042
     },
-    "termination_rate_distribution": {
-      "p50": 0.1710029168153791,
-      "p75": 0.5142857142857142,
-      "p90": 0.8966454272863569,
-      "p95": 0.992763451005058,
-      "p99": 1.0
+    "50-99": {
+      "aggregate_termination_rate": 0.41947007282328025,
+      "asset_count": 3837,
+      "termination_rate_p50": 0.34065934065934067,
+      "termination_rate_p90": 0.9769556025369979,
+      "top_10pct_raw_burden_concentration": {
+        "asset_count": 384,
+        "burden_share": 0.26860793858018556,
+        "burden_to_size_ratio": 2.245478976241391,
+        "tracked_line_share": 0.11962166710186556
+      },
+      "zero_burden_asset_share": 0.07766484232473286
     },
-    "total_terminated_lines": 7551524,
-    "total_tracked_lines": 26290720,
-    "tracked_line_distribution": {
-      "p50": 152.0,
-      "p90": 1077.5,
-      "p99": 7823.200000000012
-    },
-    "zero_burden_asset_share": 0.12289553621994542
+    "500-999": {
+      "aggregate_termination_rate": 0.3633864831359809,
+      "asset_count": 1669,
+      "termination_rate_p50": 0.2667375132837407,
+      "termination_rate_p90": 0.9113740959894806,
+      "top_10pct_raw_burden_concentration": {
+        "asset_count": 167,
+        "burden_share": 0.29479925182632016,
+        "burden_to_size_ratio": 2.5442118595320182,
+        "tracked_line_share": 0.11587055956910187
+      },
+      "zero_burden_asset_share": 0.015578190533253445
+    }
+  },
+  "within_repository_results": {
+    "eligibility": "at least 20 mature substantive feature assets",
+    "eligible_repo_count": 143,
+    "median_repo_top10_burden_share": 0.5752688172043011,
+    "median_repo_top10_burden_to_size_ratio": 1.3170358072068962,
+    "median_repo_top10_tracked_line_share": 0.4242041435068216,
+    "p25_repo_top10_burden_share": 0.49051026672133674,
+    "p75_repo_top10_burden_share": 0.7150544222899342
   }
 }
