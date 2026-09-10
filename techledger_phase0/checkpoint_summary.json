@@ -1,454 +1,104 @@
 {
-  "baseline_rule": {
-    "explicitly_excluded": [
-      "admission-week activity",
-      "post-admission termination/survival fields",
-      "future corrective outcomes",
-      "TechLedger-specific estate-context variables"
-    ],
-    "planned_core_predictors": [
-      "log(asset tracked_line_count)",
-      "prior-week total_commits",
-      "prior-week total_changed_lines",
-      "prior-week corrective_commits or corrective rate",
-      "prior-week tracked_line_churn_rate",
-      "prior-week living_tracked_lines_at_week_start"
-    ],
-    "planned_optional_predictors_if_coverage_allows": [
-      "prior-week Sonar codebase complexity/issue/maintainability measures"
-    ],
-    "time_alignment": "For an admission in week W, use only repository-week values from W-1 or earlier."
+  "cohort_and_join": {
+    "assets_missing_prior_week_panel_context": 207,
+    "assets_with_prior_week_panel_context": 18462,
+    "matched_corrective_outcomes": 18462,
+    "mature_substantive_feature_assets_before_panel_join": 18669,
+    "repo_overlap": 0,
+    "test_assets": 6142,
+    "test_repositories": 51,
+    "train_assets": 12320,
+    "train_repositories": 129
   },
-  "candidate_fields": {
-    "ai_share": {
-      "coverage": 0.9906497011760169,
-      "example_values": [
-        "2.58257792929e-06",
-        "2.58290478638e-06",
-        "5.16447563788e-06",
-        "7.74281466799e-06",
-        "7.73249684901e-06"
+  "held_out_actual_top10pct_burden_share": 0.8707950011084017,
+  "interpretation_guardrail": "This controls repository-level recent activity and codebase health, not file/subsystem-local pre-admission churn. Persistence of residual concentration would justify a stronger local-churn baseline before TechLedger-specific predictors.",
+  "leakage_control": "An admission in week W receives repository context only from W-1; admission-week and all post-admission fields are excluded.",
+  "models": {
+    "activity_churn": {
+      "features": [
+        "asset_tracked_lines",
+        "is_ai_origin",
+        "total_commits",
+        "total_changed_lines",
+        "corrective_commits",
+        "corrective_rate",
+        "tracked_line_churn_rate",
+        "living_tracked_lines_at_week_start"
       ],
-      "nonempty_rows": 10277
+      "test_metrics": {
+        "actual_burden_captured_by_top10pct_predicted": 0.6242933939259587,
+        "actual_burden_captured_by_top20pct_predicted": 0.7520505431168255,
+        "log_count_pearson": 0.41712146467489364,
+        "log_count_r2": -0.38076769942336686,
+        "mean_poisson_deviance": 79.83965884770294,
+        "observed_corrective_lines": 144352.0,
+        "positive_excess_lines": 91312.0803324792,
+        "positive_excess_share_of_observed": 0.6325653980026547,
+        "predicted_corrective_lines": 163498.0519623416,
+        "prediction_to_observed_ratio": 1.1326344765735257,
+        "test_assets": 6142,
+        "top10pct_share_of_positive_excess": 0.9606066458733119
+      },
+      "train_only_calibration_scale": 1.000000000000029
     },
-    "corrective_changed_lines": {
-      "coverage": 1.0,
-      "example_values": [
-        "0",
-        "65",
-        "221",
-        "4",
-        "29"
+    "activity_churn_sonar": {
+      "features": [
+        "asset_tracked_lines",
+        "is_ai_origin",
+        "total_commits",
+        "total_changed_lines",
+        "corrective_commits",
+        "corrective_rate",
+        "tracked_line_churn_rate",
+        "living_tracked_lines_at_week_start",
+        "sonar_ncloc",
+        "sonar_issue_count",
+        "sonar_bug_count",
+        "sonar_vulnerability_count",
+        "sonar_code_smell_count",
+        "sonar_complexity",
+        "sonar_cognitive_complexity",
+        "sonar_duplicated_lines_density",
+        "sonar_maintainability_effort"
       ],
-      "nonempty_rows": 10374
+      "test_metrics": {
+        "actual_burden_captured_by_top10pct_predicted": 0.6244804367102638,
+        "actual_burden_captured_by_top20pct_predicted": 0.7531520172910663,
+        "log_count_pearson": 0.4087602392288317,
+        "log_count_r2": -0.3482644675853037,
+        "mean_poisson_deviance": 86.73101163171131,
+        "observed_corrective_lines": 144352.0,
+        "positive_excess_lines": 97668.14589568858,
+        "positive_excess_share_of_observed": 0.6765971091199885,
+        "predicted_corrective_lines": 154634.6797409605,
+        "prediction_to_observed_ratio": 1.0712333721802296,
+        "test_assets": 6142,
+        "top10pct_share_of_positive_excess": 0.9587662871120076
+      },
+      "train_only_calibration_scale": 1.0000000000000087
     },
-    "corrective_commits": {
-      "coverage": 1.0,
-      "example_values": [
-        "0",
-        "2",
-        "1",
-        "3",
-        "6"
+    "size_only": {
+      "features": [
+        "asset_tracked_lines"
       ],
-      "nonempty_rows": 10374
-    },
-    "corrective_line_rate": {
-      "coverage": 0.9358974358974359,
-      "example_values": [
-        "0.106382978723",
-        "0.375212224109",
-        "0",
-        "0.00376293508937",
-        "0.00868263473054"
-      ],
-      "nonempty_rows": 9709
-    },
-    "corrective_rate": {
-      "coverage": 0.9370541738962792,
-      "example_values": [
-        "0.153846153846",
-        "0.142857142857",
-        "0",
-        "0.2",
-        "0.157894736842"
-      ],
-      "nonempty_rows": 9721
-    },
-    "living_tracked_lines_at_week_start": {
-      "coverage": 0.9909388856757277,
-      "example_values": [
-        "11828",
-        "12015",
-        "12191",
-        "12546",
-        "12578"
-      ],
-      "nonempty_rows": 10280
-    },
-    "repo": {
-      "coverage": 1.0,
-      "example_values": [
-        "benwbrum/fromthepage",
-        "readthedocs/readthedocs.org",
-        "XRPLF/rippled",
-        "Azure/azure-sdk-for-python",
-        "fjordllc/bootcamp"
-      ],
-      "nonempty_rows": 10374
-    },
-    "repo_key": {
-      "coverage": 1.0,
-      "example_values": [
-        "benwbrum__fromthepage",
-        "readthedocs__readthedocs.org",
-        "XRPLF__rippled",
-        "Azure__azure-sdk-for-python",
-        "fjordllc__bootcamp"
-      ],
-      "nonempty_rows": 10374
-    },
-    "sonar_bug_count": {
-      "coverage": 0.9928667823404665,
-      "example_values": [
-        "49",
-        "50",
-        "51",
-        "63",
-        "62"
-      ],
-      "nonempty_rows": 10300
-    },
-    "sonar_code_smell_count": {
-      "coverage": 0.9928667823404665,
-      "example_values": [
-        "3900",
-        "3903",
-        "3902",
-        "3904",
-        "3898"
-      ],
-      "nonempty_rows": 10300
-    },
-    "sonar_cognitive_complexity": {
-      "coverage": 0.9581646423751687,
-      "example_values": [
-        "13834",
-        "13831",
-        "13830",
-        "13851",
-        "13857"
-      ],
-      "nonempty_rows": 9940
-    },
-    "sonar_complexity": {
-      "coverage": 0.9643339117023327,
-      "example_values": [
-        "10117",
-        "10111",
-        "10118",
-        "10177",
-        "10185"
-      ],
-      "nonempty_rows": 10004
-    },
-    "sonar_duplicated_lines_density": {
-      "coverage": 0.9840948525159051,
-      "example_values": [
-        "4.5",
-        "4.6",
-        "4.8",
-        "4.7",
-        "5"
-      ],
-      "nonempty_rows": 10209
-    },
-    "sonar_issue_count": {
-      "coverage": 0.9930595720069404,
-      "example_values": [
-        "4017",
-        "4018",
-        "4025",
-        "4027",
-        "4028"
-      ],
-      "nonempty_rows": 10302
-    },
-    "sonar_maintainability_effort": {
-      "coverage": 0.9928667823404665,
-      "example_values": [
-        "27242",
-        "27252",
-        "27279",
-        "27277",
-        "27275"
-      ],
-      "nonempty_rows": 10300
-    },
-    "sonar_ncloc": {
-      "coverage": 0.9834200886832466,
-      "example_values": [
-        "65446",
-        "65411",
-        "65497",
-        "65538",
-        "65908"
-      ],
-      "nonempty_rows": 10202
-    },
-    "sonar_scan_count": {
-      "coverage": 0.9930595720069404,
-      "example_values": [
-        "1",
-        "2"
-      ],
-      "nonempty_rows": 10302
-    },
-    "sonar_sqale_index": {
-      "coverage": 0.9928667823404665,
-      "example_values": [
-        "27272",
-        "27282",
-        "27309",
-        "27307",
-        "27305"
-      ],
-      "nonempty_rows": 10300
-    },
-    "sonar_vulnerability_count": {
-      "coverage": 0.9928667823404665,
-      "example_values": [
-        "8",
-        "163",
-        "162",
-        "160",
-        "159"
-      ],
-      "nonempty_rows": 10300
-    },
-    "total_changed_lines": {
-      "coverage": 1.0,
-      "example_values": [
-        "0",
-        "611",
-        "589",
-        "34",
-        "1063"
-      ],
-      "nonempty_rows": 10374
-    },
-    "total_commits": {
-      "coverage": 1.0,
-      "example_values": [
-        "0",
-        "13",
-        "7",
-        "9",
-        "10"
-      ],
-      "nonempty_rows": 10374
-    },
-    "tracked_line_churn_rate": {
-      "coverage": 0.9909388856757277,
-      "example_values": [
-        "0.00219817382482",
-        "0.0134831460674",
-        "0.00319908128948",
-        "7.97066794197e-05",
-        "0.00119255843536"
-      ],
-      "nonempty_rows": 10280
-    },
-    "week": {
-      "coverage": 1.0,
-      "example_values": [
-        "2025-04-28T00:00:00+00:00",
-        "2025-05-05T00:00:00+00:00",
-        "2025-05-12T00:00:00+00:00",
-        "2025-05-19T00:00:00+00:00",
-        "2025-05-26T00:00:00+00:00"
-      ],
-      "nonempty_rows": 10374
+      "test_metrics": {
+        "actual_burden_captured_by_top10pct_predicted": 0.6357445688317446,
+        "actual_burden_captured_by_top20pct_predicted": 0.7582853025936599,
+        "log_count_pearson": 0.4281087005286947,
+        "log_count_r2": -0.3494810459117239,
+        "mean_poisson_deviance": 70.11276140345926,
+        "observed_corrective_lines": 144352.0,
+        "positive_excess_lines": 90978.60633532093,
+        "positive_excess_share_of_observed": 0.6302552533759209,
+        "predicted_corrective_lines": 152607.31479540895,
+        "prediction_to_observed_ratio": 1.0571887801721414,
+        "test_assets": 6142,
+        "top10pct_share_of_positive_excess": 0.9605458648800208
+      },
+      "train_only_calibration_scale": 0.9999999999999889
     }
   },
-  "purpose": "Freeze a leakage-safe conventional baseline using repository context from the week before each feature admission.",
-  "row_count": 10374,
-  "sample_rows": [
-    {
-      "ai_share": "2.58257792929e-06",
-      "corrective_changed_lines": "0",
-      "corrective_commits": "0",
-      "corrective_line_rate": "",
-      "corrective_rate": "",
-      "living_tracked_lines_at_week_start": "11828",
-      "repo": "benwbrum/fromthepage",
-      "repo_key": "benwbrum__fromthepage",
-      "sonar_bug_count": "49",
-      "sonar_code_smell_count": "3900",
-      "sonar_cognitive_complexity": "13834",
-      "sonar_complexity": "10117",
-      "sonar_duplicated_lines_density": "4.5",
-      "sonar_issue_count": "4017",
-      "sonar_maintainability_effort": "27242",
-      "sonar_ncloc": "65446",
-      "sonar_scan_count": "1",
-      "sonar_sqale_index": "27272",
-      "sonar_vulnerability_count": "8",
-      "total_changed_lines": "0",
-      "total_commits": "0",
-      "tracked_line_churn_rate": "0.00219817382482",
-      "week": "2025-04-28T00:00:00+00:00"
-    },
-    {
-      "ai_share": "2.58290478638e-06",
-      "corrective_changed_lines": "65",
-      "corrective_commits": "2",
-      "corrective_line_rate": "0.106382978723",
-      "corrective_rate": "0.153846153846",
-      "living_tracked_lines_at_week_start": "12015",
-      "repo": "benwbrum/fromthepage",
-      "repo_key": "benwbrum__fromthepage",
-      "sonar_bug_count": "49",
-      "sonar_code_smell_count": "3900",
-      "sonar_cognitive_complexity": "13831",
-      "sonar_complexity": "10111",
-      "sonar_duplicated_lines_density": "4.5",
-      "sonar_issue_count": "4017",
-      "sonar_maintainability_effort": "27242",
-      "sonar_ncloc": "65411",
-      "sonar_scan_count": "1",
-      "sonar_sqale_index": "27272",
-      "sonar_vulnerability_count": "8",
-      "total_changed_lines": "611",
-      "total_commits": "13",
-      "tracked_line_churn_rate": "0.0134831460674",
-      "week": "2025-05-05T00:00:00+00:00"
-    },
-    {
-      "ai_share": "5.16447563788e-06",
-      "corrective_changed_lines": "221",
-      "corrective_commits": "1",
-      "corrective_line_rate": "0.375212224109",
-      "corrective_rate": "0.142857142857",
-      "living_tracked_lines_at_week_start": "12191",
-      "repo": "benwbrum/fromthepage",
-      "repo_key": "benwbrum__fromthepage",
-      "sonar_bug_count": "49",
-      "sonar_code_smell_count": "3900",
-      "sonar_cognitive_complexity": "13830",
-      "sonar_complexity": "10111",
-      "sonar_duplicated_lines_density": "4.5",
-      "sonar_issue_count": "4017",
-      "sonar_maintainability_effort": "27242",
-      "sonar_ncloc": "65497",
-      "sonar_scan_count": "1",
-      "sonar_sqale_index": "27272",
-      "sonar_vulnerability_count": "8",
-      "total_changed_lines": "589",
-      "total_commits": "7",
-      "tracked_line_churn_rate": "0.00319908128948",
-      "week": "2025-05-12T00:00:00+00:00"
-    },
-    {
-      "ai_share": "7.74281466799e-06",
-      "corrective_changed_lines": "0",
-      "corrective_commits": "0",
-      "corrective_line_rate": "0",
-      "corrective_rate": "0",
-      "living_tracked_lines_at_week_start": "12546",
-      "repo": "benwbrum/fromthepage",
-      "repo_key": "benwbrum__fromthepage",
-      "sonar_bug_count": "49",
-      "sonar_code_smell_count": "3900",
-      "sonar_cognitive_complexity": "13834",
-      "sonar_complexity": "10118",
-      "sonar_duplicated_lines_density": "4.5",
-      "sonar_issue_count": "4018",
-      "sonar_maintainability_effort": "27252",
-      "sonar_ncloc": "65538",
-      "sonar_scan_count": "1",
-      "sonar_sqale_index": "27282",
-      "sonar_vulnerability_count": "8",
-      "total_changed_lines": "34",
-      "total_commits": "9",
-      "tracked_line_churn_rate": "7.97066794197e-05",
-      "week": "2025-05-19T00:00:00+00:00"
-    }
-  ],
-  "schema": [
-    "repo_key",
-    "repo",
-    "week",
-    "adoption_class",
-    "ai_share",
-    "lagged_ai_share",
-    "total_commits",
-    "total_changed_lines",
-    "corrective_commits",
-    "corrective_rate",
-    "corrective_changed_lines",
-    "corrective_line_rate",
-    "ai_total_commits",
-    "human_total_commits",
-    "human_total_changed_lines",
-    "human_corrective_commits",
-    "human_corrective_rate",
-    "human_corrective_changed_lines",
-    "human_corrective_line_rate",
-    "human_origin_living_tracked_lines_at_week_start",
-    "human_origin_corrective_terminated_lines",
-    "human_origin_corrective_line_rate",
-    "maintenance_corrective_commits",
-    "maintenance_corrective_rate",
-    "maintenance_corrective_changed_lines",
-    "maintenance_corrective_line_rate",
-    "maintenance_adaptive_commits",
-    "maintenance_adaptive_rate",
-    "maintenance_adaptive_changed_lines",
-    "maintenance_adaptive_line_rate",
-    "maintenance_perfective_commits",
-    "maintenance_perfective_rate",
-    "maintenance_perfective_changed_lines",
-    "maintenance_perfective_line_rate",
-    "maintenance_preventive_commits",
-    "maintenance_preventive_rate",
-    "maintenance_preventive_changed_lines",
-    "maintenance_preventive_line_rate",
-    "maintenance_management_commits",
-    "maintenance_management_rate",
-    "maintenance_management_changed_lines",
-    "maintenance_management_line_rate",
-    "sonar_scan_count",
-    "sonar_ncloc",
-    "sonar_issue_count",
-    "sonar_bug_count",
-    "sonar_vulnerability_count",
-    "sonar_code_smell_count",
-    "sonar_security_hotspot_count",
-    "sonar_defect_security_issue_count",
-    "sonar_severe_issue_count",
-    "sonar_complexity",
-    "sonar_cognitive_complexity",
-    "sonar_duplicated_lines_density",
-    "sonar_comment_lines_density",
-    "sonar_sqale_index",
-    "sonar_maintainability_effort",
-    "sonar_issue_density_per_kloc",
-    "sonar_bug_density_per_kloc",
-    "sonar_vulnerability_density_per_kloc",
-    "sonar_code_smell_density_per_kloc",
-    "sonar_security_hotspot_density_per_kloc",
-    "sonar_defect_security_issue_density_per_kloc",
-    "sonar_severe_issue_density_per_kloc",
-    "sonar_complexity_per_kloc",
-    "sonar_cognitive_complexity_per_kloc",
-    "sonar_sqale_index_per_kloc",
-    "sonar_maintainability_effort_per_kloc",
-    "living_tracked_lines_at_week_start",
-    "terminated_existing_lines",
-    "tracked_line_churn_rate"
-  ],
-  "unique_repositories": 182,
-  "week_max_lexical": "2026-05-25T00:00:00+00:00",
-  "week_min_lexical": "2025-04-28T00:00:00+00:00"
+  "outcome": "terminal_corrective_line_count, a lower-bound first-intervention corrective burden measure",
+  "purpose": "Test whether ordinary repository activity/churn observable before admission explains the heavy-tailed corrective burden.",
+  "validation_split": "Entire repositories are deterministically split ~70/30 by SHA-256 hash; no repository appears in both train and test."
 }
