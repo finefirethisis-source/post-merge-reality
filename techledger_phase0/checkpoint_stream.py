@@ -1,147 +1,105 @@
 from __future__ import annotations
 
 import csv
-import gzip
 import json
+from collections import Counter, defaultdict
 from pathlib import Path
 
+INPUT = Path("dev/analysis/output_rq2/rq2_repo_week_panel.csv")
 OUTPUT = Path("techledger_phase0/checkpoint_summary.json")
-ROOTS = [Path("."), Path("dev/analysis")]
 
-IDENTIFIER_TOKENS = (
-    "origin_commit_sha",
-    "commit_sha",
-    "sha",
+CANDIDATES = [
+    "week",
     "repo",
     "repo_key",
-    "repo_slug",
-)
-OUTCOME_TOKENS = (
-    "terminal",
-    "termination",
-    "survival",
-    "corrective",
-    "adaptive",
-    "perfective",
-    "preventive",
-    "maintenance",
-    "lifecycle",
-    "duration",
-    "hazard",
-    "outcome",
-)
-POTENTIAL_T0_TOKENS = (
-    "author",
-    "actor",
-    "role",
-    "date",
-    "intent",
-    "category",
-    "tracked",
-    "line",
-    "file",
-    "add",
-    "delete",
-    "change",
-    "review",
-    "comment",
-    "pr",
-    "language",
-    "star",
-    "fork",
-    "watch",
-    "complex",
-    "coverage",
-    "dependency",
-    "security",
-    "static",
-    "sonar",
-    "cognitive",
-    "duplication",
-)
-
-
-def open_text(path: Path):
-    if path.suffix == ".gz":
-        return gzip.open(path, "rt", encoding="utf-8", errors="replace", newline="")
-    return path.open("r", encoding="utf-8", errors="replace", newline="")
-
-
-def header(path: Path) -> list[str]:
-    try:
-        with open_text(path) as handle:
-            reader = csv.reader(handle)
-            return next(reader, [])
-    except Exception:
-        return []
-
-
-def classify_columns(columns: list[str]) -> dict:
-    ids = []
-    outcomes = []
-    possible_t0 = []
-    other = []
-    for col in columns:
-        low = col.lower()
-        if low in IDENTIFIER_TOKENS or any(low.endswith(token) for token in IDENTIFIER_TOKENS):
-            ids.append(col)
-        elif any(token in low for token in OUTCOME_TOKENS):
-            outcomes.append(col)
-        elif any(token in low for token in POTENTIAL_T0_TOKENS):
-            possible_t0.append(col)
-        else:
-            other.append(col)
-    return {
-        "identifier_columns": ids,
-        "possible_admission_time_columns": possible_t0,
-        "obvious_outcome_or_post_admission_columns": outcomes,
-        "other_columns": other,
-    }
+    "total_commits",
+    "total_changed_lines",
+    "corrective_commits",
+    "corrective_changed_lines",
+    "corrective_rate",
+    "corrective_line_rate",
+    "living_tracked_lines_at_week_start",
+    "tracked_line_churn_rate",
+    "sonar_scan_count",
+    "sonar_ncloc",
+    "sonar_issue_count",
+    "sonar_bug_count",
+    "sonar_vulnerability_count",
+    "sonar_code_smell_count",
+    "sonar_complexity",
+    "sonar_cognitive_complexity",
+    "sonar_duplicated_lines_density",
+    "sonar_sqale_index",
+    "sonar_maintainability_effort",
+    "ai_share",
+]
 
 
 def main() -> None:
-    paths: set[Path] = set()
-    for root in ROOTS:
-        if not root.exists():
-            continue
-        for pattern in ("*.csv", "*.csv.gz"):
-            paths.update(root.rglob(pattern))
+    row_count = 0
+    repos: set[str] = set()
+    weeks: list[str] = []
+    nonempty = Counter()
+    examples: dict[str, list[str]] = defaultdict(list)
+    sample_rows: list[dict[str, str]] = []
 
-    tables = []
-    for path in sorted(paths):
-        if "techledger_phase0" in path.parts:
-            continue
-        columns = header(path)
-        if not columns:
-            continue
-        classification = classify_columns(columns)
-        has_asset_id = "origin_commit_sha" in columns
-        has_commit_id = any(c in columns for c in ("commit_sha", "sha"))
-        has_repo = any(c in columns for c in ("repo", "repo_key", "repo_slug"))
-        tables.append({
-            "path": str(path),
-            "size_bytes": path.stat().st_size,
-            "column_count": len(columns),
-            "has_origin_commit_sha": has_asset_id,
-            "has_commit_level_id": has_commit_id,
-            "has_repo_id": has_repo,
-            **classification,
-        })
-
-    asset_level = [t for t in tables if t["has_origin_commit_sha"] and t["has_repo_id"]]
-    generic_commit_level = [t for t in tables if t["has_commit_level_id"] and t["has_repo_id"] and not t["has_origin_commit_sha"]]
-    repo_level = [t for t in tables if t["has_repo_id"] and not t["has_origin_commit_sha"] and not t["has_commit_level_id"]]
+    with INPUT.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        schema = reader.fieldnames or []
+        present = [c for c in CANDIDATES if c in schema]
+        for row in reader:
+            row_count += 1
+            repo = (row.get("repo") or row.get("repo_key") or "").strip()
+            if repo:
+                repos.add(repo)
+            week = (row.get("week") or "").strip()
+            if week:
+                weeks.append(week)
+            if len(sample_rows) < 4:
+                sample_rows.append({c: row.get(c, "") for c in present})
+            for col in present:
+                value = (row.get(col) or "").strip()
+                if value:
+                    nonempty[col] += 1
+                    if value not in examples[col] and len(examples[col]) < 5:
+                        examples[col].append(value)
 
     summary = {
-        "purpose": "Identify packaged tables that could supply information knowable at asset admission time without revisiting original repositories.",
-        "files_scanned": len(tables),
-        "asset_level_tables": asset_level,
-        "generic_commit_level_tables": generic_commit_level,
-        "repo_level_tables": repo_level,
-        "interpretation_rule": {
-            "usable_asset_predictor_source": "must identify the origin asset/commit and contain fields knowable at or before admission",
-            "warning": "Columns are classified by names only in this checkpoint; no field is accepted as causal/predictive yet.",
+        "purpose": "Freeze a leakage-safe conventional baseline using repository context from the week before each feature admission.",
+        "row_count": row_count,
+        "unique_repositories": len(repos),
+        "week_min_lexical": min(weeks) if weeks else None,
+        "week_max_lexical": max(weeks) if weeks else None,
+        "schema": schema,
+        "candidate_fields": {
+            col: {
+                "nonempty_rows": nonempty[col],
+                "coverage": nonempty[col] / row_count if row_count else None,
+                "example_values": examples[col],
+            }
+            for col in present
         },
+        "sample_rows": sample_rows,
+        "baseline_rule": {
+            "time_alignment": "For an admission in week W, use only repository-week values from W-1 or earlier.",
+            "planned_core_predictors": [
+                "log(asset tracked_line_count)",
+                "prior-week total_commits",
+                "prior-week total_changed_lines",
+                "prior-week corrective_commits or corrective rate",
+                "prior-week tracked_line_churn_rate",
+                "prior-week living_tracked_lines_at_week_start",
+            ],
+            "planned_optional_predictors_if_coverage_allows": [
+                "prior-week Sonar codebase complexity/issue/maintainability measures"
+            ],
+            "explicitly_excluded": [
+                "admission-week activity",
+                "post-admission termination/survival fields",
+                "future corrective outcomes",
+                "TechLedger-specific estate-context variables"
+            ]
+        }
     }
 
     OUTPUT.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
