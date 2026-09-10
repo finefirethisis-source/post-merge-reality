@@ -5,6 +5,7 @@ import hashlib
 import json
 import shutil
 import sys
+import traceback
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -127,7 +128,7 @@ def select_pilot(assets_by_repo: dict[str, dict[str, dict]]) -> list[dict]:
         if not 40 <= n <= 140:
             continue
         m = metadata.get(repo, {})
-        branch = (m.get("branch_checked") or "").strip() or "main"
+        branch = (m.get("branch_checked") or "").strip() or "auto"
         candidates.append({
             "repo": repo,
             "branch": branch,
@@ -262,13 +263,15 @@ def reconcile_and_measure(repo: str, assets: dict[str, dict], line_path: Path, c
 
 def scrape_repo(repo_info: dict, assets: dict[str, dict], commit_label: dict[tuple[str, str], str]) -> dict:
     repo = repo_info["repo"]
-    branch = repo_info["branch"]
+    requested_branch = repo_info["branch"]
     repo_dir = WORK / "repos" / repo.replace("/", "__")
     output_root = WORK / "output"
     if repo_dir.exists():
         shutil.rmtree(repo_dir)
     repo_dir = gcs.ensure_local_repo(repo, WORK / "repos", skip_fetch=False, full_clone=False)
     try:
+        checked_out_branch = gcs.run_git(repo_dir, ["rev-parse", "--abbrev-ref", "HEAD"]).strip()
+        branch = checked_out_branch if requested_branch in {"", "auto"} else requested_branch
         earliest = min(a["origin_date"] for a in assets.values())
         latest = max(a["origin_date"] for a in assets.values())
         since = earliest - timedelta(days=2)
@@ -303,7 +306,8 @@ def scrape_repo(repo_info: dict, assets: dict[str, dict], commit_label: dict[tup
         line_path = output_root / repo.replace("/", "__") / "line_lifecycle.jsonl"
         measured = reconcile_and_measure(repo, {sha: assets[sha] for sha in target_shas}, line_path, commit_label)
         measured["missing_target_origin_commits"] = len(missing_origins)
-        measured["branch"] = branch
+        measured["requested_branch"] = requested_branch
+        measured["resolved_branch"] = branch
         measured["observation_endpoint_sha"] = branch_end_sha
         measured["earliest_target_origin"] = earliest.isoformat()
         measured["latest_target_origin"] = latest.isoformat()
@@ -330,7 +334,11 @@ def main() -> None:
         try:
             results[repo] = scrape_repo(repo, assets_by_repo[repo], commit_label)
         except Exception as exc:
-            failures.append({"repo": repo, "error": str(exc)[:4000]})
+            failures.append({
+                "repo": repo,
+                "error": str(exc)[:4000],
+                "traceback": traceback.format_exc()[-12000:],
+            })
             break
 
     summary = {
