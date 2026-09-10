@@ -1,0 +1,70 @@
+{
+  "purpose": "Five-repository illustration of admission-time markers versus 180-day function/method rework.",
+  "method": "One streaming first-parent git log -p --function-context pass per repository; block identity is canonical file path plus extracted function/method name.",
+  "block_definition": "Named function/method inferred from Git function-context hunks. Same file+name is the same block; function renames become new identities.",
+  "admission_window": [
+    "2025-05-01T00:00:00+00:00",
+    "2025-12-02T23:59:59+00:00"
+  ],
+  "horizon_days": 180,
+  "repos": [
+    {
+      "repo": "BarthPaleologue/CosmosJourneyer",
+      "code_commits_seen": 242,
+      "events_with_attributed_functions": 215,
+      "admission_events": 76,
+      "changed_lines": 51561,
+      "attributed_changed_lines": 37231,
+      "function_attribution_share": 0.7220767634452396
+    },
+    {
+      "repo": "gameknife/gkNextEngine",
+      "code_commits_seen": 23,
+      "events_with_attributed_functions": 13,
+      "admission_events": 3,
+      "changed_lines": 9101,
+      "attributed_changed_lines": 9101,
+      "function_attribution_share": 1.0
+    },
+    {
+      "repo": "MudBlazor/MudBlazor",
+      "code_commits_seen": 832,
+      "events_with_attributed_functions": 751,
+      "admission_events": 208,
+      "changed_lines": 91435,
+      "attributed_changed_lines": 84682,
+      "function_attribution_share": 0.9261442554820364
+    },
+    {
+      "repo": "skeletonlabs/skeleton",
+      "code_commits_seen": 366,
+      "events_with_attributed_functions": 244,
+      "admission_events": 134,
+      "changed_lines": 14919,
+      "attributed_changed_lines": 12627,
+      "function_attribution_share": 0.8463704001608687
+    },
+    {
+      "repo": "PrimeIntellect-ai/verifiers",
+      "code_commits_seen": 1156,
+      "events_with_attributed_functions": 1014,
+      "admission_events": 460,
+      "changed_lines": 157555,
+      "attributed_changed_lines": 153587,
+      "function_attribution_share": 0.9748151439179968
+    }
+  ],
+  "admission_rows": 881,
+  "outcomes": [
+    "outcome_rework_count_180d",
+    "outcome_rework_volume_180d",
+    "outcome_rework_intensity_180d"
+  ],
+  "limitations": [
+    "Illustrative five-repository convenience sample; not inferential validation.",
+    "Only changes attributable to named function/method context are included in block outcomes.",
+    "File renames are followed; function renames are new identities; overloads with the same file+name are intentionally collapsed for this smell test.",
+    "Default-branch first-parent history only.",
+    "Function-context extraction is heuristic across languages; per-repository attribution share is reported so coverage is visible."
+  ]
+}

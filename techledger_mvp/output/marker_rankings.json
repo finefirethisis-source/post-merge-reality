@@ -1,0 +1,1670 @@
+{
+  "categorical_marker_families": [
+    "origin_intent",
+    "origin_maintenance_class",
+    "origin_role"
+  ],
+  "interpretation_guardrails": [
+    "Associations are descriptive and highly dependent on this five-repository convenience sample.",
+    "Raw associations can reflect repository differences; within-repo rank associations are included as a second view.",
+    "No multiple-testing correction is applied because this run is exploratory illustration, not hypothesis testing.",
+    "Correlation is not causation and marker redundancy is expected."
+  ],
+  "numeric_markers_tested": [
+    "admitted_block_loc",
+    "author_hour_utc",
+    "author_prior_code_commits",
+    "author_prior_commit_share",
+    "author_tenure_days",
+    "blocks_per_file",
+    "blocks_touched",
+    "changed_assert_count",
+    "changed_async_keyword_count",
+    "changed_boolean_operator_count",
+    "changed_branch_keyword_count",
+    "changed_comment_fraction",
+    "changed_exception_keyword_count",
+    "changed_import_dependency_lines",
+    "changed_long_line_fraction",
+    "changed_mean_line_chars",
+    "changed_nonblank_lines",
+    "changed_numeric_literal_count",
+    "changed_todo_fixme_count",
+    "churn_per_block",
+    "code_addition_fraction",
+    "code_additions",
+    "code_churn",
+    "code_deletions",
+    "code_files_touched",
+    "days_since_any_block_touch",
+    "file_extension_count",
+    "function_attribution_share",
+    "hot_block_fraction_30d",
+    "is_merge",
+    "is_weekend",
+    "max_block_loc",
+    "max_change_density",
+    "max_complexity_proxy",
+    "mean_block_loc",
+    "mean_change_density",
+    "mean_comment_fraction",
+    "mean_complexity_proxy",
+    "mean_path_depth",
+    "message_chars",
+    "message_dependency",
+    "message_docs",
+    "message_feature",
+    "message_fix",
+    "message_has_exclamation",
+    "message_has_issue_ref",
+    "message_has_question",
+    "message_perf",
+    "message_refactor",
+    "message_revert",
+    "message_test",
+    "message_words",
+    "new_block_fraction",
+    "new_blocks",
+    "parent_count",
+    "prior_block_authors_90d",
+    "prior_block_changed_lines_30d",
+    "prior_block_changed_lines_90d",
+    "prior_block_commits_30d",
+    "prior_block_commits_90d",
+    "repo_age_days",
+    "test_file_fraction",
+    "test_files_touched",
+    "weekday"
+  ],
+  "outcome_summaries": {
+    "outcome_rework_count_180d": {
+      "max": 185.0,
+      "mean": 19.938706015891032,
+      "median": 8.0,
+      "n": 881,
+      "p75": 23.0,
+      "p90": 69.0,
+      "p95": 83.0,
+      "zero_share": 0.12939841089670828
+    },
+    "outcome_rework_intensity_180d": {
+      "max": 22.625,
+      "mean": 1.4172451830577069,
+      "median": 0.5090802577621558,
+      "n": 881,
+      "p75": 1.6538461538461537,
+      "p90": 4.259284731774415,
+      "p95": 5.600970873786408,
+      "zero_share": 0.12939841089670828
+    },
+    "outcome_rework_volume_180d": {
+      "max": 23151.0,
+      "mean": 1103.1532349602724,
+      "median": 164.0,
+      "n": 881,
+      "p75": 962.0,
+      "p90": 4321.0,
+      "p95": 5427.0,
+      "zero_share": 0.12939841089670828
+    }
+  },
+  "purpose": "Illustrative marker discovery for function/method-level downstream rework; not inferential validation.",
+  "rankings": {
+    "outcome_rework_count_180d": {
+      "top_raw_associations": [
+        {
+          "association": 0.6930031100996509,
+          "kind": "numeric",
+          "marker": "max_complexity_proxy",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.775525136635324e-127,
+          "strength": 0.6930031100996509
+        },
+        {
+          "association": 0.6530204821520332,
+          "kind": "numeric",
+          "marker": "admitted_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.2438167492572454e-108,
+          "strength": 0.6530204821520332
+        },
+        {
+          "association": 0.6495922893832079,
+          "kind": "numeric",
+          "marker": "max_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 9.854920909906642e-107,
+          "strength": 0.6495922893832079
+        },
+        {
+          "association": 0.6394503666221455,
+          "kind": "numeric",
+          "marker": "prior_block_changed_lines_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.8592582810482523e-102,
+          "strength": 0.6394503666221455
+        },
+        {
+          "association": 0.6106792101793201,
+          "kind": "numeric",
+          "marker": "mean_complexity_proxy",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.663119995495736e-91,
+          "strength": 0.6106792101793201
+        },
+        {
+          "association": 0.6074182952431516,
+          "kind": "numeric",
+          "marker": "prior_block_changed_lines_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 5.907580797358255e-90,
+          "strength": 0.6074182952431516
+        },
+        {
+          "association": 0.6065888433706479,
+          "kind": "numeric",
+          "marker": "prior_block_commits_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.1921569561012198e-89,
+          "strength": 0.6065888433706479
+        },
+        {
+          "association": 0.5804197932112058,
+          "kind": "numeric",
+          "marker": "prior_block_commits_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.78978325265393e-80,
+          "strength": 0.5804197932112058
+        },
+        {
+          "association": 0.5648095533850135,
+          "kind": "numeric",
+          "marker": "mean_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.1992473684484531e-75,
+          "strength": 0.5648095533850135
+        },
+        {
+          "association": 0.38450595570160107,
+          "kind": "numeric",
+          "marker": "changed_branch_keyword_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.0187563294863096e-32,
+          "strength": 0.38450595570160107
+        },
+        {
+          "association": 0.36533668315032103,
+          "kind": "numeric",
+          "marker": "prior_block_authors_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.3088889959432507e-29,
+          "strength": 0.36533668315032103
+        },
+        {
+          "association": 0.3461460650512873,
+          "kind": "numeric",
+          "marker": "mean_comment_fraction",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.363686696638796e-26,
+          "strength": 0.3461460650512873
+        },
+        {
+          "association": 0.3385191975460355,
+          "kind": "numeric",
+          "marker": "code_additions",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.627565364615137e-25,
+          "strength": 0.3385191975460355
+        },
+        {
+          "association": 0.3384569906458178,
+          "kind": "numeric",
+          "marker": "code_churn",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.726167690955512e-25,
+          "strength": 0.3384569906458178
+        },
+        {
+          "association": 0.33509839063832736,
+          "kind": "numeric",
+          "marker": "changed_nonblank_lines",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.4648388365204185e-24,
+          "strength": 0.33509839063832736
+        },
+        {
+          "association": 0.32266611803783246,
+          "kind": "numeric",
+          "marker": "changed_boolean_operator_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 8.553264971169427e-23,
+          "strength": 0.32266611803783246
+        },
+        {
+          "association": 0.2997810260423718,
+          "kind": "numeric",
+          "marker": "blocks_touched",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 9.427552706482114e-20,
+          "strength": 0.2997810260423718
+        },
+        {
+          "association": 0.2971564559659129,
+          "kind": "numeric",
+          "marker": "changed_comment_fraction",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.0249392881645757e-19,
+          "strength": 0.2971564559659129
+        },
+        {
+          "association": -0.29001524046539023,
+          "kind": "numeric",
+          "marker": "mean_path_depth",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.5580063836904572e-18,
+          "strength": 0.29001524046539023
+        },
+        {
+          "association": 0.28096741167333456,
+          "kind": "numeric",
+          "marker": "hot_block_fraction_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.9036112685191985e-17,
+          "strength": 0.28096741167333456
+        },
+        {
+          "association": -0.27725978630347065,
+          "kind": "numeric",
+          "marker": "days_since_any_block_touch",
+          "method": "Spearman rho",
+          "n": 759,
+          "p_value": 7.314838391274478e-15,
+          "strength": 0.27725978630347065
+        },
+        {
+          "association": 0.26215860382265443,
+          "kind": "numeric",
+          "marker": "churn_per_block",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.5949934992860854e-15,
+          "strength": 0.26215860382265443
+        },
+        {
+          "association": -0.2549190556999336,
+          "kind": "numeric",
+          "marker": "repo_age_days",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.5546058098601817e-14,
+          "strength": 0.2549190556999336
+        },
+        {
+          "association": 0.23962270288068827,
+          "kind": "numeric",
+          "marker": "changed_numeric_literal_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 5.696389543837956e-13,
+          "strength": 0.23962270288068827
+        },
+        {
+          "association": 0.23783512104375,
+          "kind": "numeric",
+          "marker": "code_deletions",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 8.540575604372377e-13,
+          "strength": 0.23783512104375
+        },
+        {
+          "association": -0.22273014618940712,
+          "kind": "numeric",
+          "marker": "mean_change_density",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.2971411093318842e-11,
+          "strength": 0.22273014618940712
+        },
+        {
+          "association": 0.2217800920767536,
+          "kind": "numeric",
+          "marker": "changed_exception_keyword_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.8039008698782303e-11,
+          "strength": 0.2217800920767536
+        },
+        {
+          "association": -0.2175085822966282,
+          "kind": "numeric",
+          "marker": "author_tenure_days",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 6.794604832703298e-11,
+          "strength": 0.2175085822966282
+        },
+        {
+          "association": 0.20949711936996251,
+          "kind": "numeric",
+          "marker": "changed_import_dependency_lines",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.4032524093371837e-10,
+          "strength": 0.20949711936996251
+        },
+        {
+          "association": -0.20333694969519991,
+          "kind": "numeric",
+          "marker": "file_extension_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.1252805511885004e-09,
+          "strength": 0.20333694969519991
+        }
+      ],
+      "top_within_repo_associations": [
+        {
+          "association": 0.6553992614478443,
+          "marker": "admitted_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 6.875568282752776e-109,
+          "strength": 0.6553992614478443
+        },
+        {
+          "association": 0.5948759968953737,
+          "marker": "max_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 3.742519967202613e-85,
+          "strength": 0.5948759968953737
+        },
+        {
+          "association": 0.5614912507414842,
+          "marker": "max_complexity_proxy",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.334686227994463e-74,
+          "strength": 0.5614912507414842
+        },
+        {
+          "association": 0.5249810105141273,
+          "marker": "prior_block_changed_lines_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.3897820095804194e-63,
+          "strength": 0.5249810105141273
+        },
+        {
+          "association": 0.5144336270873199,
+          "marker": "prior_block_commits_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.7553590590380227e-60,
+          "strength": 0.5144336270873199
+        },
+        {
+          "association": 0.5129852491242808,
+          "marker": "prior_block_changed_lines_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.2670478248708567e-60,
+          "strength": 0.5129852491242808
+        },
+        {
+          "association": 0.5085968683626279,
+          "marker": "prior_block_commits_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 6.1327525459616e-59,
+          "strength": 0.5085968683626279
+        },
+        {
+          "association": 0.46911862590098946,
+          "marker": "mean_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 3.0015975365131707e-49,
+          "strength": 0.46911862590098946
+        },
+        {
+          "association": 0.44245506072845786,
+          "marker": "mean_complexity_proxy",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.188146715607225e-43,
+          "strength": 0.44245506072845786
+        },
+        {
+          "association": 0.3753488216856139,
+          "marker": "code_files_touched",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 9.273606338115624e-31,
+          "strength": 0.3753488216856139
+        },
+        {
+          "association": 0.374743095094053,
+          "marker": "blocks_touched",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.1708810093472302e-30,
+          "strength": 0.374743095094053
+        },
+        {
+          "association": 0.37001384547050736,
+          "marker": "code_churn",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 7.108741936467229e-30,
+          "strength": 0.37001384547050736
+        },
+        {
+          "association": 0.3694640955883093,
+          "marker": "changed_nonblank_lines",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 8.749915615186548e-30,
+          "strength": 0.3694640955883093
+        },
+        {
+          "association": 0.3678877100738885,
+          "marker": "code_additions",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.58385234523917e-29,
+          "strength": 0.3678877100738885
+        },
+        {
+          "association": 0.3413592841753901,
+          "marker": "prior_block_authors_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.1208871886022706e-25,
+          "strength": 0.3413592841753901
+        },
+        {
+          "association": 0.33810449272375914,
+          "marker": "changed_import_dependency_lines",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 6.39979458797905e-25,
+          "strength": 0.33810449272375914
+        },
+        {
+          "association": 0.3193132634217668,
+          "marker": "changed_branch_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.920111263181078e-22,
+          "strength": 0.3193132634217668
+        },
+        {
+          "association": 0.30003033923005384,
+          "marker": "file_extension_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 418,
+          "p_value": 3.8356070020929803e-10,
+          "strength": 0.30003033923005384
+        },
+        {
+          "association": 0.2756134001744325,
+          "marker": "code_deletions",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 9.045534391202856e-17,
+          "strength": 0.2756134001744325
+        },
+        {
+          "association": 0.2644324946105408,
+          "marker": "changed_assert_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.6325489309164811e-15,
+          "strength": 0.2644324946105408
+        },
+        {
+          "association": 0.2549776964128056,
+          "marker": "mean_comment_fraction",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.6979747952759988e-14,
+          "strength": 0.2549776964128056
+        },
+        {
+          "association": 0.24716537959535698,
+          "marker": "changed_exception_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.0950406002619398e-13,
+          "strength": 0.24716537959535698
+        },
+        {
+          "association": 0.2411456915197967,
+          "marker": "changed_numeric_literal_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.4092390067669355e-13,
+          "strength": 0.2411456915197967
+        },
+        {
+          "association": 0.24039638637519184,
+          "marker": "changed_boolean_operator_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 5.23029369604856e-13,
+          "strength": 0.24039638637519184
+        },
+        {
+          "association": 0.2379028634838478,
+          "marker": "message_revert",
+          "method": "Within-repo rank Spearman rho",
+          "n": 668,
+          "p_value": 4.758535869162332e-10,
+          "strength": 0.2379028634838478
+        },
+        {
+          "association": 0.23585261029692212,
+          "marker": "changed_async_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.4550800822849697e-12,
+          "strength": 0.23585261029692212
+        },
+        {
+          "association": 0.2243365802543299,
+          "marker": "changed_todo_fixme_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.7711517418748636e-11,
+          "strength": 0.2243365802543299
+        },
+        {
+          "association": 0.22152706800711347,
+          "marker": "message_perf",
+          "method": "Within-repo rank Spearman rho",
+          "n": 418,
+          "p_value": 4.819321839616838e-06,
+          "strength": 0.22152706800711347
+        },
+        {
+          "association": 0.21809089325114317,
+          "marker": "churn_per_block",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 6.496569653025103e-11,
+          "strength": 0.21809089325114317
+        },
+        {
+          "association": 0.20875802929786244,
+          "marker": "is_merge",
+          "method": "Within-repo rank Spearman rho",
+          "n": 744,
+          "p_value": 9.028782542668866e-09,
+          "strength": 0.20875802929786244
+        }
+      ]
+    },
+    "outcome_rework_intensity_180d": {
+      "top_raw_associations": [
+        {
+          "association": 0.5076228109315606,
+          "kind": "numeric",
+          "marker": "prior_block_changed_lines_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 7.038040479046443e-59,
+          "strength": 0.5076228109315606
+        },
+        {
+          "association": 0.49325869640373643,
+          "kind": "numeric",
+          "marker": "prior_block_commits_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.320197176130021e-55,
+          "strength": 0.49325869640373643
+        },
+        {
+          "association": -0.4871409203020437,
+          "kind": "numeric",
+          "marker": "mean_path_depth",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.0801850344922886e-53,
+          "strength": 0.4871409203020437
+        },
+        {
+          "association": 0.4869414111287171,
+          "kind": "numeric",
+          "marker": "prior_block_changed_lines_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.2086581519770502e-53,
+          "strength": 0.4869414111287171
+        },
+        {
+          "association": 0.4733791799095451,
+          "kind": "numeric",
+          "marker": "prior_block_commits_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.1161177106765384e-50,
+          "strength": 0.4733791799095451
+        },
+        {
+          "association": -0.37610258238704153,
+          "kind": "numeric",
+          "marker": "repo_age_days",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 5.506182545940472e-31,
+          "strength": 0.37610258238704153
+        },
+        {
+          "association": 0.36460374104920096,
+          "kind": "numeric",
+          "marker": "max_complexity_proxy",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.348608061743274e-29,
+          "strength": 0.36460374104920096
+        },
+        {
+          "association": 0.35074986956537163,
+          "kind": "numeric",
+          "marker": "mean_complexity_proxy",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 6.670470293224366e-27,
+          "strength": 0.35074986956537163
+        },
+        {
+          "association": -0.3467639561359591,
+          "kind": "numeric",
+          "marker": "days_since_any_block_touch",
+          "method": "Spearman rho",
+          "n": 759,
+          "p_value": 7.227688743277414e-23,
+          "strength": 0.3467639561359591
+        },
+        {
+          "association": 0.34050659556193247,
+          "kind": "numeric",
+          "marker": "hot_block_fraction_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.3535161111012084e-25,
+          "strength": 0.34050659556193247
+        },
+        {
+          "association": -0.3401124319384386,
+          "kind": "numeric",
+          "marker": "message_has_issue_ref",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.6923038091089106e-25,
+          "strength": 0.3401124319384386
+        },
+        {
+          "association": -0.2639876335340349,
+          "kind": "numeric",
+          "marker": "message_chars",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.6363182298324866e-15,
+          "strength": 0.2639876335340349
+        },
+        {
+          "association": 0.25172815873026605,
+          "kind": "numeric",
+          "marker": "author_prior_commit_share",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.362391155593971e-14,
+          "strength": 0.25172815873026605
+        },
+        {
+          "association": 0.2421865928309709,
+          "kind": "numeric",
+          "marker": "max_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.168330169253152e-13,
+          "strength": 0.2421865928309709
+        },
+        {
+          "association": -0.24052460888547375,
+          "kind": "numeric",
+          "marker": "message_words",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.637831008061423e-13,
+          "strength": 0.24052460888547375
+        },
+        {
+          "association": -0.2337415989402487,
+          "kind": "numeric",
+          "marker": "author_tenure_days",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.1325542905322986e-12,
+          "strength": 0.2337415989402487
+        },
+        {
+          "association": 0.22425625259264823,
+          "kind": "numeric",
+          "marker": "mean_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.6645442538319528e-11,
+          "strength": 0.22425625259264823
+        },
+        {
+          "association": 0.2104681557468875,
+          "kind": "numeric",
+          "marker": "changed_branch_keyword_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.808988211460241e-10,
+          "strength": 0.2104681557468875
+        },
+        {
+          "association": -0.20956479309444734,
+          "kind": "numeric",
+          "marker": "is_merge",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.3581398595729304e-10,
+          "strength": 0.20956479309444734
+        },
+        {
+          "association": -0.20956479309444734,
+          "kind": "numeric",
+          "marker": "parent_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.3581398595729304e-10,
+          "strength": 0.20956479309444734
+        },
+        {
+          "association": 0.20491071601821872,
+          "kind": "numeric",
+          "marker": "admitted_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 8.319743575504943e-10,
+          "strength": 0.20491071601821872
+        },
+        {
+          "association": 0.19526398005417225,
+          "kind": "numeric",
+          "marker": "author_prior_code_commits",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 5.100217069280236e-09,
+          "strength": 0.19526398005417225
+        },
+        {
+          "association": -0.19479379632577365,
+          "kind": "numeric",
+          "marker": "file_extension_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 5.558665585043164e-09,
+          "strength": 0.19479379632577365
+        },
+        {
+          "association": 0.1880666118731903,
+          "kind": "numeric",
+          "marker": "blocks_per_file",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.860873943821474e-08,
+          "strength": 0.1880666118731903
+        },
+        {
+          "association": 0.1829708549136273,
+          "kind": "numeric",
+          "marker": "prior_block_authors_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.515580684956222e-08,
+          "strength": 0.1829708549136273
+        },
+        {
+          "association": 0.1496938607370316,
+          "kind": "numeric",
+          "marker": "mean_comment_fraction",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 8.119220571772244e-06,
+          "strength": 0.1496938607370316
+        },
+        {
+          "association": -0.14838612837179702,
+          "kind": "numeric",
+          "marker": "message_docs",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 9.752185175735154e-06,
+          "strength": 0.14838612837179702
+        },
+        {
+          "association": 0.14571042812697563,
+          "kind": "numeric",
+          "marker": "changed_boolean_operator_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.4120570686143426e-05,
+          "strength": 0.14571042812697563
+        },
+        {
+          "association": 0.14051666031791601,
+          "kind": "numeric",
+          "marker": "changed_exception_keyword_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.8437944941006653e-05,
+          "strength": 0.14051666031791601
+        },
+        {
+          "association": 0.1387852416975728,
+          "kind": "categorical_indicator",
+          "marker": "origin_role=Human",
+          "method": "Point-biserial r",
+          "n": 881,
+          "p_value": 3.5721048561540645e-05,
+          "strength": 0.1387852416975728
+        }
+      ],
+      "top_within_repo_associations": [
+        {
+          "association": 0.3666774669344483,
+          "marker": "prior_block_changed_lines_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.4922893588644596e-29,
+          "strength": 0.3666774669344483
+        },
+        {
+          "association": 0.3532755106794333,
+          "marker": "prior_block_commits_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 3.3210098671985124e-27,
+          "strength": 0.3532755106794333
+        },
+        {
+          "association": 0.3176100139137294,
+          "marker": "prior_block_changed_lines_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.981067508094698e-22,
+          "strength": 0.3176100139137294
+        },
+        {
+          "association": 0.3085291280784254,
+          "marker": "prior_block_commits_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 8.105458318142047e-21,
+          "strength": 0.3085291280784254
+        },
+        {
+          "association": 0.21141293254795443,
+          "marker": "admitted_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.497866175842179e-10,
+          "strength": 0.21141293254795443
+        },
+        {
+          "association": 0.21042043078530195,
+          "marker": "changed_import_dependency_lines",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 3.0399521886880103e-10,
+          "strength": 0.21042043078530195
+        },
+        {
+          "association": 0.20484524095360485,
+          "marker": "hot_block_fraction_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 8.99954610035106e-10,
+          "strength": 0.20484524095360485
+        },
+        {
+          "association": -0.19532159045727834,
+          "marker": "days_since_any_block_touch",
+          "method": "Within-repo rank Spearman rho",
+          "n": 758,
+          "p_value": 5.927432071799417e-08,
+          "strength": 0.19532159045727834
+        },
+        {
+          "association": 0.19315631423621338,
+          "marker": "file_extension_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 418,
+          "p_value": 7.045099279742597e-05,
+          "strength": 0.19315631423621338
+        },
+        {
+          "association": 0.19044819441758537,
+          "marker": "max_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.2908262587506242e-08,
+          "strength": 0.19044819441758537
+        },
+        {
+          "association": 0.18551142451882702,
+          "marker": "mean_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 3.0734236389974636e-08,
+          "strength": 0.18551142451882702
+        },
+        {
+          "association": 0.18339833365904046,
+          "marker": "max_complexity_proxy",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.424012142890578e-08,
+          "strength": 0.18339833365904046
+        },
+        {
+          "association": 0.17747109651944046,
+          "marker": "message_revert",
+          "method": "Within-repo rank Spearman rho",
+          "n": 668,
+          "p_value": 3.931791684723563e-06,
+          "strength": 0.17747109651944046
+        },
+        {
+          "association": 0.1753111596300706,
+          "marker": "mean_complexity_proxy",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.715448344795657e-07,
+          "strength": 0.1753111596300706
+        },
+        {
+          "association": 0.15939300840306636,
+          "marker": "changed_exception_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.068298554797403e-06,
+          "strength": 0.15939300840306636
+        },
+        {
+          "association": 0.15914258698208414,
+          "marker": "prior_block_authors_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.1469084741383757e-06,
+          "strength": 0.15914258698208414
+        },
+        {
+          "association": 0.14997918325951992,
+          "marker": "changed_todo_fixme_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 8.082829335277891e-06,
+          "strength": 0.14997918325951992
+        },
+        {
+          "association": 0.14917273568581488,
+          "marker": "changed_branch_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 9.050066289228006e-06,
+          "strength": 0.14917273568581488
+        },
+        {
+          "association": 0.14856487268013463,
+          "marker": "message_refactor",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 9.851082399414297e-06,
+          "strength": 0.14856487268013463
+        },
+        {
+          "association": 0.1480614398573029,
+          "marker": "message_perf",
+          "method": "Within-repo rank Spearman rho",
+          "n": 418,
+          "p_value": 0.002406938473020533,
+          "strength": 0.1480614398573029
+        },
+        {
+          "association": 0.13311138709168838,
+          "marker": "changed_nonblank_lines",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 7.614155070931165e-05,
+          "strength": 0.13311138709168838
+        },
+        {
+          "association": -0.13299947356451255,
+          "marker": "mean_path_depth",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 7.721781918906511e-05,
+          "strength": 0.13299947356451255
+        },
+        {
+          "association": 0.13229532122205193,
+          "marker": "code_churn",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 8.432608847856666e-05,
+          "strength": 0.13229532122205193
+        },
+        {
+          "association": 0.13061564318763802,
+          "marker": "author_prior_commit_share",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 0.00010385419097598078,
+          "strength": 0.13061564318763802
+        },
+        {
+          "association": 0.12943515020283566,
+          "marker": "is_merge",
+          "method": "Within-repo rank Spearman rho",
+          "n": 744,
+          "p_value": 0.0004009110363714667,
+          "strength": 0.12943515020283566
+        },
+        {
+          "association": 0.12943515020283566,
+          "marker": "parent_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 744,
+          "p_value": 0.0004009110363714667,
+          "strength": 0.12943515020283566
+        },
+        {
+          "association": 0.1287410949317387,
+          "marker": "changed_assert_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 0.00013065000885769166,
+          "strength": 0.1287410949317387
+        },
+        {
+          "association": 0.12411886547190884,
+          "marker": "message_dependency",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 0.00022709202225349064,
+          "strength": 0.12411886547190884
+        },
+        {
+          "association": 0.11931575442744125,
+          "marker": "blocks_touched",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 0.0003954824561519614,
+          "strength": 0.11931575442744125
+        },
+        {
+          "association": 0.11799306587349263,
+          "marker": "code_additions",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 0.0004591440467807353,
+          "strength": 0.11799306587349263
+        }
+      ]
+    },
+    "outcome_rework_volume_180d": {
+      "top_raw_associations": [
+        {
+          "association": 0.7374798092679394,
+          "kind": "numeric",
+          "marker": "max_complexity_proxy",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 5.350673292873976e-152,
+          "strength": 0.7374798092679394
+        },
+        {
+          "association": 0.715646740818266,
+          "kind": "numeric",
+          "marker": "admitted_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.7703984169165796e-139,
+          "strength": 0.715646740818266
+        },
+        {
+          "association": 0.7079792289042189,
+          "kind": "numeric",
+          "marker": "max_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 6.37894264327204e-135,
+          "strength": 0.7079792289042189
+        },
+        {
+          "association": 0.6803535602371598,
+          "kind": "numeric",
+          "marker": "prior_block_changed_lines_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 9.17319312208835e-121,
+          "strength": 0.6803535602371598
+        },
+        {
+          "association": 0.6629294049093016,
+          "kind": "numeric",
+          "marker": "mean_complexity_proxy",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.3034382685917786e-112,
+          "strength": 0.6629294049093016
+        },
+        {
+          "association": 0.6336663424517376,
+          "kind": "numeric",
+          "marker": "prior_block_changed_lines_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.329029364909463e-100,
+          "strength": 0.6336663424517376
+        },
+        {
+          "association": 0.6277108282038771,
+          "kind": "numeric",
+          "marker": "mean_block_loc",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.0506257062779037e-97,
+          "strength": 0.6277108282038771
+        },
+        {
+          "association": 0.6061890334588576,
+          "kind": "numeric",
+          "marker": "prior_block_commits_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.6710549148884e-89,
+          "strength": 0.6061890334588576
+        },
+        {
+          "association": 0.5756711349362089,
+          "kind": "numeric",
+          "marker": "prior_block_commits_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 6.761807344876806e-79,
+          "strength": 0.5756711349362089
+        },
+        {
+          "association": 0.4105085931239078,
+          "kind": "numeric",
+          "marker": "changed_branch_keyword_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.886767929117559e-37,
+          "strength": 0.4105085931239078
+        },
+        {
+          "association": 0.39298104845886916,
+          "kind": "numeric",
+          "marker": "mean_comment_fraction",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 6.5177828055114345e-34,
+          "strength": 0.39298104845886916
+        },
+        {
+          "association": 0.39033694753445336,
+          "kind": "numeric",
+          "marker": "code_churn",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.9228731388545025e-33,
+          "strength": 0.39033694753445336
+        },
+        {
+          "association": 0.3885487310924928,
+          "kind": "numeric",
+          "marker": "code_additions",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.9746169757528015e-33,
+          "strength": 0.3885487310924928
+        },
+        {
+          "association": 0.3850090080886056,
+          "kind": "numeric",
+          "marker": "changed_nonblank_lines",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.651192442608114e-32,
+          "strength": 0.3850090080886056
+        },
+        {
+          "association": 0.35250797155361263,
+          "kind": "numeric",
+          "marker": "changed_boolean_operator_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.570530887121723e-27,
+          "strength": 0.35250797155361263
+        },
+        {
+          "association": 0.3516664331342631,
+          "kind": "numeric",
+          "marker": "prior_block_authors_90d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.8180065543504135e-27,
+          "strength": 0.3516664331342631
+        },
+        {
+          "association": 0.32304239068659535,
+          "kind": "numeric",
+          "marker": "changed_comment_fraction",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 7.583419816003335e-23,
+          "strength": 0.32304239068659535
+        },
+        {
+          "association": 0.31912697245645766,
+          "kind": "numeric",
+          "marker": "churn_per_block",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.6311148442608725e-22,
+          "strength": 0.31912697245645766
+        },
+        {
+          "association": 0.30626659223122005,
+          "kind": "numeric",
+          "marker": "blocks_touched",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.3779080634184865e-20,
+          "strength": 0.30626659223122005
+        },
+        {
+          "association": -0.27900189160924455,
+          "kind": "numeric",
+          "marker": "mean_path_depth",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.239617708594752e-17,
+          "strength": 0.27900189160924455
+        },
+        {
+          "association": -0.2744931003779518,
+          "kind": "numeric",
+          "marker": "repo_age_days",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.079504047398947e-16,
+          "strength": 0.2744931003779518
+        },
+        {
+          "association": 0.27105497668859,
+          "kind": "numeric",
+          "marker": "hot_block_fraction_30d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.662777894094626e-16,
+          "strength": 0.27105497668859
+        },
+        {
+          "association": 0.2688970640000891,
+          "kind": "numeric",
+          "marker": "code_deletions",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.662175359816684e-16,
+          "strength": 0.2688970640000891
+        },
+        {
+          "association": -0.2645313892833535,
+          "kind": "numeric",
+          "marker": "days_since_any_block_touch",
+          "method": "Spearman rho",
+          "n": 759,
+          "p_value": 1.2804421779755117e-13,
+          "strength": 0.2645313892833535
+        },
+        {
+          "association": 0.2514381307282944,
+          "kind": "numeric",
+          "marker": "changed_numeric_literal_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.604698010245413e-14,
+          "strength": 0.2514381307282944
+        },
+        {
+          "association": 0.24089880182285614,
+          "kind": "numeric",
+          "marker": "changed_exception_keyword_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 4.257596211255839e-13,
+          "strength": 0.24089880182285614
+        },
+        {
+          "association": -0.2368346998921044,
+          "kind": "numeric",
+          "marker": "author_tenure_days",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.069793665216997e-12,
+          "strength": 0.2368346998921044
+        },
+        {
+          "association": -0.23175854963410825,
+          "kind": "numeric",
+          "marker": "mean_change_density",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.3017699552536106e-12,
+          "strength": 0.23175854963410825
+        },
+        {
+          "association": -0.21585558758640516,
+          "kind": "numeric",
+          "marker": "file_extension_count",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 9.523579231439768e-11,
+          "strength": 0.21585558758640516
+        },
+        {
+          "association": 0.2017079992908688,
+          "kind": "numeric",
+          "marker": "changed_import_dependency_lines",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.5342843476809098e-09,
+          "strength": 0.2017079992908688
+        }
+      ],
+      "top_within_repo_associations": [
+        {
+          "association": 0.7096938327974052,
+          "marker": "admitted_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.129535379489995e-135,
+          "strength": 0.7096938327974052
+        },
+        {
+          "association": 0.6470129761449861,
+          "marker": "max_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.8222164499376037e-105,
+          "strength": 0.6470129761449861
+        },
+        {
+          "association": 0.6030974724758279,
+          "marker": "max_complexity_proxy",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.418728085022304e-88,
+          "strength": 0.6030974724758279
+        },
+        {
+          "association": 0.5740634982167814,
+          "marker": "prior_block_changed_lines_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.1629070690262376e-78,
+          "strength": 0.5740634982167814
+        },
+        {
+          "association": 0.5447293045852367,
+          "marker": "prior_block_changed_lines_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 5.403695013386088e-69,
+          "strength": 0.5447293045852367
+        },
+        {
+          "association": 0.5224400561868049,
+          "marker": "mean_block_loc",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.1968649534405266e-62,
+          "strength": 0.5224400561868049
+        },
+        {
+          "association": 0.5186764923395591,
+          "marker": "prior_block_commits_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.2692880017383063e-61,
+          "strength": 0.5186764923395591
+        },
+        {
+          "association": 0.5057417592146932,
+          "marker": "prior_block_commits_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 3.402052850530831e-58,
+          "strength": 0.5057417592146932
+        },
+        {
+          "association": 0.48933728123751036,
+          "marker": "mean_complexity_proxy",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.7110568246725434e-54,
+          "strength": 0.48933728123751036
+        },
+        {
+          "association": 0.426138477132989,
+          "marker": "code_churn",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.776919930091274e-40,
+          "strength": 0.426138477132989
+        },
+        {
+          "association": 0.4227704734626118,
+          "marker": "changed_nonblank_lines",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.217873514812402e-39,
+          "strength": 0.4227704734626118
+        },
+        {
+          "association": 0.41742317519096644,
+          "marker": "code_additions",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.4500296750725506e-38,
+          "strength": 0.41742317519096644
+        },
+        {
+          "association": 0.37516136242762954,
+          "marker": "blocks_touched",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 9.968059645140468e-31,
+          "strength": 0.37516136242762954
+        },
+        {
+          "association": 0.3703746468101897,
+          "marker": "code_files_touched",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 6.201435714223756e-30,
+          "strength": 0.3703746468101897
+        },
+        {
+          "association": 0.3393880742615775,
+          "marker": "changed_branch_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.146579919868994e-25,
+          "strength": 0.3393880742615775
+        },
+        {
+          "association": 0.3266821723643842,
+          "marker": "prior_block_authors_90d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.784206560006344e-23,
+          "strength": 0.3266821723643842
+        },
+        {
+          "association": 0.3131378121408514,
+          "marker": "code_deletions",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.9915675795826043e-21,
+          "strength": 0.3131378121408514
+        },
+        {
+          "association": 0.3122590544842779,
+          "marker": "changed_import_dependency_lines",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.6077051487583237e-21,
+          "strength": 0.3122590544842779
+        },
+        {
+          "association": 0.28172103582043995,
+          "marker": "mean_comment_fraction",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.7584978264419475e-17,
+          "strength": 0.28172103582043995
+        },
+        {
+          "association": 0.2784485990065497,
+          "marker": "churn_per_block",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 4.250693510400583e-17,
+          "strength": 0.2784485990065497
+        },
+        {
+          "association": 0.2643390154118344,
+          "marker": "changed_boolean_operator_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.6715685065663584e-15,
+          "strength": 0.2643390154118344
+        },
+        {
+          "association": 0.2639137980837784,
+          "marker": "changed_numeric_literal_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.860948298125949e-15,
+          "strength": 0.2639137980837784
+        },
+        {
+          "association": 0.2510631669670604,
+          "marker": "file_extension_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 418,
+          "p_value": 1.9804315684597665e-07,
+          "strength": 0.2510631669670604
+        },
+        {
+          "association": 0.22835576472123412,
+          "marker": "changed_assert_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 7.51737884331212e-12,
+          "strength": 0.22835576472123412
+        },
+        {
+          "association": 0.22739491468726644,
+          "marker": "changed_exception_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 9.24030548623996e-12,
+          "strength": 0.22739491468726644
+        },
+        {
+          "association": 0.22210010483056086,
+          "marker": "changed_async_keyword_count",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.8334254157274545e-11,
+          "strength": 0.22210010483056086
+        },
+        {
+          "association": 0.21769877261235887,
+          "marker": "changed_comment_fraction",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 7.039752926850778e-11,
+          "strength": 0.21769877261235887
+        },
+        {
+          "association": -0.2087276449231137,
+          "marker": "days_since_any_block_touch",
+          "method": "Within-repo rank Spearman rho",
+          "n": 758,
+          "p_value": 6.585048129560339e-09,
+          "strength": 0.2087276449231137
+        },
+        {
+          "association": 0.19456896935563983,
+          "marker": "message_revert",
+          "method": "Within-repo rank Spearman rho",
+          "n": 668,
+          "p_value": 4.023078624641008e-07,
+          "strength": 0.19456896935563983
+        },
+        {
+          "association": 0.18655690669220198,
+          "marker": "hot_block_fraction_30d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 2.562563814684311e-08,
+          "strength": 0.18655690669220198
+        }
+      ]
+    }
+  },
+  "repos": {
+    "BarthPaleologue/CosmosJourneyer": 76,
+    "MudBlazor/MudBlazor": 208,
+    "PrimeIntellect-ai/verifiers": 460,
+    "gameknife/gkNextEngine": 3,
+    "skeletonlabs/skeleton": 134
+  },
+  "rows": 881
+}
