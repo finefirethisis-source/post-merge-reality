@@ -332,7 +332,7 @@ def main() -> None:
     for info in pilot:
         repo = info["repo"]
         try:
-            results[repo] = scrape_repo(repo, assets_by_repo[repo], commit_label)
+            results[repo] = scrape_repo(info, assets_by_repo[repo], commit_label)
         except Exception as exc:
             failures.append({
                 "repo": repo,
