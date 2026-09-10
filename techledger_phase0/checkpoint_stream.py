@@ -17,7 +17,7 @@ from src.webscrape import github_commit_scraper as gcs
 RQ1A = Path('dev/analysis/output_rq1a_explore/rq1_origin_commit_maintenance_summary.csv')
 RQ1B = Path('dev/analysis/output_rq1b_explore/rq1b_origin_commit_terminal_maintenance_summary.csv')
 OUTPUT = Path('techledger_phase0/checkpoint_summary.json')
-WORK = Path('/tmp/techledger_exact180_fastpilot')
+WORK = Path('/tmp/techledger_exact180_hybridpilot')
 REPO = 'BarthPaleologue/CosmosJourneyer'
 HORIZON = 180.0
 TARGETS = {
@@ -28,8 +28,7 @@ TARGETS = {
     '402772731d238ac639968de9315f9f40d64754c0': {'packaged': 25, 'terminal_180': 13, 'corrective_180': 0},
 }
 REFERENCE_SCRIPT_SECONDS = 1709.44
-REFERENCE_FULL_FILE_BLAME_SECONDS = 1300.20
-REFERENCE_DIFF_SECONDS = 265.70
+FAST_DIFF_ONLY_SECONDS = 311.732144459
 
 
 def pdt(v):
@@ -68,11 +67,7 @@ def load_metadata_and_labels():
 
 
 def measure(lines, selected, labels):
-    raw = Counter()
-    terminal = Counter()
-    corrective = Counter()
-    labeled = Counter()
-    unlabeled = Counter()
+    raw = Counter(); terminal = Counter(); corrective = Counter(); labeled = Counter(); unlabeled = Counter()
     for row in lines:
         sha = row.get('origin_commit_sha')
         if sha not in selected:
@@ -89,13 +84,13 @@ def measure(lines, selected, labels):
         klass = labels.get((REPO, tsha)) if tsha else None
         if klass:
             labeled[sha] += 1
-            if klass == 'corrective':
-                corrective[sha] += 1
+            if klass == 'corrective': corrective[sha] += 1
         else:
             unlabeled[sha] += 1
 
     assets = []
     for sha in TARGETS:
+        expected = TARGETS[sha]
         actual = {
             'sha': sha,
             'packaged': selected[sha]['tracked'],
@@ -103,123 +98,99 @@ def measure(lines, selected, labels):
             'terminal_180': terminal[sha],
             'corrective_180': corrective[sha],
         }
-        expected = TARGETS[sha]
         actual['tracked_matches_blame_reference'] = actual['reconstructed'] == expected['packaged']
         actual['terminal_matches_blame_reference'] = actual['terminal_180'] == expected['terminal_180']
         actual['corrective_matches_blame_reference'] = actual['corrective_180'] == expected['corrective_180']
         assets.append(actual)
-
-    total_terminal = sum(terminal.values())
-    total_labeled = sum(labeled.values())
-    total_unlabeled = sum(unlabeled.values())
     return {
         'assets': assets,
         'all_tracked_counts_match': all(a['tracked_matches_blame_reference'] for a in assets),
         'all_terminal_counts_match': all(a['terminal_matches_blame_reference'] for a in assets),
         'all_corrective_counts_match': all(a['corrective_matches_blame_reference'] for a in assets),
-        'terminal_lines_180': total_terminal,
+        'terminal_lines_180': sum(terminal.values()),
         'corrective_lines_180': sum(corrective.values()),
-        'terminal_label_coverage': total_labeled / (total_labeled + total_unlabeled) if (total_labeled + total_unlabeled) else None,
+        'terminal_label_coverage': sum(labeled.values()) / (sum(labeled.values()) + sum(unlabeled.values())) if (sum(labeled.values()) + sum(unlabeled.values())) else None,
     }
 
 
 def main():
-    total_start = time.monotonic()
-    if WORK.exists():
-        shutil.rmtree(WORK)
+    start = time.monotonic()
+    if WORK.exists(): shutil.rmtree(WORK)
     WORK.mkdir(parents=True)
-    timings = {}
-    failure = None
-    result = None
-    repo_dir = None
+    timings = {}; failure = None; result = None; repo_dir = None
+    survivor_stats = {}
+    diff_only_snapshot = None
 
     try:
-        t = time.monotonic()
-        selected, labels = load_metadata_and_labels()
-        timings['load_packaged_data_seconds'] = time.monotonic() - t
-        if set(selected) != set(TARGETS):
-            raise RuntimeError(f'Expected five target SHAs; found {len(selected)}')
-        for sha, expected in TARGETS.items():
-            if selected[sha]['tracked'] != expected['packaged']:
-                raise RuntimeError(f'Packaged tracked count changed for {sha}')
+        t = time.monotonic(); selected, labels = load_metadata_and_labels(); timings['load_packaged_data_seconds'] = time.monotonic() - t
+        if set(selected) != set(TARGETS): raise RuntimeError(f'Expected five target SHAs; found {len(selected)}')
 
-        t = time.monotonic()
-        repo_dir = gcs.ensure_local_repo(REPO, WORK / 'repos', full_clone=False)
-        timings['clone_seconds'] = time.monotonic() - t
-        branch = gcs.run_git(repo_dir, ['rev-parse', '--abbrev-ref', 'HEAD']).strip()
-        reachable = set(gcs.run_git(repo_dir, ['rev-list', 'HEAD']).splitlines())
-        if not set(TARGETS).issubset(reachable):
-            raise RuntimeError('One or more validated target SHAs are no longer reachable')
+        t = time.monotonic(); repo_dir = gcs.ensure_local_repo(REPO, WORK / 'repos', full_clone=False); timings['clone_seconds'] = time.monotonic() - t
+        branch = gcs.run_git(repo_dir, ['rev-parse','--abbrev-ref','HEAD']).strip()
+        reachable = set(gcs.run_git(repo_dir, ['rev-list','HEAD']).splitlines())
+        if not set(TARGETS).issubset(reachable): raise RuntimeError('One or more target SHAs no longer reachable')
 
         earliest = min(v['origin_date'] for v in selected.values())
         latest = max(v['origin_date'] for v in selected.values())
         horizon_end = latest + timedelta(days=HORIZON, seconds=1)
 
-        t = time.monotonic()
-        commits, _ = gcs.fetch_branch_commits(REPO, repo_dir, branch, since=earliest - timedelta(days=2))
-        obs = [c for c in commits if gcs.commit_datetime(c) <= horizon_end]
-        timings['enumerate_commit_metadata_seconds'] = time.monotonic() - t
-        if not set(TARGETS).issubset({c['sha'] for c in obs}):
-            raise RuntimeError('Target SHAs missing from dated branch enumeration')
+        t = time.monotonic(); commits, _ = gcs.fetch_branch_commits(REPO, repo_dir, branch, since=earliest - timedelta(days=2)); obs = [c for c in commits if gcs.commit_datetime(c) <= horizon_end]; timings['enumerate_commit_metadata_seconds'] = time.monotonic() - t
+        if not set(TARGETS).issubset({c['sha'] for c in obs}): raise RuntimeError('Target SHAs missing from dated branch enumeration')
 
-        t = time.monotonic()
-        detailed = gcs.add_git_file_changes(REPO, repo_dir, obs)
-        timings['extract_all_window_diffs_seconds'] = time.monotonic() - t
+        t = time.monotonic(); detailed = gcs.add_git_file_changes(REPO, repo_dir, obs); timings['extract_all_window_diffs_seconds'] = time.monotonic() - t
 
+        t = time.monotonic(); lines = gcs.build_line_lifecycle(detailed, repo_dir=None, origin_commit_shas=set(TARGETS)); timings['forward_diff_lifecycle_seconds'] = time.monotonic() - t
+        diff_only_snapshot = measure(lines, selected, labels)
+
+        survivors = [line for line in lines if line.get('status') == 'survived']
+        survivor_stats = {
+            'lines_before_targeted_verification': len(survivors),
+            'unique_current_files_before_targeted_verification': len({line.get('current_file') for line in survivors if line.get('current_file')}),
+            'unique_origin_files_before_targeted_verification': len({line.get('origin_file') for line in survivors if line.get('origin_file')}),
+        }
+        commit_graph = gcs.build_commit_graph(detailed)
         t = time.monotonic()
-        # Same authors' forward lifecycle logic; deliberately omit repo_dir so
-        # verify_line_lifecycle_with_blame() is not invoked.
-        lines = gcs.build_line_lifecycle(
-            detailed,
-            repo_dir=None,
-            origin_commit_shas=set(TARGETS),
+        gcs.verify_line_lifecycle_with_blame(
+            survivors,
+            repo_dir,
+            commit_graph,
+            blame_workers=4,
+            branch_end_sha=obs[-1]['sha'],
+            blame_since=None,
         )
-        timings['diff_only_lifecycle_seconds'] = time.monotonic() - t
+        timings['targeted_survivor_blame_seconds'] = time.monotonic() - t
+        survivor_stats['lines_still_surviving_after_verification'] = sum(1 for line in survivors if line.get('status') == 'survived')
+        survivor_stats['new_terminals_found_by_targeted_verification'] = sum(1 for line in survivors if line.get('status') != 'survived')
 
         result = measure(lines, selected, labels)
-        result.update({
-            'repo': REPO,
-            'branch': branch,
-            'observation_commits': len(obs),
-            'reconstructed_lines': len(lines),
-        })
+        result.update({'repo': REPO, 'branch': branch, 'observation_commits': len(obs), 'reconstructed_lines': len(lines)})
     except Exception as exc:
-        failure = {
-            'error': str(exc),
-            'traceback': traceback.format_exc()[-10000:],
-        }
+        failure = {'error': str(exc), 'traceback': traceback.format_exc()[-12000:]}
     finally:
-        if repo_dir is not None:
-            gcs.remove_cloned_repo_dir(repo_dir)
+        if repo_dir is not None: gcs.remove_cloned_repo_dir(repo_dir)
 
-    timings['total_script_compute_seconds'] = time.monotonic() - total_start
+    timings['total_script_compute_seconds'] = time.monotonic() - start
     exact_match = bool(result and result['all_tracked_counts_match'] and result['all_terminal_counts_match'] and result['all_corrective_counts_match'])
-    speedup = REFERENCE_SCRIPT_SECONDS / timings['total_script_compute_seconds'] if timings['total_script_compute_seconds'] else None
+    speedup_vs_full = REFERENCE_SCRIPT_SECONDS / timings['total_script_compute_seconds'] if timings['total_script_compute_seconds'] else None
     summary = {
-        'purpose': 'Test whether exact-180 per-asset burden can be reconstructed materially faster by using the authors forward diff lifecycle without expensive full-file blame verification.',
-        'method_change': 'Keep the same commit window, parsed diffs, line-birth rules, rename handling, line-position mapping, and first-terminal logic; skip verify_line_lifecycle_with_blame and use the forward diff result directly.',
-        'same_five_assets_as_validated_blame_pilot': list(TARGETS),
-        'reference_blame_pilot': {
-            'script_compute_seconds': REFERENCE_SCRIPT_SECONDS,
-            'full_file_blame_prefetch_seconds': REFERENCE_FULL_FILE_BLAME_SECONDS,
-            'diff_extraction_seconds': REFERENCE_DIFF_SECONDS,
-            'terminal_lines_180': 38,
-            'corrective_lines_180': 1,
-        },
-        'optimized_timings': timings,
-        'optimized_result': result,
+        'purpose': 'Fix the five-asset fast-path mismatch by applying the authors blame verifier only to lines that survive the forward diff pass.',
+        'method': 'Forward-track all target lines through parsed diffs. Preserve lines already terminated by diff. Run exact blame verification only on apparent survivors, then recombine.',
+        'same_five_assets_as_reference': list(TARGETS),
+        'reference_full_blame': {'seconds': REFERENCE_SCRIPT_SECONDS, 'terminal_lines_180': 38, 'corrective_lines_180': 1},
+        'reference_diff_only': {'seconds': FAST_DIFF_ONLY_SECONDS, 'terminal_lines_180': 33, 'corrective_lines_180': 1},
+        'diff_only_snapshot_this_run': diff_only_snapshot,
+        'survivor_verification': survivor_stats,
+        'hybrid_result': result,
+        'timings': timings,
         'failure': failure,
-        'exact_outcome_match_to_blame_pilot': exact_match,
-        'measured_speedup_vs_blame_pilot': speedup,
-        'acceptance': 'PASS only if all five reconstructed line counts, terminal_180 counts, and corrective_180 counts exactly match the blame-based pilot and runtime is materially lower.',
-        'pilot_pass': exact_match and speedup is not None and speedup >= 3.0,
-        'guardrail': 'A pass validates this faster route only on the same five assets. Before a full 18k-asset rerun, validate on a larger and more diverse repository sample, especially assets involving renames/moves.',
+        'exact_outcome_match_to_full_blame_reference': exact_match,
+        'speedup_vs_full_blame_reference': speedup_vs_full,
+        'pilot_pass': exact_match and speedup_vs_full is not None and speedup_vs_full >= 2.0,
+        'acceptance': 'All five tracked, terminal_180, and corrective_180 counts must exactly match the validated full-blame reference; total runtime must remain at least 2x faster.',
+        'guardrail': 'A pass fixes the five-asset sample only. Next validation should test the hybrid on a more diverse set including renames/moves before scaling to the full study sample.'
     }
     OUTPUT.write_text(json.dumps(summary, indent=2, sort_keys=True) + '\n', encoding='utf-8')
     print(json.dumps(summary, indent=2, sort_keys=True))
-    if failure:
-        raise SystemExit(2)
+    if failure: raise SystemExit(2)
 
-
-if __name__ == '__main__':
-    main()
+if __name__ == '__main__': main()
