@@ -1,0 +1,122 @@
+{
+  "first_termination_days_distribution": {
+    "max": 390.83221064814813,
+    "n": 176532,
+    "p50": 3.931076388888889,
+    "p75": 26.87008969907407,
+    "p90": 89.87554050925925,
+    "p95": 146.09405671296292,
+    "p99": 259.9443662037037
+  },
+  "input": "dev/analysis/output_rq1a_explore/rq1_origin_commit_maintenance_summary.csv",
+  "origin_roles": {
+    "AI": 29100,
+    "Human": 218248
+  },
+  "row_count": 247348,
+  "schema": [
+    "repo_key",
+    "repo",
+    "origin_commit_sha",
+    "origin_role",
+    "origin_commit_category",
+    "origin_commit_date",
+    "origin_primary_operational_intent",
+    "origin_maintenance_class",
+    "tracked_line_count",
+    "survived_line_count",
+    "modified_line_count",
+    "deleted_line_count",
+    "terminated_line_count",
+    "terminated_by_ai_line_count",
+    "terminated_by_human_line_count",
+    "terminated_by_bot_line_count",
+    "terminated_by_unknown_line_count",
+    "survival_rate",
+    "termination_rate",
+    "any_termination",
+    "first_termination_days"
+  ],
+  "termination_rate_distribution": {
+    "max": 1.0,
+    "n": 247348,
+    "p50": 0.18666666666666668,
+    "p75": 0.75,
+    "p90": 1.0,
+    "p95": 1.0,
+    "p99": 1.0
+  },
+  "top_origin_intents": [
+    [
+      "bug_fix",
+      58908
+    ],
+    [
+      "feature",
+      52148
+    ],
+    [
+      "documentation",
+      34879
+    ],
+    [
+      "test",
+      23149
+    ],
+    [
+      "refactor_cleanup",
+      22149
+    ],
+    [
+      "dependency_update",
+      15683
+    ],
+    [
+      "build_config_ci",
+      12738
+    ],
+    [
+      "resource",
+      8266
+    ],
+    [
+      "merge_release_versioning",
+      4949
+    ],
+    [
+      "style_formatting",
+      4028
+    ],
+    [
+      "performance",
+      3976
+    ],
+    [
+      "unknown",
+      2866
+    ],
+    [
+      "security_fix",
+      1757
+    ],
+    [
+      "revert",
+      1536
+    ],
+    [
+      "mixed",
+      316
+    ]
+  ],
+  "tracked_line_count_distribution": {
+    "max": 440587.0,
+    "n": 247348,
+    "p50": 23.0,
+    "p75": 110.0,
+    "p90": 393.0,
+    "p95": 823.0,
+    "p99": 3775.0599999999977
+  },
+  "unique_origin_assets": 247348,
+  "unique_repositories": 182
+}
