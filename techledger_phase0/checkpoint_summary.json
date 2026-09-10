@@ -1,190 +1,283 @@
 {
-  "corrective_commits": {
-    "concentration": {
-      "top_10pct": {
-        "asset_count": 1867,
-        "burden_share": 0.508787724586057,
-        "burden_to_size_ratio": 1.4316062058718733,
-        "tracked_line_share": 0.35539642291240026
-      },
-      "top_1pct": {
-        "asset_count": 187,
-        "burden_share": 0.14017301444396602,
-        "burden_to_size_ratio": 1.091577020609513,
-        "tracked_line_share": 0.1284133064341135
-      },
-      "top_20pct": {
-        "asset_count": 3734,
-        "burden_share": 0.6994559048029123,
-        "burden_to_size_ratio": 1.461246206627974,
-        "tracked_line_share": 0.4786708096351557
-      },
-      "top_5pct": {
-        "asset_count": 933,
-        "burden_share": 0.35139155282420637,
-        "burden_to_size_ratio": 1.3137813223469883,
-        "tracked_line_share": 0.2674657850946361
-      }
+  "asset_level_tables": [
+    {
+      "column_count": 21,
+      "has_commit_level_id": false,
+      "has_origin_commit_sha": true,
+      "has_repo_id": true,
+      "identifier_columns": [
+        "repo_key",
+        "repo",
+        "origin_commit_sha"
+      ],
+      "obvious_outcome_or_post_admission_columns": [
+        "origin_maintenance_class",
+        "survival_rate",
+        "termination_rate",
+        "any_termination",
+        "first_termination_days"
+      ],
+      "other_columns": [],
+      "path": "dev/analysis/output_rq1a_explore/rq1_origin_commit_maintenance_summary.csv",
+      "possible_admission_time_columns": [
+        "origin_role",
+        "origin_commit_category",
+        "origin_commit_date",
+        "origin_primary_operational_intent",
+        "tracked_line_count",
+        "survived_line_count",
+        "modified_line_count",
+        "deleted_line_count",
+        "terminated_line_count",
+        "terminated_by_ai_line_count",
+        "terminated_by_human_line_count",
+        "terminated_by_bot_line_count",
+        "terminated_by_unknown_line_count"
+      ],
+      "size_bytes": 52641419
     },
-    "p50_all_assets": 1.0,
-    "p50_nonzero_assets": 2.0,
-    "p90_all_assets": 3.0,
-    "p90_nonzero_assets": 5.0,
-    "p99_all_assets": 11.0,
-    "p99_nonzero_assets": 15.0,
-    "total": 25547.0,
-    "zero_asset_share": 0.46869141357330335
-  },
-  "corrective_lines": {
-    "concentration": {
-      "top_10pct": {
-        "asset_count": 1867,
-        "burden_share": 0.8661966468855439,
-        "burden_to_size_ratio": 2.2190383237770313,
-        "tracked_line_share": 0.39034776353532646
-      },
-      "top_1pct": {
-        "asset_count": 187,
-        "burden_share": 0.5578585943188362,
-        "burden_to_size_ratio": 3.9031673462885923,
-        "tracked_line_share": 0.14292459042251612
-      },
-      "top_20pct": {
-        "asset_count": 3734,
-        "burden_share": 0.9457343682334521,
-        "burden_to_size_ratio": 1.8313138146981993,
-        "tracked_line_share": 0.5164239796822093
-      },
-      "top_5pct": {
-        "asset_count": 933,
-        "burden_share": 0.7712686726977676,
-        "burden_to_size_ratio": 2.724846189946644,
-        "tracked_line_share": 0.28305035181192006
-      }
-    },
-    "p50_all_assets": 1.0,
-    "p50_nonzero_assets": 6.0,
-    "p90_all_assets": 29.0,
-    "p90_nonzero_assets": 60.0,
-    "p99_all_assets": 263.27999999999884,
-    "p99_nonzero_assets": 443.6399999999994,
-    "total": 420266.0,
-    "zero_asset_share": 0.46869141357330335
-  },
-  "definition": {
-    "asset": "origin commit classified as feature, at least 20 tracked lines, at least 180 days observed",
-    "corrective_event_proxy": "distinct terminal corrective commits represented among first interventions of original lines",
-    "corrective_line_proxy": "original lines whose first terminal intervention was classified corrective",
-    "important_limit": "Both are lower-bound first-intervention measures; they do not count every later maintenance touch to the asset."
-  },
-  "join_quality": {
-    "cohort_assets": 18669,
-    "duplicate_join_keys_in_rq1b": 0,
-    "matched_in_rq1b": 18669,
-    "unmatched": 0
-  },
-  "size_band_top10": {
-    "100-249": {
-      "asset_count": 4620,
-      "corrective_commits_top10": {
-        "asset_count": 462,
-        "burden_share": 0.4173091750192752,
-        "burden_to_size_ratio": 3.909114613785202,
-        "tracked_line_share": 0.106752862540194
-      },
-      "corrective_lines_top10": {
-        "asset_count": 462,
-        "burden_share": 0.6890894396551724,
-        "burden_to_size_ratio": 6.575458528085889,
-        "tracked_line_share": 0.10479716915738284
-      }
-    },
-    "1000+": {
-      "asset_count": 1571,
-      "corrective_commits_top10": {
-        "asset_count": 157,
-        "burden_share": 0.44339348079161817,
-        "burden_to_size_ratio": 1.9942742498072457,
-        "tracked_line_share": 0.222333252728141
-      },
-      "corrective_lines_top10": {
-        "asset_count": 157,
-        "burden_share": 0.8150414945592667,
-        "burden_to_size_ratio": 3.5146200031903634,
-        "tracked_line_share": 0.2319003174793919
-      }
-    },
-    "20-49": {
-      "asset_count": 4399,
-      "corrective_commits_top10": {
-        "asset_count": 440,
-        "burden_share": 0.49907834101382487,
-        "burden_to_size_ratio": 4.734724525864226,
-        "tracked_line_share": 0.10540810522080553
-      },
-      "corrective_lines_top10": {
-        "asset_count": 440,
-        "burden_share": 0.7161612640873708,
-        "burden_to_size_ratio": 6.897675610559955,
-        "tracked_line_share": 0.10382646336556738
-      }
-    },
-    "250-499": {
-      "asset_count": 2573,
-      "corrective_commits_top10": {
-        "asset_count": 257,
-        "burden_share": 0.39497307001795334,
-        "burden_to_size_ratio": 3.772840690982511,
-        "tracked_line_share": 0.10468850989706001
-      },
-      "corrective_lines_top10": {
-        "asset_count": 257,
-        "burden_share": 0.6710364145658263,
-        "burden_to_size_ratio": 6.430127251812329,
-        "tracked_line_share": 0.10435818581610418
-      }
-    },
-    "50-99": {
-      "asset_count": 3837,
-      "corrective_commits_top10": {
-        "asset_count": 384,
-        "burden_share": 0.4322381930184805,
-        "burden_to_size_ratio": 4.165948840929209,
-        "tracked_line_share": 0.10375504105376157
-      },
-      "corrective_lines_top10": {
-        "asset_count": 384,
-        "burden_share": 0.6854634146341464,
-        "burden_to_size_ratio": 6.555457134349369,
-        "tracked_line_share": 0.10456378565004207
-      }
-    },
-    "500-999": {
-      "asset_count": 1669,
-      "corrective_commits_top10": {
-        "asset_count": 167,
-        "burden_share": 0.3904544300583905,
-        "burden_to_size_ratio": 3.746687866553423,
-        "tracked_line_share": 0.10421322617877143
-      },
-      "corrective_lines_top10": {
-        "asset_count": 167,
-        "burden_share": 0.6728992653718426,
-        "burden_to_size_ratio": 6.506213323486614,
-        "tracked_line_share": 0.10342410122686274
-      }
+    {
+      "column_count": 30,
+      "has_commit_level_id": false,
+      "has_origin_commit_sha": true,
+      "has_repo_id": true,
+      "identifier_columns": [
+        "repo_key",
+        "repo",
+        "origin_commit_sha",
+        "first_terminal_commit_sha"
+      ],
+      "obvious_outcome_or_post_admission_columns": [
+        "any_termination",
+        "termination_rate",
+        "first_termination_date",
+        "first_termination_days",
+        "first_terminal_maintenance_class",
+        "mode_terminal_maintenance_class",
+        "terminal_corrective_line_count",
+        "terminal_adaptive_line_count",
+        "terminal_perfective_line_count",
+        "terminal_preventive_line_count",
+        "terminal_management_line_count",
+        "terminal_unknown_line_count",
+        "terminal_mixed_line_count",
+        "terminal_corrective_commit_count",
+        "terminal_adaptive_commit_count",
+        "terminal_perfective_commit_count",
+        "terminal_preventive_commit_count",
+        "terminal_management_commit_count",
+        "terminal_unknown_commit_count",
+        "terminal_mixed_commit_count"
+      ],
+      "other_columns": [],
+      "path": "dev/analysis/output_rq1b_explore/rq1b_origin_commit_terminal_maintenance_summary.csv",
+      "possible_admission_time_columns": [
+        "origin_role",
+        "origin_commit_category",
+        "origin_commit_date",
+        "tracked_line_count",
+        "survived_line_count",
+        "terminated_line_count"
+      ],
+      "size_bytes": 64013895
     }
+  ],
+  "files_scanned": 21,
+  "generic_commit_level_tables": [],
+  "interpretation_rule": {
+    "usable_asset_predictor_source": "must identify the origin asset/commit and contain fields knowable at or before admission",
+    "warning": "Columns are classified by names only in this checkpoint; no field is accepted as causal/predictive yet."
   },
-  "within_repository_top10": {
-    "eligibility": "at least 20 mature substantive feature assets",
-    "eligible_repo_count": 143,
-    "median_corrective_commit_burden_share": 0.43859649122807015,
-    "median_corrective_commit_burden_to_size_ratio": 1.656209548826679,
-    "median_corrective_line_burden_share": 0.7513513513513513,
-    "median_corrective_line_burden_to_size_ratio": 2.5489721076618252,
-    "p25_corrective_commit_burden_share": 0.38661769402746726,
-    "p25_corrective_line_burden_share": 0.6387356667669575,
-    "p75_corrective_commit_burden_share": 0.5,
-    "p75_corrective_line_burden_share": 0.8425923533941585
-  }
+  "purpose": "Identify packaged tables that could supply information knowable at asset admission time without revisiting original repositories.",
+  "repo_level_tables": [
+    {
+      "column_count": 17,
+      "has_commit_level_id": false,
+      "has_origin_commit_sha": false,
+      "has_repo_id": true,
+      "identifier_columns": [
+        "repo",
+        "repo_key"
+      ],
+      "obvious_outcome_or_post_admission_columns": [
+        "survival_days",
+        "survival_days_positive"
+      ],
+      "other_columns": [
+        "origin_group",
+        "origin_ai",
+        "cr_status",
+        "event_type",
+        "event_observed",
+        "weight",
+        "observation_end",
+        "origin_end"
+      ],
+      "path": "dev/analysis/output_rq1/rq1_fine_gray_maintenance_class_line_data.csv.gz",
+      "possible_admission_time_columns": [
+        "origin_commit_category",
+        "file_primary_role",
+        "event_type_factor",
+        "origin_start",
+        "max_tracked_lines"
+      ],
+      "size_bytes": 10105651
+    },
+    {
+      "column_count": 17,
+      "has_commit_level_id": false,
+      "has_origin_commit_sha": false,
+      "has_repo_id": true,
+      "identifier_columns": [
+        "repo",
+        "repo_key"
+      ],
+      "obvious_outcome_or_post_admission_columns": [
+        "survival_days",
+        "survival_days_positive"
+      ],
+      "other_columns": [
+        "origin_group",
+        "origin_ai",
+        "cr_status",
+        "event_type",
+        "event_observed",
+        "weight",
+        "observation_end",
+        "origin_end"
+      ],
+      "path": "dev/analysis/output_rq1/rq1_fine_gray_operational_intent_line_data.csv.gz",
+      "possible_admission_time_columns": [
+        "origin_commit_category",
+        "file_primary_role",
+        "event_type_factor",
+        "origin_start",
+        "max_tracked_lines"
+      ],
+      "size_bytes": 10513922
+    },
+    {
+      "column_count": 71,
+      "has_commit_level_id": false,
+      "has_origin_commit_sha": false,
+      "has_repo_id": true,
+      "identifier_columns": [
+        "repo_key",
+        "repo"
+      ],
+      "obvious_outcome_or_post_admission_columns": [
+        "corrective_commits",
+        "corrective_rate",
+        "corrective_changed_lines",
+        "corrective_line_rate",
+        "human_corrective_commits",
+        "human_corrective_rate",
+        "human_corrective_changed_lines",
+        "human_corrective_line_rate",
+        "human_origin_corrective_terminated_lines",
+        "human_origin_corrective_line_rate",
+        "maintenance_corrective_commits",
+        "maintenance_corrective_rate",
+        "maintenance_corrective_changed_lines",
+        "maintenance_corrective_line_rate",
+        "maintenance_adaptive_commits",
+        "maintenance_adaptive_rate",
+        "maintenance_adaptive_changed_lines",
+        "maintenance_adaptive_line_rate",
+        "maintenance_perfective_commits",
+        "maintenance_perfective_rate",
+        "maintenance_perfective_changed_lines",
+        "maintenance_perfective_line_rate",
+        "maintenance_preventive_commits",
+        "maintenance_preventive_rate",
+        "maintenance_preventive_changed_lines",
+        "maintenance_preventive_line_rate",
+        "maintenance_management_commits",
+        "maintenance_management_rate",
+        "maintenance_management_changed_lines",
+        "maintenance_management_line_rate"
+      ],
+      "other_columns": [
+        "week",
+        "adoption_class",
+        "ai_share",
+        "lagged_ai_share",
+        "total_commits",
+        "ai_total_commits",
+        "human_total_commits"
+      ],
+      "path": "dev/analysis/output_rq2/rq2_repo_week_panel.csv",
+      "possible_admission_time_columns": [
+        "total_changed_lines",
+        "human_total_changed_lines",
+        "human_origin_living_tracked_lines_at_week_start",
+        "sonar_scan_count",
+        "sonar_ncloc",
+        "sonar_issue_count",
+        "sonar_bug_count",
+        "sonar_vulnerability_count",
+        "sonar_code_smell_count",
+        "sonar_security_hotspot_count",
+        "sonar_defect_security_issue_count",
+        "sonar_severe_issue_count",
+        "sonar_complexity",
+        "sonar_cognitive_complexity",
+        "sonar_duplicated_lines_density",
+        "sonar_comment_lines_density",
+        "sonar_sqale_index",
+        "sonar_maintainability_effort",
+        "sonar_issue_density_per_kloc",
+        "sonar_bug_density_per_kloc",
+        "sonar_vulnerability_density_per_kloc",
+        "sonar_code_smell_density_per_kloc",
+        "sonar_security_hotspot_density_per_kloc",
+        "sonar_defect_security_issue_density_per_kloc",
+        "sonar_severe_issue_density_per_kloc",
+        "sonar_complexity_per_kloc",
+        "sonar_cognitive_complexity_per_kloc",
+        "sonar_sqale_index_per_kloc",
+        "sonar_maintainability_effort_per_kloc",
+        "living_tracked_lines_at_week_start",
+        "terminated_existing_lines",
+        "tracked_line_churn_rate"
+      ],
+      "size_bytes": 5754703
+    },
+    {
+      "column_count": 21,
+      "has_commit_level_id": false,
+      "has_origin_commit_sha": false,
+      "has_repo_id": true,
+      "identifier_columns": [
+        "repo_slug"
+      ],
+      "obvious_outcome_or_post_admission_columns": [],
+      "other_columns": [
+        "repo_url",
+        "filter_passed",
+        "filter_reason",
+        "min_monthly_commits_observed",
+        "branch_checked",
+        "commits_2025-12",
+        "commits_2026-01",
+        "commits_2026-02",
+        "commits_2026-03",
+        "commits_2026-04",
+        "commits_2026-05"
+      ],
+      "path": "filtered_full_sample_repos.csv",
+      "possible_admission_time_columns": [
+        "num_forks",
+        "num_watchers",
+        "num_stars",
+        "primary_language",
+        "num_PRs",
+        "num_PRs_human",
+        "num_PRs_agent",
+        "num_PRs_bot",
+        "num_months_with_agentic_PRs"
+      ],
+      "size_bytes": 25434
+    }
+  ]
 }
