@@ -1,154 +1,96 @@
 {
-  "acceptance": "At least 4/5 exact tracked-line matches; aggregate line ratio 0.9-1.1; >=90% terminal-label coverage when terminal events exist.",
-  "candidate_pool": [
-    {
-      "feature_assets": 50,
-      "language": "TypeScript",
-      "prs": 423,
-      "repo": "BarthPaleologue/CosmosJourneyer"
-    },
-    {
-      "feature_assets": 50,
-      "language": "C++",
-      "prs": 116,
-      "repo": "gameknife/gkNextEngine"
-    },
-    {
-      "feature_assets": 51,
-      "language": "C#",
-      "prs": 4732,
-      "repo": "MudBlazor/MudBlazor"
-    },
-    {
-      "feature_assets": 51,
-      "language": "Answer Set Programming",
-      "prs": 3669,
-      "repo": "influxdata/docs-v2"
-    },
-    {
-      "feature_assets": 51,
-      "language": "TypeScript",
-      "prs": 2154,
-      "repo": "skeletonlabs/skeleton"
-    },
-    {
-      "feature_assets": 51,
-      "language": "Python",
-      "prs": 690,
-      "repo": "PrimeIntellect-ai/verifiers"
-    },
-    {
-      "feature_assets": 51,
-      "language": "Go",
-      "prs": 585,
-      "repo": "perber/leafwiki"
-    },
-    {
-      "feature_assets": 52,
-      "language": "Python",
-      "prs": 340,
-      "repo": "nandyalu/trailarr"
-    },
-    {
-      "feature_assets": 53,
-      "language": "TypeScript",
-      "prs": 2901,
-      "repo": "matter-js/matter.js"
-    },
-    {
-      "feature_assets": 46,
-      "language": "TypeScript",
-      "prs": 13525,
-      "repo": "OfficeDev/microsoft-365-agents-toolkit"
-    },
-    {
-      "feature_assets": 54,
-      "language": "Go",
-      "prs": 1775,
-      "repo": "cloudposse/atmos"
-    },
-    {
-      "feature_assets": 46,
-      "language": "C#",
-      "prs": 189,
-      "repo": "Advance-Technologies-Foundation/clio"
-    }
-  ],
-  "commit_label_map_size": 255693,
+  "acceptance": "PASS only if all five reconstructed line counts, terminal_180 counts, and corrective_180 counts exactly match the blame-based pilot and runtime is materially lower.",
+  "exact_outcome_match_to_blame_pilot": false,
   "failure": null,
-  "guardrail": "No marker inference from this micro-pilot. If it passes, next checkpoint expands validation before full analysis.",
-  "history_skips": [],
-  "horizon_days": 180.0,
-  "label_conflicts": 0,
-  "micro_assets": 5,
-  "micro_pilot_pass": true,
-  "paper_day180_anchor": {
-    "AI_corrective_CIF": 0.0461432462520287,
-    "Human_corrective_CIF": 0.032865038256452254,
-    "ratio": 1.4040222893387198
-  },
-  "purpose": "Fast micro-validation of exact 180-day per-asset reconstruction before any broader rerun.",
-  "result": {
+  "guardrail": "A pass validates this faster route only on the same five assets. Before a full 18k-asset rerun, validate on a larger and more diverse repository sample, especially assets involving renames/moves.",
+  "measured_speedup_vs_blame_pilot": 5.4836821623470104,
+  "method_change": "Keep the same commit window, parsed diffs, line-birth rules, rename handling, line-position mapping, and first-terminal logic; skip verify_line_lifecycle_with_blame and use the forward diff result directly.",
+  "optimized_result": {
+    "all_corrective_counts_match": true,
+    "all_terminal_counts_match": false,
+    "all_tracked_counts_match": true,
     "assets": [
       {
         "corrective_180": 0,
+        "corrective_matches_blame_reference": true,
         "packaged": 21,
         "reconstructed": 21,
-        "role": "Human",
         "sha": "9028015cabb5fa6aef82365005438066c3e70154",
-        "terminal_180": 14
+        "terminal_180": 11,
+        "terminal_matches_blame_reference": false,
+        "tracked_matches_blame_reference": true
       },
       {
         "corrective_180": 0,
+        "corrective_matches_blame_reference": true,
         "packaged": 21,
         "reconstructed": 21,
-        "role": "Human",
         "sha": "dd593848da30990ce05a4226718eb503b99c6b59",
-        "terminal_180": 2
+        "terminal_180": 0,
+        "terminal_matches_blame_reference": false,
+        "tracked_matches_blame_reference": true
       },
       {
         "corrective_180": 0,
+        "corrective_matches_blame_reference": true,
         "packaged": 23,
         "reconstructed": 23,
-        "role": "Human",
         "sha": "839957fb6792ad99a1ab9450048247b249e71904",
-        "terminal_180": 2
+        "terminal_180": 2,
+        "terminal_matches_blame_reference": true,
+        "tracked_matches_blame_reference": true
       },
       {
         "corrective_180": 1,
+        "corrective_matches_blame_reference": true,
         "packaged": 24,
         "reconstructed": 24,
-        "role": "Human",
         "sha": "5b0b55bf857207f3f3c11156858ce86d6a118641",
-        "terminal_180": 7
+        "terminal_180": 7,
+        "terminal_matches_blame_reference": true,
+        "tracked_matches_blame_reference": true
       },
       {
         "corrective_180": 0,
+        "corrective_matches_blame_reference": true,
         "packaged": 25,
         "reconstructed": 25,
-        "role": "Human",
         "sha": "402772731d238ac639968de9315f9f40d64754c0",
-        "terminal_180": 13
+        "terminal_180": 13,
+        "terminal_matches_blame_reference": true,
+        "tracked_matches_blame_reference": true
       }
     ],
     "branch": "main",
     "corrective_lines_180": 1,
-    "exact_count_match_share": 1.0,
-    "exact_count_matches": 5,
-    "labeled_terminal_lines_180": 38,
-    "packaged_lines": 114,
+    "observation_commits": 1092,
     "reconstructed_lines": 114,
-    "reconstructed_to_packaged_ratio": 1.0,
     "repo": "BarthPaleologue/CosmosJourneyer",
-    "selected_origin_dates": [
-      "2025-05-24T17:29:12+00:00",
-      "2025-07-24T20:35:54+00:00",
-      "2025-11-10T18:25:51+00:00",
-      "2025-07-24T17:09:49+00:00",
-      "2025-05-21T15:04:02+00:00"
-    ],
     "terminal_label_coverage": 1.0,
-    "terminal_lines_180": 38,
-    "unlabeled_terminal_lines_180": 0
-  }
+    "terminal_lines_180": 33
+  },
+  "optimized_timings": {
+    "clone_seconds": 15.302550349,
+    "diff_only_lifecycle_seconds": 0.06647230699996953,
+    "enumerate_commit_metadata_seconds": 26.46975336199999,
+    "extract_all_window_diffs_seconds": 266.673610715,
+    "load_packaged_data_seconds": 2.9404797449999975,
+    "total_script_compute_seconds": 311.73214445900004
+  },
+  "pilot_pass": false,
+  "purpose": "Test whether exact-180 per-asset burden can be reconstructed materially faster by using the authors forward diff lifecycle without expensive full-file blame verification.",
+  "reference_blame_pilot": {
+    "corrective_lines_180": 1,
+    "diff_extraction_seconds": 265.7,
+    "full_file_blame_prefetch_seconds": 1300.2,
+    "script_compute_seconds": 1709.44,
+    "terminal_lines_180": 38
+  },
+  "same_five_assets_as_validated_blame_pilot": [
+    "9028015cabb5fa6aef82365005438066c3e70154",
+    "dd593848da30990ce05a4226718eb503b99c6b59",
+    "839957fb6792ad99a1ab9450048247b249e71904",
+    "5b0b55bf857207f3f3c11156858ce86d6a118641",
+    "402772731d238ac639968de9315f9f40d64754c0"
+  ]
 }
