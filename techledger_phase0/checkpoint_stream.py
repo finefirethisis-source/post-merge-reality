@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import csv
 import json
+from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 
 INPUT = Path("dev/analysis/output_rq1a_explore/rq1_origin_commit_maintenance_summary.csv")
 OUTPUT = Path("techledger_phase0/checkpoint_summary.json")
+OBSERVATION_END = datetime(2026, 5, 31, 23, 59, 59, tzinfo=timezone.utc)
+MATURE_CUTOFF = datetime(2025, 12, 2, 23, 59, 59, tzinfo=timezone.utc)  # >=180 days observed
 
 
 def as_int(value: str | None) -> int:
@@ -22,6 +26,18 @@ def as_float(value: str | None) -> float:
         return 0.0
 
 
+def parse_dt(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
 def quantile(values: list[float], q: float) -> float | None:
     if not values:
         return None
@@ -33,16 +49,16 @@ def quantile(values: list[float], q: float) -> float | None:
     return values[lo] * (1 - frac) + values[hi] * frac
 
 
-def concentration(rows: list[dict[str, float | int]], fraction: float) -> dict[str, float | int | None]:
+def concentration(rows: list[dict], fraction: float) -> dict:
     if not rows:
         return {"asset_count": 0, "burden_share": None, "tracked_line_share": None, "burden_to_size_ratio": None}
-    ranked = sorted(rows, key=lambda r: int(r["terminated"]), reverse=True)
+    ranked = sorted(rows, key=lambda r: r["terminated"], reverse=True)
     n = max(1, round(len(ranked) * fraction))
     top = ranked[:n]
-    total_burden = sum(int(r["terminated"]) for r in ranked)
-    total_size = sum(int(r["tracked"]) for r in ranked)
-    top_burden = sum(int(r["terminated"]) for r in top)
-    top_size = sum(int(r["tracked"]) for r in top)
+    total_burden = sum(r["terminated"] for r in ranked)
+    total_size = sum(r["tracked"] for r in ranked)
+    top_burden = sum(r["terminated"] for r in top)
+    top_size = sum(r["tracked"] for r in top)
     burden_share = top_burden / total_burden if total_burden else 0.0
     size_share = top_size / total_size if total_size else 0.0
     return {
@@ -53,46 +69,39 @@ def concentration(rows: list[dict[str, float | int]], fraction: float) -> dict[s
     }
 
 
-def cohort_stats(rows: list[dict[str, float | int]]) -> dict:
-    rates = [float(r["rate"]) for r in rows]
-    tracked = [float(r["tracked"]) for r in rows]
-    terminated = [float(r["terminated"]) for r in rows]
-    total_tracked = sum(int(r["tracked"]) for r in rows)
-    total_terminated = sum(int(r["terminated"]) for r in rows)
+def stats(rows: list[dict]) -> dict:
+    rates = [r["rate"] for r in rows]
     return {
         "asset_count": len(rows),
-        "zero_burden_asset_share": (sum(1 for r in rows if int(r["terminated"]) == 0) / len(rows)) if rows else None,
-        "total_tracked_lines": total_tracked,
-        "total_terminated_lines": total_terminated,
-        "aggregate_termination_rate": total_terminated / total_tracked if total_tracked else None,
-        "termination_rate_distribution": {
-            "p50": quantile(rates, 0.50),
-            "p75": quantile(rates, 0.75),
-            "p90": quantile(rates, 0.90),
-            "p95": quantile(rates, 0.95),
-            "p99": quantile(rates, 0.99),
-        },
-        "tracked_line_distribution": {
-            "p50": quantile(tracked, 0.50),
-            "p90": quantile(tracked, 0.90),
-            "p99": quantile(tracked, 0.99),
-        },
-        "terminated_line_distribution": {
-            "p50": quantile(terminated, 0.50),
-            "p90": quantile(terminated, 0.90),
-            "p99": quantile(terminated, 0.99),
-        },
-        "burden_concentration": {
-            "top_1pct": concentration(rows, 0.01),
-            "top_5pct": concentration(rows, 0.05),
-            "top_10pct": concentration(rows, 0.10),
-            "top_20pct": concentration(rows, 0.20),
-        },
+        "aggregate_termination_rate": (
+            sum(r["terminated"] for r in rows) / sum(r["tracked"] for r in rows)
+            if rows and sum(r["tracked"] for r in rows) else None
+        ),
+        "termination_rate_p50": quantile(rates, 0.50),
+        "termination_rate_p90": quantile(rates, 0.90),
+        "zero_burden_asset_share": (sum(1 for r in rows if r["terminated"] == 0) / len(rows)) if rows else None,
+        "top_10pct_raw_burden_concentration": concentration(rows, 0.10),
     }
 
 
+def size_band(n: int) -> str:
+    if n < 50:
+        return "20-49"
+    if n < 100:
+        return "50-99"
+    if n < 250:
+        return "100-249"
+    if n < 500:
+        return "250-499"
+    if n < 1000:
+        return "500-999"
+    return "1000+"
+
+
 def main() -> None:
-    features: list[dict[str, float | int]] = []
+    mature: list[dict] = []
+    by_repo: dict[str, list[dict]] = defaultdict(list)
+    by_band: dict[str, list[dict]] = defaultdict(list)
 
     with INPUT.open("r", encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -100,25 +109,60 @@ def main() -> None:
             if (row.get("origin_primary_operational_intent") or "").strip() != "feature":
                 continue
             tracked = as_int(row.get("tracked_line_count"))
+            if tracked < 20:
+                continue
+            dt = parse_dt(row.get("origin_commit_date"))
+            if dt is None or dt > MATURE_CUTOFF:
+                continue
             terminated = as_int(row.get("terminated_line_count"))
-            features.append({
+            repo = row.get("repo") or row.get("repo_key") or "unknown"
+            item = {
+                "repo": repo,
                 "tracked": tracked,
                 "terminated": terminated,
                 "rate": as_float(row.get("termination_rate")),
-            })
+            }
+            mature.append(item)
+            by_repo[repo].append(item)
+            by_band[size_band(tracked)].append(item)
 
-    substantive = [r for r in features if int(r["tracked"]) >= 20]
+    repo_metrics = []
+    for repo, rows in by_repo.items():
+        if len(rows) < 20:
+            continue
+        c = concentration(rows, 0.10)
+        repo_metrics.append({
+            "repo": repo,
+            "asset_count": len(rows),
+            "top10_burden_share": c["burden_share"],
+            "top10_size_share": c["tracked_line_share"],
+            "top10_burden_to_size_ratio": c["burden_to_size_ratio"],
+        })
 
+    valid_burden = [r["top10_burden_share"] for r in repo_metrics if r["top10_burden_share"] is not None]
+    valid_size = [r["top10_size_share"] for r in repo_metrics if r["top10_size_share"] is not None]
+    valid_ratio = [r["top10_burden_to_size_ratio"] for r in repo_metrics if r["top10_burden_to_size_ratio"] is not None]
+
+    band_order = ["20-49", "50-99", "100-249", "250-499", "500-999", "1000+"]
     summary = {
         "definition": {
             "asset": "origin commit classified as feature",
-            "raw_burden_proxy": "count of original tracked lines later modified or deleted at least once",
-            "normalized_burden_proxy": "terminated original lines / original tracked lines",
-            "important_limit": "This is a lower-bound first-intervention proxy, not total lifetime maintenance effort.",
-            "substantive_asset_threshold": "at least 20 tracked lines",
+            "substantive_threshold": "at least 20 tracked lines",
+            "maturity_rule": "origin date on or before 2025-12-02, giving at least 180 days before 2026-05-31 observation end",
+            "burden_proxy": "count of original tracked lines later modified or deleted at least once",
+            "important_limit": "lower-bound first-intervention proxy, not total lifetime maintenance effort",
         },
-        "all_feature_assets": cohort_stats(features),
-        "substantive_feature_assets": cohort_stats(substantive),
+        "mature_substantive_features": stats(mature),
+        "size_band_results": {band: stats(by_band[band]) for band in band_order if by_band[band]},
+        "within_repository_results": {
+            "eligible_repo_count": len(repo_metrics),
+            "eligibility": "at least 20 mature substantive feature assets",
+            "median_repo_top10_burden_share": quantile(valid_burden, 0.50),
+            "median_repo_top10_tracked_line_share": quantile(valid_size, 0.50),
+            "median_repo_top10_burden_to_size_ratio": quantile(valid_ratio, 0.50),
+            "p25_repo_top10_burden_share": quantile(valid_burden, 0.25),
+            "p75_repo_top10_burden_share": quantile(valid_burden, 0.75),
+        },
     }
 
     OUTPUT.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
