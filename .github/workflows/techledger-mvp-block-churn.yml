@@ -6,6 +6,7 @@ on:
     paths:
       - 'techledger_mvp/**'
       - 'scripts/techledger_enrich_contributor_context.py'
+      - 'scripts/techledger_corrective_test.py'
       - '.github/workflows/techledger-mvp-block-churn.yml'
 
 jobs:
@@ -26,12 +27,14 @@ jobs:
         run: python techledger_mvp/block_churn_scan.py
       - name: Add historical contributor and ownership context
         run: python scripts/techledger_enrich_contributor_context.py
-      - name: Rank admission-time markers
+      - name: Run corrective-burden gate
+        run: python scripts/techledger_corrective_test.py
+      - name: Rank broad admission-time markers
         run: python techledger_mvp/analyze_block_churn.py
       - name: Commit compact outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add techledger_mvp/output/commit_metrics.csv techledger_mvp/output/scan_summary.json techledger_mvp/output/marker_rankings.json
-          git diff --cached --quiet || git commit -m "Add TechLedger MVP contributor context results"
+          git add techledger_mvp/output/commit_metrics.csv techledger_mvp/output/scan_summary.json techledger_mvp/output/marker_rankings.json techledger_mvp/output/corrective_metrics.csv techledger_mvp/output/corrective_rankings.json
+          git diff --cached --quiet || git commit -m "Add TechLedger corrective burden gate results"
           git push
