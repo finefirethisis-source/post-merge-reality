@@ -28,12 +28,12 @@
     },
     {
       "repo": "MudBlazor/MudBlazor",
-      "code_commits_seen": 832,
-      "events_with_attributed_functions": 751,
+      "code_commits_seen": 836,
+      "events_with_attributed_functions": 755,
       "admission_events": 208,
-      "changed_lines": 91435,
-      "attributed_changed_lines": 84682,
-      "function_attribution_share": 0.9261442554820364
+      "changed_lines": 91540,
+      "attributed_changed_lines": 84787,
+      "function_attribution_share": 0.9262289709416649
     },
     {
       "repo": "skeletonlabs/skeleton",
@@ -66,5 +66,31 @@
     "File renames are followed; function renames are new identities; overloads with the same file+name are intentionally collapsed for this smell test.",
     "Default-branch first-parent history only.",
     "Function-context extraction is heuristic across languages; per-repository attribution share is reported so coverage is visible."
-  ]
+  ],
+  "contributor_context_enrichment": {
+    "lookback_days": 180,
+    "temporal_rule": "Only function-attributed events strictly before the admission commit in a fixed 180-day lookback are used.",
+    "identity": "Lower-cased Git author email on the landed default-branch commit; identities are not unified across multiple emails. On merge commits this may represent the merger/integrator rather than every original code author.",
+    "rank_basis": "Prior function-attributed default-branch events in the repository.",
+    "local_ownership_basis": "Prior touches to the exact canonical function blocks and files used by the churn outcome.",
+    "fields": [
+      "author_180d_function_commits",
+      "author_180d_function_commit_share",
+      "author_180d_contributor_percentile",
+      "author_180d_contributor_rank_from_top",
+      "contributors_active_180d",
+      "author_block_commit_share_180d",
+      "author_block_line_share_180d",
+      "author_existing_block_experience_fraction_180d",
+      "author_majority_owner_block_fraction_180d",
+      "author_last_toucher_block_fraction_180d",
+      "touched_blocks_with_history_fraction_180d",
+      "author_file_commit_share_180d",
+      "author_file_line_share_180d",
+      "author_existing_file_experience_fraction_180d",
+      "author_majority_owner_file_fraction_180d",
+      "author_last_toucher_file_fraction_180d",
+      "touched_files_with_history_fraction_180d"
+    ]
+  }
 }

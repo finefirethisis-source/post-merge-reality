@@ -12,7 +12,21 @@
   ],
   "numeric_markers_tested": [
     "admitted_block_loc",
+    "author_180d_contributor_percentile",
+    "author_180d_contributor_rank_from_top",
+    "author_180d_function_commit_share",
+    "author_180d_function_commits",
+    "author_block_commit_share_180d",
+    "author_block_line_share_180d",
+    "author_existing_block_experience_fraction_180d",
+    "author_existing_file_experience_fraction_180d",
+    "author_file_commit_share_180d",
+    "author_file_line_share_180d",
     "author_hour_utc",
+    "author_last_toucher_block_fraction_180d",
+    "author_last_toucher_file_fraction_180d",
+    "author_majority_owner_block_fraction_180d",
+    "author_majority_owner_file_fraction_180d",
     "author_prior_code_commits",
     "author_prior_commit_share",
     "author_tenure_days",
@@ -36,6 +50,7 @@
     "code_churn",
     "code_deletions",
     "code_files_touched",
+    "contributors_active_180d",
     "days_since_any_block_touch",
     "file_extension_count",
     "function_attribution_share",
@@ -74,6 +89,8 @@
     "repo_age_days",
     "test_file_fraction",
     "test_files_touched",
+    "touched_blocks_with_history_fraction_180d",
+    "touched_files_with_history_fraction_180d",
     "weekday"
   ],
   "outcome_summaries": {
@@ -311,13 +328,13 @@
           "strength": 0.26215860382265443
         },
         {
-          "association": -0.2549190556999336,
+          "association": -0.25385780287798265,
           "kind": "numeric",
           "marker": "repo_age_days",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 1.5546058098601817e-14,
-          "strength": 0.2549190556999336
+          "p_value": 2.011702919830171e-14,
+          "strength": 0.25385780287798265
         },
         {
           "association": 0.23962270288068827,
@@ -338,6 +355,15 @@
           "strength": 0.23783512104375
         },
         {
+          "association": 0.2251051999474619,
+          "kind": "numeric",
+          "marker": "touched_blocks_with_history_fraction_180d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.3900656029510491e-11,
+          "strength": 0.2251051999474619
+        },
+        {
           "association": -0.22273014618940712,
           "kind": "numeric",
           "marker": "mean_change_density",
@@ -356,13 +382,13 @@
           "strength": 0.2217800920767536
         },
         {
-          "association": -0.2175085822966282,
+          "association": -0.21733816594810637,
           "kind": "numeric",
           "marker": "author_tenure_days",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 6.794604832703298e-11,
-          "strength": 0.2175085822966282
+          "p_value": 7.036169552711688e-11,
+          "strength": 0.21733816594810637
         },
         {
           "association": 0.20949711936996251,
@@ -372,15 +398,6 @@
           "n": 881,
           "p_value": 3.4032524093371837e-10,
           "strength": 0.20949711936996251
-        },
-        {
-          "association": -0.20333694969519991,
-          "kind": "numeric",
-          "marker": "file_extension_count",
-          "method": "Spearman rho",
-          "n": 881,
-          "p_value": 1.1252805511885004e-09,
-          "strength": 0.20333694969519991
         }
       ],
       "top_within_repo_associations": [
@@ -674,13 +691,13 @@
           "strength": 0.4733791799095451
         },
         {
-          "association": -0.37610258238704153,
+          "association": -0.3764199553176181,
           "kind": "numeric",
           "marker": "repo_age_days",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 5.506182545940472e-31,
-          "strength": 0.37610258238704153
+          "p_value": 4.8683943345051615e-31,
+          "strength": 0.3764199553176181
         },
         {
           "association": 0.36460374104920096,
@@ -728,6 +745,15 @@
           "strength": 0.3401124319384386
         },
         {
+          "association": 0.2727030612726669,
+          "kind": "numeric",
+          "marker": "touched_files_with_history_fraction_180d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.730105774406245e-16,
+          "strength": 0.2727030612726669
+        },
+        {
           "association": -0.2639876335340349,
           "kind": "numeric",
           "marker": "message_chars",
@@ -737,13 +763,31 @@
           "strength": 0.2639876335340349
         },
         {
-          "association": 0.25172815873026605,
+          "association": 0.2548102009503182,
+          "kind": "numeric",
+          "marker": "author_180d_function_commit_share",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 1.59634342794329e-14,
+          "strength": 0.2548102009503182
+        },
+        {
+          "association": -0.2525951683240639,
+          "kind": "numeric",
+          "marker": "contributors_active_180d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 2.7294653006426813e-14,
+          "strength": 0.2525951683240639
+        },
+        {
+          "association": 0.2518939446234287,
           "kind": "numeric",
           "marker": "author_prior_commit_share",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 3.362391155593971e-14,
-          "strength": 0.25172815873026605
+          "p_value": 3.231143520295193e-14,
+          "strength": 0.2518939446234287
         },
         {
           "association": 0.2421865928309709,
@@ -764,13 +808,22 @@
           "strength": 0.24052460888547375
         },
         {
-          "association": -0.2337415989402487,
+          "association": 0.23782672539564187,
+          "kind": "numeric",
+          "marker": "touched_blocks_with_history_fraction_180d",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 8.556769945475581e-13,
+          "strength": 0.23782672539564187
+        },
+        {
+          "association": -0.23323102622496378,
           "kind": "numeric",
           "marker": "author_tenure_days",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 2.1325542905322986e-12,
-          "strength": 0.2337415989402487
+          "p_value": 2.38751492663438e-12,
+          "strength": 0.23323102622496378
         },
         {
           "association": 0.22425625259264823,
@@ -780,6 +833,15 @@
           "n": 881,
           "p_value": 1.6645442538319528e-11,
           "strength": 0.22425625259264823
+        },
+        {
+          "association": 0.22007686732667464,
+          "kind": "numeric",
+          "marker": "author_180d_function_commits",
+          "method": "Spearman rho",
+          "n": 881,
+          "p_value": 3.999339448389341e-11,
+          "strength": 0.22007686732667464
         },
         {
           "association": 0.2104681557468875,
@@ -818,13 +880,13 @@
           "strength": 0.20491071601821872
         },
         {
-          "association": 0.19526398005417225,
+          "association": 0.19533696784772625,
           "kind": "numeric",
           "marker": "author_prior_code_commits",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 5.100217069280236e-09,
-          "strength": 0.19526398005417225
+          "p_value": 5.03242696406537e-09,
+          "strength": 0.19533696784772625
         },
         {
           "association": -0.19479379632577365,
@@ -852,51 +914,6 @@
           "n": 881,
           "p_value": 4.515580684956222e-08,
           "strength": 0.1829708549136273
-        },
-        {
-          "association": 0.1496938607370316,
-          "kind": "numeric",
-          "marker": "mean_comment_fraction",
-          "method": "Spearman rho",
-          "n": 881,
-          "p_value": 8.119220571772244e-06,
-          "strength": 0.1496938607370316
-        },
-        {
-          "association": -0.14838612837179702,
-          "kind": "numeric",
-          "marker": "message_docs",
-          "method": "Spearman rho",
-          "n": 881,
-          "p_value": 9.752185175735154e-06,
-          "strength": 0.14838612837179702
-        },
-        {
-          "association": 0.14571042812697563,
-          "kind": "numeric",
-          "marker": "changed_boolean_operator_count",
-          "method": "Spearman rho",
-          "n": 881,
-          "p_value": 1.4120570686143426e-05,
-          "strength": 0.14571042812697563
-        },
-        {
-          "association": 0.14051666031791601,
-          "kind": "numeric",
-          "marker": "changed_exception_keyword_count",
-          "method": "Spearman rho",
-          "n": 881,
-          "p_value": 2.8437944941006653e-05,
-          "strength": 0.14051666031791601
-        },
-        {
-          "association": 0.1387852416975728,
-          "kind": "categorical_indicator",
-          "marker": "origin_role=Human",
-          "method": "Point-biserial r",
-          "n": 881,
-          "p_value": 3.5721048561540645e-05,
-          "strength": 0.1387852416975728
         }
       ],
       "top_within_repo_associations": [
@@ -1005,12 +1022,36 @@
           "strength": 0.17747109651944046
         },
         {
+          "association": 0.17696863366303195,
+          "marker": "author_existing_block_experience_fraction_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 751,
+          "p_value": 1.0597509014115994e-06,
+          "strength": 0.17696863366303195
+        },
+        {
           "association": 0.1753111596300706,
           "marker": "mean_complexity_proxy",
           "method": "Within-repo rank Spearman rho",
           "n": 878,
           "p_value": 1.715448344795657e-07,
           "strength": 0.1753111596300706
+        },
+        {
+          "association": 0.17048399975057357,
+          "marker": "author_block_commit_share_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 751,
+          "p_value": 2.61867340578172e-06,
+          "strength": 0.17048399975057357
+        },
+        {
+          "association": 0.1684783324670175,
+          "marker": "author_block_line_share_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 751,
+          "p_value": 3.440871708442014e-06,
+          "strength": 0.1684783324670175
         },
         {
           "association": 0.15939300840306636,
@@ -1027,6 +1068,30 @@
           "n": 878,
           "p_value": 2.1469084741383757e-06,
           "strength": 0.15914258698208414
+        },
+        {
+          "association": 0.15720344385749582,
+          "marker": "author_file_commit_share_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 786,
+          "p_value": 9.517612278676631e-06,
+          "strength": 0.15720344385749582
+        },
+        {
+          "association": 0.15663945101080004,
+          "marker": "author_existing_file_experience_fraction_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 786,
+          "p_value": 1.0253036001326757e-05,
+          "strength": 0.15663945101080004
+        },
+        {
+          "association": 0.15228060163009743,
+          "marker": "author_file_line_share_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 786,
+          "p_value": 1.806736404690471e-05,
+          "strength": 0.15228060163009743
         },
         {
           "association": 0.14997918325951992,
@@ -1061,6 +1126,22 @@
           "strength": 0.1480614398573029
         },
         {
+          "association": -0.1458746353081261,
+          "marker": "contributors_active_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 1.4281014772785223e-05,
+          "strength": 0.1458746353081261
+        },
+        {
+          "association": 0.14223277339214932,
+          "marker": "author_last_toucher_block_fraction_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 751,
+          "p_value": 9.18350633313127e-05,
+          "strength": 0.14223277339214932
+        },
+        {
           "association": 0.13311138709168838,
           "marker": "changed_nonblank_lines",
           "method": "Within-repo rank Spearman rho",
@@ -1075,70 +1156,6 @@
           "n": 878,
           "p_value": 7.721781918906511e-05,
           "strength": 0.13299947356451255
-        },
-        {
-          "association": 0.13229532122205193,
-          "marker": "code_churn",
-          "method": "Within-repo rank Spearman rho",
-          "n": 878,
-          "p_value": 8.432608847856666e-05,
-          "strength": 0.13229532122205193
-        },
-        {
-          "association": 0.13061564318763802,
-          "marker": "author_prior_commit_share",
-          "method": "Within-repo rank Spearman rho",
-          "n": 878,
-          "p_value": 0.00010385419097598078,
-          "strength": 0.13061564318763802
-        },
-        {
-          "association": 0.12943515020283566,
-          "marker": "is_merge",
-          "method": "Within-repo rank Spearman rho",
-          "n": 744,
-          "p_value": 0.0004009110363714667,
-          "strength": 0.12943515020283566
-        },
-        {
-          "association": 0.12943515020283566,
-          "marker": "parent_count",
-          "method": "Within-repo rank Spearman rho",
-          "n": 744,
-          "p_value": 0.0004009110363714667,
-          "strength": 0.12943515020283566
-        },
-        {
-          "association": 0.1287410949317387,
-          "marker": "changed_assert_count",
-          "method": "Within-repo rank Spearman rho",
-          "n": 878,
-          "p_value": 0.00013065000885769166,
-          "strength": 0.1287410949317387
-        },
-        {
-          "association": 0.12411886547190884,
-          "marker": "message_dependency",
-          "method": "Within-repo rank Spearman rho",
-          "n": 878,
-          "p_value": 0.00022709202225349064,
-          "strength": 0.12411886547190884
-        },
-        {
-          "association": 0.11931575442744125,
-          "marker": "blocks_touched",
-          "method": "Within-repo rank Spearman rho",
-          "n": 878,
-          "p_value": 0.0003954824561519614,
-          "strength": 0.11931575442744125
-        },
-        {
-          "association": 0.11799306587349263,
-          "marker": "code_additions",
-          "method": "Within-repo rank Spearman rho",
-          "n": 878,
-          "p_value": 0.0004591440467807353,
-          "strength": 0.11799306587349263
         }
       ]
     },
@@ -1325,13 +1342,13 @@
           "strength": 0.27900189160924455
         },
         {
-          "association": -0.2744931003779518,
+          "association": -0.2729029890425184,
           "kind": "numeric",
           "marker": "repo_age_days",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 1.079504047398947e-16,
-          "strength": 0.2744931003779518
+          "p_value": 1.6416049750478395e-16,
+          "strength": 0.2729029890425184
         },
         {
           "association": 0.27105497668859,
@@ -1379,13 +1396,13 @@
           "strength": 0.24089880182285614
         },
         {
-          "association": -0.2368346998921044,
+          "association": -0.23631931718726804,
           "kind": "numeric",
           "marker": "author_tenure_days",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 1.069793665216997e-12,
-          "strength": 0.2368346998921044
+          "p_value": 1.2009247085076192e-12,
+          "strength": 0.23631931718726804
         },
         {
           "association": -0.23175854963410825,
@@ -1397,22 +1414,22 @@
           "strength": 0.23175854963410825
         },
         {
-          "association": -0.21585558758640516,
+          "association": 0.22983347364707912,
           "kind": "numeric",
-          "marker": "file_extension_count",
+          "marker": "touched_blocks_with_history_fraction_180d",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 9.523579231439768e-11,
-          "strength": 0.21585558758640516
+          "p_value": 5.0278315368439336e-12,
+          "strength": 0.22983347364707912
         },
         {
-          "association": 0.2017079992908688,
+          "association": -0.22530240576717173,
           "kind": "numeric",
-          "marker": "changed_import_dependency_lines",
+          "marker": "author_180d_contributor_percentile",
           "method": "Spearman rho",
           "n": 881,
-          "p_value": 1.5342843476809098e-09,
-          "strength": 0.2017079992908688
+          "p_value": 1.3329406288644295e-11,
+          "strength": 0.22530240576717173
         }
       ],
       "top_within_repo_associations": [
@@ -1641,20 +1658,20 @@
           "strength": 0.2087276449231137
         },
         {
+          "association": -0.19757179249000795,
+          "marker": "contributors_active_180d",
+          "method": "Within-repo rank Spearman rho",
+          "n": 878,
+          "p_value": 3.54329300422822e-09,
+          "strength": 0.19757179249000795
+        },
+        {
           "association": 0.19456896935563983,
           "marker": "message_revert",
           "method": "Within-repo rank Spearman rho",
           "n": 668,
           "p_value": 4.023078624641008e-07,
           "strength": 0.19456896935563983
-        },
-        {
-          "association": 0.18655690669220198,
-          "marker": "hot_block_fraction_30d",
-          "method": "Within-repo rank Spearman rho",
-          "n": 878,
-          "p_value": 2.562563814684311e-08,
-          "strength": 0.18655690669220198
         }
       ]
     }
