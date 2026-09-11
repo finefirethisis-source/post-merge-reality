@@ -8,6 +8,7 @@ on:
       - 'scripts/techledger_enrich_contributor_context.py'
       - 'scripts/techledger_corrective_test.py'
       - 'scripts/techledger_corrective_persistence_test.py'
+      - 'scripts/techledger_corrective_signal_scan.py'
       - '.github/workflows/techledger-mvp-block-churn.yml'
 
 jobs:
@@ -32,12 +33,14 @@ jobs:
         run: python scripts/techledger_corrective_test.py
       - name: Test corrective persistence beyond size and activity
         run: python scripts/techledger_corrective_persistence_test.py
+      - name: Scan all other admission-time signals against corrective burden
+        run: python scripts/techledger_corrective_signal_scan.py
       - name: Rank broad admission-time markers
         run: python techledger_mvp/analyze_block_churn.py
       - name: Commit compact outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add techledger_mvp/output/commit_metrics.csv techledger_mvp/output/scan_summary.json techledger_mvp/output/marker_rankings.json techledger_mvp/output/corrective_metrics.csv techledger_mvp/output/corrective_rankings.json techledger_mvp/output/corrective_persistence_test.json
-          git diff --cached --quiet || git commit -m "Add TechLedger corrective persistence test results"
+          git add techledger_mvp/output/commit_metrics.csv techledger_mvp/output/scan_summary.json techledger_mvp/output/marker_rankings.json techledger_mvp/output/corrective_metrics.csv techledger_mvp/output/corrective_rankings.json techledger_mvp/output/corrective_persistence_test.json techledger_mvp/output/corrective_signal_scan.json
+          git diff --cached --quiet || git commit -m "Add TechLedger broad corrective signal scan results"
           git push
