@@ -1,0 +1,524 @@
+{
+  "eligible_rows_with_prior_activity": {
+    "prior_corrective_commit_share_90d": 721,
+    "prior_corrective_line_share_90d": 721
+  },
+  "guardrails": [
+    "Five-repository convenience sample; repositories with fewer than 20 eligible rows are excluded from repo-local residual tests.",
+    "Corrective labels are the conservative proxy produced by the preceding corrective-burden gate.",
+    "Function attribution inherits the existing MVP scanner's heuristic limitations.",
+    "The quartile summaries are descriptive only and do not themselves control for size/activity; the residual tests are the primary result.",
+    "No p-value gate is used for the go/no-go interpretation."
+  ],
+  "interpretation_rule": "A positive controlled association means two areas of similar size and recent activity differ in later corrective burden according to how corrective their recent history was. This is still descriptive evidence, not causal validation.",
+  "purpose": "Does the fraction of recent work that was corrective predict later corrective burden beyond asset size and generic activity?",
+  "rows_total": 881,
+  "signals": {
+    "prior_corrective_commit_share_90d": {
+      "denominator": "prior_block_commits_90d",
+      "numerator": "prior_corrective_block_commits_90d"
+    },
+    "prior_corrective_line_share_90d": {
+      "denominator": "prior_block_changed_lines_90d",
+      "numerator": "prior_corrective_block_changed_lines_90d"
+    }
+  },
+  "tests": {
+    "prior_corrective_commit_share_90d": {
+      "outcome_corrective_changed_lines_180d": {
+        "controlled_size_activity": {
+          "association": -0.0034025934642056,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_commits_90d"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.34027475160977855,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.09082942915330916,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.007308590480916272,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.0025387037101395823,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "controlled_size_activity_complexity": {
+          "association": -0.014395035301220948,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_commits_90d",
+            "max_complexity_proxy"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.3343596572374401,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.09099585618219054,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.018945978864104446,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.003679994701697664,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "raw": {
+          "association": 0.39831930246164954,
+          "method": "Spearman rho",
+          "n": 721
+        },
+        "within_repo_share_quartiles": {
+          "Q1": {
+            "mean_outcome": 80.2752808988764,
+            "n": 178
+          },
+          "Q2": {
+            "mean_outcome": 316.1302083333333,
+            "n": 192
+          },
+          "Q3": {
+            "mean_outcome": 233.56969696969696,
+            "n": 165
+          },
+          "Q4": {
+            "mean_outcome": 155.14054054054054,
+            "n": 185
+          }
+        }
+      },
+      "outcome_corrective_commit_count_180d": {
+        "controlled_size_activity": {
+          "association": -0.06335906444636179,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_commits_90d"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.3568160257923134,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.17951651990382544,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.07366220846533325,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.00737516545732058,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "controlled_size_activity_complexity": {
+          "association": -0.052910764366190244,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_commits_90d",
+            "max_complexity_proxy"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.351115354488923,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.17861689627504349,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.06291603652862199,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.008663201180659955,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "raw": {
+          "association": 0.3807718742235359,
+          "method": "Spearman rho",
+          "n": 721
+        },
+        "within_repo_share_quartiles": {
+          "Q1": {
+            "mean_outcome": 1.7191011235955056,
+            "n": 178
+          },
+          "Q2": {
+            "mean_outcome": 10.697916666666666,
+            "n": 192
+          },
+          "Q3": {
+            "mean_outcome": 7.781818181818182,
+            "n": 165
+          },
+          "Q4": {
+            "mean_outcome": 4.827027027027027,
+            "n": 185
+          }
+        }
+      },
+      "outcome_corrective_revisit_180d": {
+        "controlled_size_activity": {
+          "association": 0.06278917502826217,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_commits_90d"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.3596412797682554,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.2270239044318592,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": 0.05601108587424708,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.011711630801086087,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "controlled_size_activity_complexity": {
+          "association": 0.05849102905788644,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_commits_90d",
+            "max_complexity_proxy"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.3526585409905392,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.2271405739585736,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": 0.05122441500115085,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.01208847778174637,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "raw": {
+          "association": 0.3525260757147061,
+          "method": "Spearman rho",
+          "n": 721
+        },
+        "within_repo_share_quartiles": {
+          "Q1": {
+            "mean_outcome": 0.42134831460674155,
+            "n": 178
+          },
+          "Q2": {
+            "mean_outcome": 0.6458333333333334,
+            "n": 192
+          },
+          "Q3": {
+            "mean_outcome": 0.8484848484848485,
+            "n": 165
+          },
+          "Q4": {
+            "mean_outcome": 0.7405405405405405,
+            "n": 185
+          }
+        }
+      }
+    },
+    "prior_corrective_line_share_90d": {
+      "outcome_corrective_changed_lines_180d": {
+        "controlled_size_activity": {
+          "association": -0.12368340856485559,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_changed_lines_90d"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.3317623633612651,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.061465810240233044,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.13287399270101077,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.006105595206739499,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "controlled_size_activity_complexity": {
+          "association": -0.12904595444311773,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_changed_lines_90d",
+            "max_complexity_proxy"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.33042354308190014,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.06115718379858642,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.13862240795372752,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.00798763539720896,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "raw": {
+          "association": 0.3382199937966198,
+          "method": "Spearman rho",
+          "n": 721
+        },
+        "within_repo_share_quartiles": {
+          "Q1": {
+            "mean_outcome": 97.59217877094972,
+            "n": 179
+          },
+          "Q2": {
+            "mean_outcome": 295.282722513089,
+            "n": 191
+          },
+          "Q3": {
+            "mean_outcome": 296.31360946745565,
+            "n": 169
+          },
+          "Q4": {
+            "mean_outcome": 101.0,
+            "n": 181
+          }
+        }
+      },
+      "outcome_corrective_commit_count_180d": {
+        "controlled_size_activity": {
+          "association": -0.1540339402767466,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_changed_lines_90d"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.3177064447843737,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.15574219457270708,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.16853459221791695,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.0147660987265455,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "controlled_size_activity_complexity": {
+          "association": -0.14615596813235865,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_changed_lines_90d",
+            "max_complexity_proxy"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.31629289787262926,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.15232318958031554,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": -0.16028963604938226,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.01686768180926826,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "raw": {
+          "association": 0.32260915886504526,
+          "method": "Spearman rho",
+          "n": 721
+        },
+        "within_repo_share_quartiles": {
+          "Q1": {
+            "mean_outcome": 2.3240223463687153,
+            "n": 179
+          },
+          "Q2": {
+            "mean_outcome": 10.450261780104713,
+            "n": 191
+          },
+          "Q3": {
+            "mean_outcome": 8.585798816568047,
+            "n": 169
+          },
+          "Q4": {
+            "mean_outcome": 3.723756906077348,
+            "n": 181
+          }
+        }
+      },
+      "outcome_corrective_revisit_180d": {
+        "controlled_size_activity": {
+          "association": 0.037686688562654294,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_changed_lines_90d"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.3441467209717498,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.24102131852899858,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": 0.028794550373228894,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.018646168003219908,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "controlled_size_activity_complexity": {
+          "association": 0.0342368650633837,
+          "controls": [
+            "admitted_block_loc",
+            "prior_block_changed_lines_90d",
+            "max_complexity_proxy"
+          ],
+          "method": "Within-repo rank residual correlation",
+          "n": 720,
+          "per_repo": {
+            "BarthPaleologue/CosmosJourneyer": {
+              "association": 0.34285253071503546,
+              "n": 56
+            },
+            "MudBlazor/MudBlazor": {
+              "association": 0.24260216007708157,
+              "n": 163
+            },
+            "PrimeIntellect-ai/verifiers": {
+              "association": 0.0249314859164815,
+              "n": 405
+            },
+            "skeletonlabs/skeleton": {
+              "association": -0.019548012648023236,
+              "n": 96
+            }
+          },
+          "repos_used": 4
+        },
+        "raw": {
+          "association": 0.32953933864173823,
+          "method": "Spearman rho",
+          "n": 721
+        },
+        "within_repo_share_quartiles": {
+          "Q1": {
+            "mean_outcome": 0.43575418994413406,
+            "n": 179
+          },
+          "Q2": {
+            "mean_outcome": 0.6492146596858639,
+            "n": 191
+          },
+          "Q3": {
+            "mean_outcome": 0.834319526627219,
+            "n": 169
+          },
+          "Q4": {
+            "mean_outcome": 0.7348066298342542,
+            "n": 181
+          }
+        }
+      }
+    }
+  }
+}

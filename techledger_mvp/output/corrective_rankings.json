@@ -1177,18 +1177,18 @@
           "strength": 0.27752287414740434
         },
         {
-          "association": -0.2712215568060778,
+          "association": -0.27122155680607773,
           "marker": "origin_intent=build_config_ci",
           "method": "Point-biserial r",
           "n": 881,
-          "strength": 0.2712215568060778
+          "strength": 0.27122155680607773
         },
         {
-          "association": -0.2635302542026089,
+          "association": -0.2635302542026088,
           "marker": "origin_maintenance_class=management",
           "method": "Point-biserial r",
           "n": 881,
-          "strength": 0.2635302542026089
+          "strength": 0.2635302542026088
         },
         {
           "association": 0.2566455848690946,
