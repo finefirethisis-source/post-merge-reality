@@ -28,12 +28,12 @@
     },
     {
       "repo": "MudBlazor/MudBlazor",
-      "code_commits_seen": 836,
-      "events_with_attributed_functions": 755,
+      "code_commits_seen": 833,
+      "events_with_attributed_functions": 752,
       "admission_events": 208,
-      "changed_lines": 91540,
-      "attributed_changed_lines": 84787,
-      "function_attribution_share": 0.9262289709416649
+      "changed_lines": 91437,
+      "attributed_changed_lines": 84684,
+      "function_attribution_share": 0.9261458709275239
     },
     {
       "repo": "skeletonlabs/skeleton",
